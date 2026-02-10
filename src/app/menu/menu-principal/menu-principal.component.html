@@ -1,0 +1,17 @@
+<mat-toolbar class="toolbarCor">
+  <button mat-icon-button>
+    <mat-icon>menu</mat-icon>
+  </button>
+  <img src="images/logo01.png" alt="Logo">
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav opened mode="side" [style.width]="'250px'" class="toolbarCor" >
+    <app-custom-sidenav />
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
