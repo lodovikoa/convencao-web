@@ -1,0 +1,9 @@
+.mat-mdc-list-item {
+  color: blue; /* Cor do texto */
+  background-color: #f0f0f0; /* Cor do fundo */
+}
+
+/* Alterar cor ao passar o mouse (hover) */
+.mat-mdc-list-item:hover {
+  background-color: lightblue !important;
+}

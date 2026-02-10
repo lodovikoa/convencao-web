@@ -1,1 +1,8 @@
-<p>custom-sidenav works!</p>
+<mat-nav-list>
+  @for (item of menuItems(); track item.label) {
+    <a mat-list-item [routerLink]="item.route">
+      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+      <span matListItemTitle>{{ item.label }}</span>
+    </a>
+  }
+</mat-nav-list>
