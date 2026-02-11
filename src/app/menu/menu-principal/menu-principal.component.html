@@ -1,15 +1,15 @@
 <mat-toolbar class="toolbarCor">
-  <button mat-icon-button>
+  <button mat-icon-button (click)="collapsed.set(!collapsed())">
     <mat-icon>menu</mat-icon>
   </button>
   <img src="images/logo01.png" alt="Logo">
 </mat-toolbar>
 
 <mat-sidenav-container>
-  <mat-sidenav opened mode="side" [style.width]="'250px'" class="toolbarCor" >
-    <app-custom-sidenav />
+  <mat-sidenav opened mode="side" [style.width]="sidenavWidth()" class="toolbarCor" >
+    <app-custom-sidenav [collapsed]="collapsed()" />
   </mat-sidenav>
-  <mat-sidenav-content class="content">
+  <mat-sidenav-content class="content" [style.margin-left]="sidenavWidth()">
     <router-outlet />
   </mat-sidenav-content>
 </mat-sidenav-container>

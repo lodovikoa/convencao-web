@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { MenuItem } from '../interface/menu-item';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,11 @@ import { RouterModule } from '@angular/router';
   styleUrl: './custom-sidenav.component.scss',
 })
 export class CustomSidenavComponent {
+
+  sideNavCollapsed = signal(false);
+  @Input() set collapsed(val: boolean) {
+    this.sideNavCollapsed.set(val);
+  }
 
   menuItems = signal<MenuItem[]>([
     {
@@ -30,4 +35,6 @@ export class CustomSidenavComponent {
       route: 'users'
     }
   ]);
+
+  // profilePicSize = computed(() => this.sideNavCollapsed() ? '32px' : '100px');
 }
