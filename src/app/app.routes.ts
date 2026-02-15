@@ -5,7 +5,7 @@ import { UsersComponent } from './pages/users/users.component';
 import { VideosComponent } from './pages/content/videos/videos.component';
 import { PlaylistsComponent } from './pages/content/playlists/playlists.component';
 import { PostsComponent } from './pages/content/posts/posts.component';
-import { ComentsComponent } from './pages/coments/coments.component';
+import { CommentsComponent } from './pages/comments/comments.component';
 
 export const routes: Routes = [
   { path: '',  pathMatch: 'full', redirectTo: 'dashboard' },
@@ -18,6 +18,6 @@ export const routes: Routes = [
     ]
    },
   { path: 'users', component: UsersComponent },
-  { path: 'coments', component: ComentsComponent }
+  { path: 'comments', component: CommentsComponent }
 
 ];

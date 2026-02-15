@@ -7,7 +7,9 @@
   #rla="routerLinkActive"
   [activated]="rla.isActive">
 
-    <mat-icon [fontSet]="rla.isActive ? 'material-icons' : 'material-icons-outlined'" matListItemIcon>{{ item().icon }}</mat-icon>
+    @let fontSetItem = rla.isActive ? 'material-icons' : 'material-icons-outlined';
+
+    <mat-icon [fontSet]="fontSetItem" matListItemIcon>{{ item().icon }}</mat-icon>
     @if (!collapsed()) {
       <span matListItemTitle>{{ item().label }}</span>
     }
@@ -34,7 +36,9 @@
         #rla="routerLinkActive"
         [activated]="rla.isActive">
 
-          <mat-icon [fontSet]="rla.isActive? 'material-icons' : 'material-icons-outlined'" matListItemIcon>{{ subItem.icon }}</mat-icon>
+           @let fontSetSubItem = rla.isActive ? 'material-icons' : 'material-icons-outlined';
+
+          <mat-icon [fontSet]="fontSetSubItem" matListItemIcon>{{ subItem.icon }}</mat-icon>
 
           @if(!collapsed()) {
             <span matListItemTitle>{{ subItem.label }}</span>

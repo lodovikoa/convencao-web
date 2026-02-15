@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbarCor">
-  <button title="Recolher Menu" mat-icon-button (click)="collapsed.set(!collapsed())">
+  <button [title]="titleText()" mat-icon-button (click)="toggle()">
     <mat-icon>menu</mat-icon>
   </button>
    <div class="container">

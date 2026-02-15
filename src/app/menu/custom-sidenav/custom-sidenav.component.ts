@@ -20,44 +20,15 @@ export class CustomSidenavComponent {
   }
 
   menuItems = signal<MenuItem[]>([
-    {
-      icon: 'dashboard',
-      label: 'Dashboard',
-      route: 'dashboard'
-    },
-    {
-      icon: 'video_library',
-      label: 'Content',
-      route: 'content',
-      subItems: [
-        {
-          icon: 'play_circle',
-          label: 'Videos',
-          route: 'videos'
-        },
-        {
-          icon: 'playlist_play',
-          label: 'Playlists',
-          route: 'playlists'
-        },
-        {
-          icon: 'post_add',
-          label: 'Poasts',
-          route: 'posts'
-        }
-      ]
-    },
-    {
-      icon: 'people',
-      label: 'Users',
-      route: 'users'
-    },
-    {
-      icon: 'comments',
-      label: 'Coments',
-      route: 'coments'
-    }
+    { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
+    { icon: 'video_library', label: 'Content', route: 'content', subItems:
+      [
+        { icon: 'play_circle', label: 'Videos', route: 'videos'},
+        { icon: 'playlist_play', label: 'Playlists', route: 'playlists' },
+        { icon: 'post_add', label: 'Poasts', route: 'posts' }
+      ] },
+    { icon: 'people', label: 'Users', route: 'users'},
+    { icon: 'comments', label: 'Comments', route: 'comments' }
   ]);
 
-  // profilePicSize = computed(() => this.sideNavCollapsed() ? '32px' : '100px');
 }
