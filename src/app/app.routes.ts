@@ -1,3 +1,4 @@
+import { LoginComponent } from './login/login/login.component';
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ContentComponent } from './pages/content/content.component';
@@ -8,7 +9,8 @@ import { PostsComponent } from './pages/content/posts/posts.component';
 import { CommentsComponent } from './pages/comments/comments.component';
 
 export const routes: Routes = [
-  { path: '',  pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: '',  pathMatch: 'full', redirectTo: 'login' },
+  { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'content', component: ContentComponent,
     children: [
