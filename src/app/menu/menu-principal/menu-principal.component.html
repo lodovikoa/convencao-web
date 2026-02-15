@@ -1,8 +1,11 @@
 <mat-toolbar class="toolbarCor">
-  <button mat-icon-button (click)="collapsed.set(!collapsed())">
+  <button title="Recolher Menu" mat-icon-button (click)="collapsed.set(!collapsed())">
     <mat-icon>menu</mat-icon>
   </button>
-  <img src="images/logo01.png" alt="Logo">
+   <div class="container">
+    <img src="images/logo01.png" alt="Logo" title="">
+    <span title="Usuário logado" class="texto-direita">{{usuarioLogado()}}</span>
+  </div>
 </mat-toolbar>
 
 <mat-sidenav-container>

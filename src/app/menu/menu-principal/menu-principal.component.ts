@@ -19,4 +19,6 @@ export class MenuPrincipalComponent {
 
   sidenavWidth = computed(() => this.collapsed() ? '65px' : '250px');
 
+  usuarioLogado = signal("Usuario Logado");
+
 }
