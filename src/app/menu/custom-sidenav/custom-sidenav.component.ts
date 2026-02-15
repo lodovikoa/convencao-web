@@ -4,10 +4,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { MenuItemComponent } from "../menu-item/menu-item.component";
 
 @Component({
   selector: 'app-custom-sidenav',
-  imports: [CommonModule, MatListModule, MatIconModule, RouterModule],
+  imports: [CommonModule, MatListModule, MatIconModule, RouterModule, MenuItemComponent],
   templateUrl: './custom-sidenav.component.html',
   styleUrl: './custom-sidenav.component.scss',
 })
@@ -27,12 +28,34 @@ export class CustomSidenavComponent {
     {
       icon: 'video_library',
       label: 'Content',
-      route: 'content'
+      route: 'content',
+      subItems: [
+        {
+          icon: 'play_circle',
+          label: 'Videos',
+          route: 'videos'
+        },
+        {
+          icon: 'playlist_play',
+          label: 'Playlists',
+          route: 'playlists'
+        },
+        {
+          icon: 'post_add',
+          label: 'Poasts',
+          route: 'posts'
+        }
+      ]
     },
     {
       icon: 'people',
       label: 'Users',
       route: 'users'
+    },
+    {
+      icon: 'comments',
+      label: 'Coments',
+      route: 'coments'
     }
   ]);
 

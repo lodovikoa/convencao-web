@@ -1,26 +1,2 @@
-// :host * {
-//   transition: all 500ms ease-in-out !important;
-// }
 
-
-.mat-mdc-list-item {
-  color: blue; /* Cor do texto */
-  background-color: #f0f0f0; /* Cor do fundo */
-}
-
-/* Alterar cor ao passar o mouse (hover) */
-.mat-mdc-list-item:hover {
-  background-color: lightblue !important;
-}
-
-.menu-item {
-  border-left: 5px solid;
-//  background: rgba(0, 128, 0);
-//  border-left-color: rgba(0, 128,0);
-  border-left-color: rgba(0, 0, 0, 0);
-}
-.selected-menu-item {
-  border-left-color: var(--primary-color);
-  background: rgba(0, 0, 0, 0.05);
-}
 
