@@ -1,0 +1,31 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  mat-card-header {
+    margin-bottom: 5px;
+    justify-content: center;
+  }
+
+  mat-error {
+  width: 100%;        // Garante que ocupe toda a largura disponível
+  text-align: center;
+  margin-bottom: 18px;    // Espaçamento opcional para não grudar no input
+}
+}
+
+
