@@ -9,9 +9,7 @@ import { AuthService } from '../../../shared/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserCredentials } from '../../../shared/interfaces/user-credentials';
-import { AuthTokenStorageService } from '../../../shared/services/auth/auth-token-storage.service';
-import { LoggedInUserStoreService } from '../../../shared/services/auth/logged-in-user-store.service';
-import { switchMap, tap } from 'rxjs';
+import { LoginFacadeService } from '../../../shared/services/auth/login-facade.service';
 
 @Component({
   selector: 'app-login',
@@ -28,10 +26,9 @@ export class LoginComponent {
 
   authService = inject(AuthService);
   router = inject(Router);
-  authTokenStorageService = inject(AuthTokenStorageService);
-  loggedInUserStoreService = inject(LoggedInUserStoreService);
+  loginFacadeService = inject(LoginFacadeService);
 
- // Usando Signals para controle de estado (tendência do Angular 21)
+  // Usando Signals para controle de estado (tendência do Angular 21)
   hidePassword = signal(true);
 
   loginForm = new FormGroup({
@@ -49,22 +46,16 @@ export class LoginComponent {
       password: this.loginForm.controls.password.value as string
     }
 
-    this.authService.login(payload)
-      .pipe(
-        tap((res) => this.authTokenStorageService.set(res.token)),
-        switchMap((res) => this.authService.getCurrentUser(res.token)),
-        tap((user) => this.loggedInUserStoreService.setUser(user))
-      )
-      .subscribe({
-        next: () => {
-          this.router.navigate(['']);
-        },
-        error: (err: HttpErrorResponse) => {
-          if (err.status === 401) {
-            this.loginForm.setErrors({ invalidCredentials: true });
-          }
+    this.loginFacadeService.login(payload).subscribe({
+      next: () => {
+        this.router.navigate(['']);
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          this.loginForm.setErrors({ invalidCredentials: true });
         }
-      });
+      }
+    });
   }
 
   togglePassword() {

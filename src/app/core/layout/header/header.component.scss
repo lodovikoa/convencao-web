@@ -1,0 +1,22 @@
+@use 'variables.scss' as var;
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+
+  .toolbar-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: var.$content-width;
+  }
+
+  .toolbar-logout {
+    margin-left: auto;
+  }
+
+  .toolbar-button {
+    color: white;
+  }
+}

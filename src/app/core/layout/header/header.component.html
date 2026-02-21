@@ -1,11 +1,17 @@
 <header>
-  <mat-toolbar>
-  <button mat-icon-button (click)="toggle()">
-    <mat-icon>menu</mat-icon>
-  </button>
-   <div class="container">
-    <img src="images/logo01.png" alt="Logo" title="">
+  <mat-toolbar class="toolbar">
+    <button class="toolbar-button" mat-icon-button (click)="toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="toolbar-content">
+      <div class="container">
+        <img src="images/logo01.png" alt="Logo" title="">
+      </div>
 
-  </div>
-</mat-toolbar>
+      @if (isLoggedIn()) {
+        <button matButton="filled" class="toolbar-logout" (click)="logout()" >Sair</button>
+        <span class="toolbar-username">{{ usuarioLogado() }}</span>
+      }
+    </div>
+  </mat-toolbar>
 </header>

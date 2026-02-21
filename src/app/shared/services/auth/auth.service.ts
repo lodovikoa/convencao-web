@@ -37,4 +37,8 @@ export class AuthService {
     return of({ token: generateJwtToken() });
   }
 
+  logout() {
+    return of(null);
+  }
+
 }
