@@ -1,25 +1,26 @@
-import { Component, Input, signal } from '@angular/core';
-import { MenuItem } from '../interface/menu-item';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { Component, Input, signal } from "@angular/core";
+import { MatIconModule } from "@angular/material/icon";
+import { MatListModule } from "@angular/material/list";
+import { RouterModule } from "@angular/router";
+import { MenuItems } from "../interface/menu-items";
 import { MenuItemComponent } from "../menu-item/menu-item.component";
 
+
 @Component({
-  selector: 'app-custom-sidenav',
-  imports: [ CommonModule, MatListModule, MatIconModule, RouterModule, MenuItemComponent ],
-  templateUrl: './custom-sidenav.component.html',
-  styleUrl: './custom-sidenav.component.scss',
+  selector: 'app-sidenav-items',
+  imports: [ CommonModule, MatListModule, MatIconModule, RouterModule, MenuItemComponent],
+  templateUrl: './sidenav-items.component.html',
+  styleUrl: './sidenav-items.component.scss',
 })
-export class CustomSidenavComponent {
+export class SidenavItemsComponent {
 
   sideNavCollapsed = signal(false);
   @Input() set collapsed(val: boolean) {
     this.sideNavCollapsed.set(val);
   }
 
-  menuItems = signal<MenuItem[]>([
+  menuItems = signal<MenuItems[]>([
     { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
     { icon: 'video_library', label: 'Content', route: 'content', subItems:
       [

@@ -1,0 +1,30 @@
+
+.container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 24px;
+
+  .container-content {
+    width: 100%;
+  }
+}
+
+.sidenav-container {
+  height: calc(100% - 64px);
+}
+
+.sidenav {
+  padding: 5px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+
+.content {
+  padding: 12px;
+}
+
+mat-sidenav, mat-sidenav-content {
+  transition: all 500ms ease-in-out !important;
+}

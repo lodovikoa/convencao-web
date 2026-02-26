@@ -1,0 +1,16 @@
+<app-header />
+
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav opened  mode="side" [style.width]="sidenavWidth()"  class="sidenav">
+    <app-sidenav-items />
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content" [style.margin-left]="sidenavWidth()">
+    <div class="container">
+      <div class="container-content">
+        <router-outlet />
+      </div>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+

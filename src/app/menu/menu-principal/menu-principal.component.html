@@ -1,13 +1,15 @@
+<!-- <Header> -->
 <mat-toolbar class="toolbarCor">
   <button [title]="titleText()" mat-icon-button (click)="toggle()">
     <mat-icon>menu</mat-icon>
   </button>
    <div class="container">
     <img src="images/logo01.png" alt="Logo" title="">
-    <span title="Usuário logado" class="texto-direita">{{usuarioLogado()}}</span>
+    <span title="Usuário logado" class="texto-direita">{{"usuarioLogado"}}</span>
   </div>
 </mat-toolbar>
 
+<!-- Menu -->
 <mat-sidenav-container>
   <mat-sidenav opened mode="side" [style.width]="sidenavWidth()" class="toolbarCor" >
     <app-custom-sidenav [collapsed]="collapsed()" />
