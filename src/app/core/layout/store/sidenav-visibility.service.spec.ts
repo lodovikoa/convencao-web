@@ -1,12 +1,12 @@
-import { SidenavVisibilityStore } from './sidenav-visibility.store';
+import { SidenavVisibilityService } from './sidenav-visibility.service';
 import { TestBed } from '@angular/core/testing';
 
 describe('SidenavVisibilityService', () => {
-  let service: SidenavVisibilityStore;
+  let service: SidenavVisibilityService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SidenavVisibilityStore);
+    service = TestBed.inject(SidenavVisibilityService);
   });
 
   it('should be created', () => {

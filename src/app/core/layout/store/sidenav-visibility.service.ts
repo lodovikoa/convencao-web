@@ -3,9 +3,9 @@ import { computed, Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class SidenavVisibilityStore {
+export class SidenavVisibilityService {
 
-  private state = signal(false);
+  private readonly state = signal(false);
 
   isCollapsed = computed(() => this.state());
 

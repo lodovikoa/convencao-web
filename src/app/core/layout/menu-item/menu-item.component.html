@@ -10,7 +10,7 @@
     @let fontSetItem = rla.isActive ? 'material-icons' : 'material-icons-outlined';
 
     <mat-icon [fontSet]="fontSetItem" matListItemIcon>{{ item().icon }}</mat-icon>
-    @if (!collapsedLocal()) {
+    @if (!collapsedMenu()) {
       <span matListItemTitle>{{ item().label }}</span>
     }
     @if(item().subItems) {
@@ -30,7 +30,7 @@
       <a
         mat-list-item
         class="menu-item"
-        [class.indented]="!collapsedLocal()"
+        [class.indented]="!collapsedMenu()"
         [routerLink]="item().route + '/' + subItem.route"
         routerLinkActive
         #rla="routerLinkActive"
@@ -40,7 +40,7 @@
 
           <mat-icon [fontSet]="fontSetSubItem" matListItemIcon>{{ subItem.icon }}</mat-icon>
 
-          @if(!collapsedLocal()) {
+          @if(!collapsedMenu()) {
             <span matListItemTitle>{{ subItem.label }}</span>
           }
       </a>

@@ -3,7 +3,7 @@ import { MenuItems } from '../interface/menu-items';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
-import { SidenavVisibilityStore } from '../store/sidenav-visibility.store';
+import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
 
 @Component({
   selector: 'app-menu-item',
@@ -14,8 +14,8 @@ import { SidenavVisibilityStore } from '../store/sidenav-visibility.store';
 
 export class MenuItemComponent {
 
-   private readonly sidenavVisibilityStore = inject(SidenavVisibilityStore);
-   collapsedLocal = computed(() => this.sidenavVisibilityStore.isCollapsed());
+   private readonly sidenavVisibilityService = inject(SidenavVisibilityService);
+   collapsedMenu = computed(() => this.sidenavVisibilityService.isCollapsed());
 
   item = input.required<MenuItems>();
   collapsed = input<boolean>(false);

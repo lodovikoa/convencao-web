@@ -3,7 +3,7 @@ import { HeaderComponent } from '../header/header.component';
 import { RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SidenavItemsComponent } from "../sidenav-items/sidenav-items.component";
-import { SidenavVisibilityStore } from '../store/sidenav-visibility.store';
+import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
 
 @Component({
   selector: 'app-layout',
@@ -13,8 +13,8 @@ import { SidenavVisibilityStore } from '../store/sidenav-visibility.store';
 })
 export class LayoutComponent {
 
-  private readonly sidenavVisibilityStore = inject(SidenavVisibilityStore);
+  private readonly sidenavVisibilityService = inject(SidenavVisibilityService);
 
   // Largura do sidenav, que muda dinamicamente com base no estado de "collapsed"
-  sidenavWidth = computed(() => this.sidenavVisibilityStore.isCollapsed() ? '100px' : '250px');
+  sidenavWidth = computed(() => this.sidenavVisibilityService.isCollapsed() ? '65px' : '250px');
 }
