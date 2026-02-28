@@ -3,13 +3,13 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from '@angular/material/button';
 import { LoginFacadeService } from '../../../shared/services/auth/login-facade.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LoggedInUserStoreService } from '../../../shared/services/auth/logged-in-user-store.service';
 import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
 
 @Component({
   selector: 'app-header',
-  imports: [MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [MatToolbarModule, MatIconModule, MatButtonModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

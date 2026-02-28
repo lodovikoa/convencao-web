@@ -3,9 +3,33 @@
     <button class="toolbar-button" mat-icon-button (click)="toggleSidenavCollapsed()" [title]="titleText()">
       <mat-icon>menu</mat-icon>
     </button>
+
+    <div class="logo-container">
+      <a routerLink="/" class="logo-link">
+        <img src="images/logo03.png" alt="Logo">
+        <span class="logo-text">CONFRATERES</span>
+      </a>
+    </div>
+
+    <span class="spacer"></span>
+
+    @if (isLoggedIn()) {
+      <div class="user-info">
+        <span class="toolbar-username">{{ usuarioLogado() }}</span>
+        <button mat-flat-button class="toolbar-logout" (click)="logout()">Sair</button>
+      </div>
+    }
+  </mat-toolbar>
+</header>
+
+<!-- <header>
+  <mat-toolbar class="toolbar">
+    <button class="toolbar-button" mat-icon-button (click)="toggleSidenavCollapsed()" [title]="titleText()">
+      <mat-icon>menu</mat-icon>
+    </button>
     <div class="toolbar-content">
       <div class="container">
-        <img src="images/logo01.png" alt="Logo" title="">
+        <img src="images/logo03.png" alt="Logo" title="">
       </div>
 
       @if (isLoggedIn()) {
@@ -14,4 +38,4 @@
       }
     </div>
   </mat-toolbar>
-</header>
+</header> -->

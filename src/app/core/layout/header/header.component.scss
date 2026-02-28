@@ -1,22 +1,70 @@
-@use 'variables.scss' as var;
-
 .toolbar {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 8px; /* Espaçamento entre os itens */
+}
 
-  .toolbar-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: var.$content-width;
-  }
+.logo-container {
+  display: flex;
+  align-items: center;
 
-  .toolbar-logout {
-    margin-left: auto;
-  }
-
-  .toolbar-button {
-    color: white;
+  img {
+    height: 40px; /* Ajuste conforme seu logo */
+    width: auto;
   }
 }
+
+/* O "Pulo do Gato" */
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espaço entre o nome e o botão de sair */
+
+  .toolbar-username {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;           /* Espaço entre a imagem e o texto */
+  text-decoration: none;
+  color: inherit;      /* Mantém a cor do texto do toolbar */
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.85;     /* Feedback visual ao passar o mouse */
+  }
+
+  img {
+    height: 35px;      /* Ajuste conforme o tamanho desejado */
+    width: auto;
+    display: block;
+  }
+
+  .logo-text {
+    font-size: 1.2rem; /* Tamanho da fonte */
+    font-weight: 600;  /* Deixa o texto em negrito (semi-bold) */
+    letter-spacing: 1px; /* Espaçamento entre as letras para um ar mais profissional */
+    text-transform: uppercase; /* Garante que fique em maiúsculas */
+
+    // Oculta o texto em telas muito pequenas (opcional)
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+}
+
+
+//Muda a cor do botão "Menu" à esquerda
+.toolbar-button {
+    color: white;
+}
+
