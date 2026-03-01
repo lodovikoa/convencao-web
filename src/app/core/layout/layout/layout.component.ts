@@ -16,5 +16,5 @@ export class LayoutComponent {
   private readonly sidenavVisibilityService = inject(SidenavVisibilityService);
 
   // Largura do sidenav, que muda dinamicamente com base no estado de "collapsed"
-  sidenavWidth = computed(() => this.sidenavVisibilityService.isCollapsed() ? '65px' : '250px');
+  sidenavWidth = computed(() => this.sidenavVisibilityService.isCollapsed() ? '75px' : '250px');
 }
