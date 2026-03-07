@@ -15,6 +15,6 @@ export function provideLoggedInUser() {
     const loginFacadeService = inject(LoginFacadeService);
     const token = authTokenStorageService.get() as string;
 
-    return loginFacadeService.refreshToken(token);
+    return loginFacadeService.recuperaToken(token);
   });
 }

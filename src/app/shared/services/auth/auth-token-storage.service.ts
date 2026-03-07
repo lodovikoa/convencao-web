@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LocalStorageToken } from '../../../core/auth/tokens/local-storage-token';
+import { SessionStorageToken } from '../../../core/auth/tokens/session-storage-token';
 
 @Injectable({
   providedIn: 'root',
@@ -8,14 +8,14 @@ export class AuthTokenStorageService {
 
   private readonly key: string = 'convencao-auth-token';
 
-  localStorageToken = inject(LocalStorageToken);
+  sessionStorageToken = inject(SessionStorageToken);
 
   set(token: string) {
-    this.localStorageToken.setItem(this.key, token);
+    this.sessionStorageToken.setItem(this.key, token);
   }
 
   get(): string | null {
-    return this.localStorageToken.getItem(this.key);
+    return this.sessionStorageToken.getItem(this.key);
   }
 
   has(): boolean {
@@ -23,7 +23,7 @@ export class AuthTokenStorageService {
   }
 
   remove(): void {
-    return this.localStorageToken.removeItem(this.key);
+    return this.sessionStorageToken.removeItem(this.key);
   }
 
 }

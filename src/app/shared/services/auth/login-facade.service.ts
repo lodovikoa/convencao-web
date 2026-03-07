@@ -1,10 +1,12 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, computed } from '@angular/core';
 import { UserCredentials } from '../../interfaces/user-credentials';
 import { AuthService } from './auth.service';
-import { pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap, map } from 'rxjs';
 import { AuthTokenStorageService } from './auth-token-storage.service';
 import { LoggedInUserStoreService } from './logged-in-user-store.service';
 import { AuthTokenResponse } from '../../interfaces/auth-token-response';
+import { jwtDecode } from 'jwt-decode';
+import { AuthTokenDetails } from '../../interfaces/auth-token-details';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +17,34 @@ export class LoginFacadeService {
   private readonly authTokenStorageService = inject(AuthTokenStorageService);
   private readonly loggedInUserStoreService = inject(LoggedInUserStoreService);
 
+  private readonly authTokenDetails = signal<AuthTokenDetails | null>(null);
+  tokenDetalhe = computed(() => this.authTokenDetails());
+
+
   login(userCredencials: UserCredentials) {
-    return this.authService.login(userCredencials).pipe(this.createUserSession());
+
+    const tokenTemp = this.authService.login(userCredencials);
+
+     tokenTemp.subscribe({
+        next: (retorno) => {
+          this.getDecodedToken(retorno.access_token);
+          // console.log('Nome: ' ,this.tokenDetalhe()?.name);
+        },
+        error: (erros) => {
+          console.log("Ocorreu erros: ", erros);
+        }
+      });
+
+    return tokenTemp.pipe(this.createUserSession());
   }
 
-  refreshToken(token: string) {
-    return this.authService.refreshToken(token).pipe(this.createUserSession());
+  // Recuperar token do Browser
+  recuperaToken(token: string) {
+    this.getDecodedToken(token);
+    return this.authService.recuperaToken(token).pipe(
+      map((res: any) => ({ access_token: res.token } as AuthTokenResponse)),
+      this.createUserSession()
+    );
   }
 
   logout() {
@@ -32,9 +56,14 @@ export class LoginFacadeService {
 
   private createUserSession() {
     return pipe(
-      tap((res: AuthTokenResponse) => this.authTokenStorageService.set(res.token)),
-      switchMap((res) => this.authService.getCurrentUser(res.token)),
+      tap((res: AuthTokenResponse) => this.authTokenStorageService.set(res.access_token)),
+      switchMap((res) => this.authService.getCurrentUser(res.access_token)),
       tap((user) => this.loggedInUserStoreService.setUser(user))
     );
+  }
+
+  // Obter dados do token
+   private getDecodedToken(token: string) {
+    this.authTokenDetails.set(jwtDecode<AuthTokenDetails>(token));
   }
 }

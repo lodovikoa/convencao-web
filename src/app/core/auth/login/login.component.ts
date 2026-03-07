@@ -27,12 +27,13 @@ export class LoginComponent {
   authService = inject(AuthService);
   router = inject(Router);
   loginFacadeService = inject(LoginFacadeService);
+  mensagemErroLogin: string = '';
 
   // Usando Signals para controle de estado (tendência do Angular 21)
   hidePassword = signal(true);
 
   loginForm = new FormGroup({
-    userName: new FormControl('', [Validators.required, Validators.minLength(5)]),
+    username: new FormControl('', [Validators.required, Validators.minLength(5)]),
     password: new FormControl('', [Validators.required, Validators.minLength(5)])
   });
 
@@ -42,17 +43,22 @@ export class LoginComponent {
     }
 
     const payload: UserCredentials = {
-      userName: this.loginForm.controls.userName.value as string,
+      username: this.loginForm.controls.username.value as string,
       password: this.loginForm.controls.password.value as string
     }
 
     this.loginFacadeService.login(payload).subscribe({
-      next: () => {
+      next: (ret) => {
         this.router.navigate(['']);
       },
       error: (err: HttpErrorResponse) => {
         if (err.status === 401) {
           this.loginForm.setErrors({ invalidCredentials: true });
+          this.mensagemErroLogin = 'Credenciais inválidas, tente novamente.'
+        }
+        if (err.status == 500) {
+          this.loginForm.setErrors({ invalidCredentials: true });
+          this.mensagemErroLogin = 'Erro de comunicação, informe ao administrador responável.'
         }
       }
     });
@@ -62,4 +68,7 @@ export class LoginComponent {
     this.hidePassword.update(prev => !prev);
   }
 
+  erroLogin() {
+    return this.mensagemErroLogin;
+  }
 }

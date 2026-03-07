@@ -8,14 +8,14 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       @if (loginForm.hasError('invalidCredentials')) {
         <mat-card-subtitle>
-          <mat-error>Credenciais inválidas. Tente novamente.</mat-error>
+          <mat-error>{{erroLogin()}}</mat-error>
         </mat-card-subtitle>
       }
 
       <mat-card-content>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Usuário</mat-label>
-          <input matInput formControlName="userName">
+          <input matInput formControlName="username">
           <mat-icon matSuffix>person</mat-icon>
         </mat-form-field>
 
