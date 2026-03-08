@@ -4,7 +4,5 @@ export interface AuthTokenDetails {
   family_name: string;
   preferred_username: string;
   email: string;
-  realm_access?: {
-  roles: string[];
-  };
+  realm_access?: { roles: string[]; };
 }
