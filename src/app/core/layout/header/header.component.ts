@@ -20,8 +20,6 @@ export class HeaderComponent {
   private readonly loggedInUserStoreService = inject(LoggedInUserStoreService);
 
   isLoggedIn = computed(() => this.loggedInUserStoreService.isLoggedIn());
-  usuarioLogado2 = computed(() => this.loggedInUserStoreService.currenteUser()?.username);
-
   usuarioLogado = computed(() => this.loginFacadeService.tokenDetalhe()?.name);
 
   private readonly sidenavVisibilityService = inject(SidenavVisibilityService);

@@ -12,7 +12,7 @@ export class LoggedInUserStoreService {
   isLoggedIn = computed(() => this.state() !== null );
 
   setUser(user: User) {
-    this.state.set(user);
+    console.log('User: ', user.username);
   }
 
   logout() {

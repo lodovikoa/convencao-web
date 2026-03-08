@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { UserCredentials } from '../../interfaces/user-credentials';
 import { AuthService } from './auth.service';
-import { pipe, switchMap, tap, map } from 'rxjs';
+import { pipe, switchMap, tap, map, of } from 'rxjs';
 import { AuthTokenStorageService } from './auth-token-storage.service';
 import { LoggedInUserStoreService } from './logged-in-user-store.service';
 import { AuthTokenResponse } from '../../interfaces/auth-token-response';
@@ -56,8 +56,8 @@ export class LoginFacadeService {
 
   private createUserSession() {
     return pipe(
-      tap((res: AuthTokenResponse) => this.authTokenStorageService.set(res.access_token)),
-      switchMap((res) => this.authService.getCurrentUser(res.access_token)),
+      tap((res: AuthTokenResponse) =>{ this.authTokenStorageService.set(res.access_token) }),
+      switchMap(() => of({ username: this.tokenDetalhe()?.preferred_username as string })),
       tap((user) => this.loggedInUserStoreService.setUser(user))
     );
   }
