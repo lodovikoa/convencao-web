@@ -5,6 +5,6 @@ export interface AuthTokenDetails {
   preferred_username: string;
   email: string;
   realm_access?: {
-    roles: string[];
+  roles: string[];
   };
 }
