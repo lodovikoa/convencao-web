@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../shared/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserCredentials } from '../../../shared/interfaces/user-credentials';
+import { UserCredentials } from '../../../shared/interfaces/auth/user-credentials';
 import { LoginFacadeService } from '../../../shared/services/auth/login-facade.service';
 
 @Component({

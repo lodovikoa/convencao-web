@@ -26,13 +26,13 @@ export class SidenavItemsComponent {
 
 // 3. Sua lista completa (Master List)
   private readonly _allMenuItems = signal<MenuItems[]>([
-    { icon: 'dashboard', label: 'Dashboard', route: 'dashboard', trancodes: ['T_CFT_ADMINISTRADOR'] },
+    { icon: 'dashboard', label: 'Dashboard', route: 'dashboard', trancodes: ['T_CFT_ADMINISTRADOR', 'T_CFT_CONSULTAR'] },
     {
       icon: 'video_library', label: 'Content', route: 'content', trancodes: ['T_CFT_ADMINISTRADOR'],
       subItems: [
-        { icon: 'play_circle', label: 'Videos', route: 'videos', trancodes: ['T_CFT_ADMINISTRADOR', 'VIDEOS_EDIT'] },
-        { icon: 'playlist_play', label: 'Playlists', route: 'playlists', trancodes: ['PLAYLIST_VIEW'] },
-        { icon: 'post_add', label: 'Posts', route: 'posts', trancodes: ['POSTS_VIEW'] }
+        { icon: 'play_circle', label: 'Videos', route: 'videos', trancodes: ['T_CFT_ADMINISTRADOR'] },
+        { icon: 'playlist_play', label: 'Playlists', route: 'playlists', trancodes: ['T_CFT_ADMINISTRADOR'] },
+        { icon: 'post_add', label: 'Posts', route: 'posts', trancodes: ['T_CFT_ADMINISTRADOR'] }
       ]
     },
     { icon: 'people', label: 'Users', route: 'users', trancodes: ['ADMIN_USERS'] },
