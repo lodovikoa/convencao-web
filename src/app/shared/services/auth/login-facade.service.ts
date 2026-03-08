@@ -28,7 +28,6 @@ export class LoginFacadeService {
      tokenTemp.subscribe({
         next: (retorno) => {
           this.getDecodedToken(retorno.access_token);
-          // console.log('Nome: ' ,this.tokenDetalhe()?.name);
         },
         error: (erros) => {
           console.log("Ocorreu erros: ", erros);

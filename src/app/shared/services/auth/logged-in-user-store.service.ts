@@ -13,7 +13,6 @@ export class LoggedInUserStoreService {
 
   setUser(user: User) {
     this.state.set(user);
-    console.log('User: ', user.username);
   }
 
   logout() {
