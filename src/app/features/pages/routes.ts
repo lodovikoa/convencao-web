@@ -7,10 +7,17 @@ import { VideosComponent } from "./content/videos/videos.component";
 import { PlaylistsComponent } from "./content/playlists/playlists.component";
 import { PostsComponent } from "./content/posts/posts.component";
 import { HomeComponent } from "./home/home.component";
+import { EstadosComponent } from "./configuracao/estados/listar/estados.component";
+import { ConfiguracaoComponent } from "./configuracao/configuracao.component";
 
 export default [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent},
+  { path: 'configuracao', component: ConfiguracaoComponent,
+    children: [
+      { path: 'estadoListar', component: EstadosComponent }
+    ]
+   },
   { path: 'comments', component: CommentsComponent},
   { path: 'users', component: UsersComponent },
   { path: 'content', component: ContentComponent,

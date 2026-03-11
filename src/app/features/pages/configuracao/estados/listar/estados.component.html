@@ -1,0 +1,13 @@
+<h2>Lista de Estados</h2>
+
+<ul>
+  @for (estado of estados(); track estado.id) {
+    <li>{{ estado.uf }} - {{estado.nome}}</li>
+  } @empty {
+    @if(estados() == undefined) {
+      <li>Carregando dados da API...</li>
+    } @else {
+      <li>Não há dados para listar.</li>
+    }
+  }
+</ul>

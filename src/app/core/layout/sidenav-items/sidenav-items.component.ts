@@ -27,6 +27,11 @@ export class SidenavItemsComponent {
 // 3. Sua lista completa (Master List)
   private readonly _allMenuItems = signal<MenuItems[]>([
     { icon: 'dashboard', label: 'Dashboard', route: 'dashboard', trancodes: ['T_CFT_ADMINISTRADOR', 'T_CFT_CONSULTAR'] },
+    { icon: 'dashboard', label: 'Configuracao', route: 'configuracao', trancodes: ['T_CFT_ADMINISTRADOR'],
+      subItems: [
+        { icon: 'dashboard', label: 'Estados', route: 'estadoListar', trancodes: ['T_CFT_ADMINISTRADOR']}
+      ]
+     },
     {
       icon: 'video_library', label: 'Content', route: 'content', trancodes: ['T_CFT_ADMINISTRADOR'],
       subItems: [
