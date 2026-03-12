@@ -1,0 +1,25 @@
+.container {
+  margin: 20px;
+  border-radius: 8px;
+  overflow: hidden; /* Garante que o border-radius apareça na tabela */
+}
+
+table {
+  width: 100%;
+}
+
+.center-column {
+  text-align: center !important;
+  justify-content: center;
+}
+
+/* Estilo para destacar a coluna de ID */
+.mat-column-id {
+  width: 60px;
+  color: #666;
+}
+
+/* Estilo para a coluna UF */
+.mat-column-uf {
+  width: 100px;
+}
