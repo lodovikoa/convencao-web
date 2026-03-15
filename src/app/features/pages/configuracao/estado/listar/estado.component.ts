@@ -1,6 +1,6 @@
 import { Component, effect, inject, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { EstadosService } from '@shared/services/configuracao/estados.service';
+import { EstadoService } from '@shared/services/configuracao/estado.service';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,7 +24,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 export class EstadoComponent {
 
   private readonly dialog = inject(MatDialog);
-  private readonly estadosService = inject(EstadosService);
+  private readonly estadoService = inject(EstadoService);
   private readonly snacBar = inject(MatSnackBar)
 
   // 1 - Refreência para o paginador usando a nova sintaxe do Signal (Angular 21)
@@ -40,9 +40,8 @@ export class EstadoComponent {
   // O switchMap garante que, sempre que o gatilho for acionado, chamamos o listarEstados().
   estadosResponse = toSignal(
     this.refreshList$.pipe(
-      switchMap((params) => this.estadosService.listarEstados(params.page, params.size))
+      switchMap((params) => this.estadoService.listarEstados(params.page, params.size))
     )
-    // { initialValue: [] as Estado[] }
   );
 
   // 3 - Função para capturar a mudança de página no HTML
@@ -57,16 +56,10 @@ export class EstadoComponent {
     // 3 - Efeito que observa mudanças no Signal 'estados' e atualiza o Datasource
     effect(() => {
       const response = this.estadosResponse();
-      // this.datasource.data = listaSincronizada;
 
       if (response && response.content) {
         // Alimenta a tabela apenas com a lista de registros
         this.datasource.data = response.content;
-
-        // Conecta o paginador (Paginação no Front-end com os dados recebidos)
-        // if (this.paginator()) {
-        //   this.datasource.paginator = this.paginator()!;
-        // }
       }
     });
   }
@@ -89,26 +82,18 @@ export class EstadoComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.estadosService.editarEstado(result).subscribe({
-          next: (estadoAtualizado) => {
+        this.estadoService.editarEstado(result).subscribe({
+          next: () => {
             this.snacBar.open('Estado atualizado com sucesso!', 'Fechar', {
               duration: 10000,
               horizontalPosition: 'center',
               verticalPosition: 'top',
               panelClass: ['success-snackbar']
             });
-
             this.recarregarDados();
-
           },
           error: (err) => {
             console.log(err);
-            // this.snacBar.open('Houve algum problema. Estado não foi atualizado.', 'Fechar', {
-            //   duration: 10000,
-            //   horizontalPosition: 'center',
-            //   verticalPosition: 'top',
-            //   panelClass:['error-snackbar']
-            // });
           }
         });
       }
@@ -129,7 +114,7 @@ export class EstadoComponent {
   }
 
   private confirmarExclusao(id: number) {
-    this.estadosService.excluirEstado(id).subscribe({
+    this.estadoService.excluirEstado(id).subscribe({
       next: () => {
         this.snacBar.open('Estado excluido com sucesso!', 'Fechar', {
           duration: 10000,
@@ -144,12 +129,6 @@ export class EstadoComponent {
       },
       error: (err) => {
         console.log(err);
-        this.snacBar.open('Houve algum problema. Estado não foi atualizado.', 'Fechar', {
-          duration: 10000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['error-snackbar']
-        });
       }
     });
   }
@@ -162,7 +141,7 @@ export class EstadoComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.estadosService.cadastrarEstado(result).subscribe({
+        this.estadoService.cadastrarEstado(result).subscribe({
           next: () => {
             this.snacBar.open('Estado cadastrado com sucesso!', 'Fechar', {
               duration: 10000,
@@ -175,12 +154,6 @@ export class EstadoComponent {
 
           error: (err) => {
             console.log(err);
-            // this.snacBar.open('Houve algum problema. Estado não foi cadastrado.', 'Fechar', {
-            //   duration: 10000,
-            //   horizontalPosition: 'center',
-            //   verticalPosition: 'top',
-            //   panelClass:['error-snackbar']
-            // });
           }
         });
       }

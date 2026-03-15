@@ -7,7 +7,7 @@ import { RespostaPaginada } from '@shared/interfaces/public/resposta-paginada';
 @Injectable({
   providedIn: 'root',
 })
-export class EstadosService {
+export class EstadoService {
 
   private readonly API_URL = '/api/estado';
   private readonly http = inject(HttpClient);
