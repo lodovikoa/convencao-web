@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EstadosService } from '@shared/services/configuracao/estados.service';
-import { Estados } from '@shared/interfaces/configuracao/estados';
+import { Estado } from '@shared/interfaces/configuracao/estado';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,12 +15,12 @@ import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/c
 import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastrar/estado-dialog-cadastrar.component';
 
 @Component({
-  selector: 'app-estados',
+  selector: 'app-estado',
   imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSnackBarModule],
-  templateUrl: './estados.component.html',
-  styleUrl: './estados.component.scss',
+  templateUrl: './estado.component.html',
+  styleUrl: './estado.component.scss',
 })
-export class EstadosComponent {
+export class EstadoComponent {
 
   private readonly dialog = inject(MatDialog);
   private readonly estadosService = inject(EstadosService);
@@ -36,7 +36,7 @@ export class EstadosComponent {
     this.refreshList$.pipe(
       switchMap(() => this.estadosService.listarEstados())
     ),
-    { initialValue: [] as Estados[] }
+    { initialValue: [] as Estado[] }
   );
 
   // 3. Função simples para disparar o gatilho
@@ -49,7 +49,7 @@ export class EstadosComponent {
   // estados = toSignal(this.estadosService.listarEstados(), { initialValue: [] as Estados[] });
 
 
-  editar(estado: Estados) {
+  editar(estado: Estado) {
 
     const dialogRef = this.dialog.open(EstadoDialogAlterarComponent, {
       width: '400px',
@@ -84,7 +84,7 @@ export class EstadosComponent {
     });
   }
 
-  excluir(estado: Estados) {
+  excluir(estado: Estado) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
       data: {  nome: estado.dsNome}

@@ -1,7 +1,7 @@
 import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { Estados } from '@shared/interfaces/configuracao/estados';
+import { Estado } from '@shared/interfaces/configuracao/estado';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -20,7 +20,7 @@ export class EstadoDialogAlterarComponent {
 
   form: FormGroup;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Estados) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Estado) {
     this.form = this.fb.group({
       id: [data.id],
       dsUf: [data.dsUf, [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
