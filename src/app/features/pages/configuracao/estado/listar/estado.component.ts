@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { CommonModule } from '@angular/common';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { EstadoDialogAlterarComponent } from '../dialog/estado-dialog-alterar/estado-dialog-alterar.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BehaviorSubject, switchMap } from 'rxjs';
@@ -27,10 +27,10 @@ export class EstadoComponent {
   private readonly snacBar = inject(MatSnackBar)
 
 
-  // 1. Criamos um "gatilho". O valor inicial 'undefined' dispara a primeira busca.
+  // Criamos um "gatilho". O valor inicial 'undefined' dispara a primeira busca.
   private refreshList$ = new BehaviorSubject<void>(undefined);
 
-  // 2. O toSignal agora observa o 'refreshList$'.
+  // O toSignal observa o 'refreshList$'.
   // O switchMap garante que, sempre que o gatilho for acionado, chamamos o listarEstados().
   estados = toSignal(
     this.refreshList$.pipe(
@@ -39,16 +39,14 @@ export class EstadoComponent {
     { initialValue: [] as Estado[] }
   );
 
-  // 3. Função simples para disparar o gatilho
+  // Função para disparar o gatilho
   recarregarDados() {
     this.refreshList$.next();
   }
 
   displayedColumns: string[] = ['dsUf', 'dsNome', 'acoes'];
 
-  // estados = toSignal(this.estadosService.listarEstados(), { initialValue: [] as Estados[] });
-
-
+  // Alterar um Estado
   editar(estado: Estado) {
 
     const dialogRef = this.dialog.open(EstadoDialogAlterarComponent, {
@@ -72,12 +70,12 @@ export class EstadoComponent {
           },
           error: (err) => {
             console.log(err);
-            this.snacBar.open('Houve algum problema. Estado não foi atualizado.', 'Fechar', {
-              duration: 10000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              panelClass:['error-snackbar']
-            });
+            // this.snacBar.open('Houve algum problema. Estado não foi atualizado.', 'Fechar', {
+            //   duration: 10000,
+            //   horizontalPosition: 'center',
+            //   verticalPosition: 'top',
+            //   panelClass:['error-snackbar']
+            // });
           }
         });
       }
@@ -123,6 +121,7 @@ export class EstadoComponent {
     });
   }
 
+  // Cadastrar novo Estado
   cadastrarEstado() {
     const dialogRef = this.dialog.open(EstadoDialogCadastrarComponent, {
       width: '400px'
@@ -143,12 +142,12 @@ export class EstadoComponent {
 
           error: (err) => {
             console.log(err);
-            this.snacBar.open('Houve algum problema. Estado não foi cadastrado.', 'Fechar', {
-              duration: 10000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              panelClass:['error-snackbar']
-            });
+            // this.snacBar.open('Houve algum problema. Estado não foi cadastrado.', 'Fechar', {
+            //   duration: 10000,
+            //   horizontalPosition: 'center',
+            //   verticalPosition: 'top',
+            //   panelClass:['error-snackbar']
+            // });
           }
         });
       }
