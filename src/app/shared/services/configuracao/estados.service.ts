@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Estado } from '@shared/interfaces/configuracao/estado';
+import { RespostaPaginada } from '@shared/interfaces/public/resposta-paginada';
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +12,9 @@ export class EstadosService {
   private readonly API_URL = '/api/estado';
   private readonly http = inject(HttpClient);
 
-  listarEstados(): Observable<Estado[]> {
-    return this.http.get<Estado[]>(this.API_URL + '/listar');
+  listarEstados(page: number = 0, size: number = 10, sort: string = 'dsNome,asc'): Observable<RespostaPaginada<Estado>> {
+    const url = `${this.API_URL}/listarPage?page=${page}&size=${size}&sort=${sort}`;
+    return this.http.get<RespostaPaginada<Estado>>(url);
   }
 
   editarEstado(estado: Estado): Observable<Estado> {

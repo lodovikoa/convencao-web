@@ -6,7 +6,7 @@
 </div>
 
 <div class="container mat-elevation-z4">
-  <table mat-table [dataSource]="estados()">
+  <table mat-table [dataSource]="datasource">
 
     <ng-container matColumnDef="dsUf">
       <th mat-header-cell *matHeaderCellDef> UF </th>
@@ -34,4 +34,10 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
   </table>
+  <mat-paginator
+    [length]="estadosResponse()?.pageable?.elementsTotal || 0"
+    [pageSize]="estadosResponse()?.pageable?.pageSize || 10"
+    [pageSizeOptions]="[5, 10, 20]"
+    (page)="mudouPagina($event)"
+    showFirstLastButtons  />
 </div>
