@@ -1,18 +1,46 @@
-.success-snackbar {
-  --mdc-snackbar-container-color: #43a047 !important; /* Verde */
-  --mdc-snackbar-supporting-text-color: white !important;
+// Estilo para o SnackBar de Erro
+// Use este seletor mais forte para garantir a sobreposição no Material 3
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #f44336 !important;
 
-  // Garante que o botão de ação também mude de cor se necessário
-  .mat-mdc-snack-bar-action {
-    color: white !important;
+  .mdc-snackbar__surface {
+    background-color: #f44336 !important;
+  }
+
+  .mdc-snackbar__label {
+    color: #ffffff !important;
+    white-space: pre-wrap !important; // Instrui o navegador a renderizar o \n como uma quebra de linha, e quebra também para textos longos
+    display: block !important;       // Garante que ocupe a largura total
+    line-height: 1.5;                // Melhora a leitura entre as linhas
+  }
+
+  .mat-mdc-snack-bar-label {
+    color: #ffffff !important;
+    white-space: pre-wrap !important;
+    display: block !important;
+    line-height: 1.6;
+
+    // Aplica o estilo apenas na primeira linha
+    &::first-line {
+      text-decoration: underline;
+      font-weight: bold; // Opcional: deixa mais evidente que é um título
+    }
+  }
+
+  // Cor do botão de fechar
+  .mat-mdc-snack-bar-actions button {
+    --mdc-text-button-label-text-color: #ffffff !important;
   }
 }
 
-.error-snackbar {
-  --mdc-snackbar-container-color: #d32f2f !important; /* Vermelho */
-  --mdc-snackbar-supporting-text-color: white !important;
+.mat-mdc-snack-bar-container.success-snackbar {
+  --mdc-snackbar-container-color: #4caf50 !important;
 
-  .mat-mdc-snack-bar-action {
-    color: white !important;
+  .mdc-snackbar__surface {
+    background-color: #4caf50 !important;
+  }
+
+  .mdc-snackbar__label {
+    color: #ffffff !important;
   }
 }
