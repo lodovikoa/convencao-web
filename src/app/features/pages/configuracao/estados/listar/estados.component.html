@@ -1,14 +1,21 @@
+<div class="header-container">
+  <h2>Cadastro de Estados</h2>
+  <button mat-raised-button color="primary" (click)="cadastrarEstado()">
+    <mat-icon>add</mat-icon> Cadastrar Estado
+  </button>
+</div>
+
 <div class="container mat-elevation-z4">
   <table mat-table [dataSource]="estados()">
 
-    <ng-container matColumnDef="uf">
+    <ng-container matColumnDef="dsUf">
       <th mat-header-cell *matHeaderCellDef> UF </th>
-      <td mat-cell *matCellDef="let element"> {{element.uf}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.dsUf}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="nome">
+    <ng-container matColumnDef="dsNome">
       <th mat-header-cell *matHeaderCellDef> Nome </th>
-      <td mat-cell *matCellDef="let element"> {{element.nome}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.dsNome}} </td>
     </ng-container>
 
     <ng-container matColumnDef="acoes">

@@ -42,3 +42,23 @@ body {
   --primary-color: blue;
 }
 /* You can add global styles to this file, and also import other style files */
+
+/* Esse código seria para mudar as cores do snackBar, mas não funcionou */
+.success-snackbar {
+  --mdc-snackbar-container-color: #d32f2f !important; /* Verde */
+  --mdc-snackbar-supporting-text-color: white !important;
+
+  // Garante que o botão de ação também mude de cor se necessário
+  .mat-mdc-snack-bar-container {
+    color: white !important;
+  }
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #d32f2f !important; /* Vermelho */
+  --mdc-snackbar-supporting-text-color: white !important;
+
+  .mat-mdc-snack-bar-action {
+    color: white !important;
+  }
+}

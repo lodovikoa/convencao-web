@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
-import { LoggedInUserStoreService } from '../../../shared/services/auth/logged-in-user-store.service';
+import { LoggedInUserStoreService } from '@shared/services/auth/logged-in-user-store.service';
 
 export const isAuthenticatedGuard: CanActivateFn = (route, state) => {
   const loggedInUserStoreService = inject(LoggedInUserStoreService);

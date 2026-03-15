@@ -5,7 +5,7 @@ import { MatListModule } from "@angular/material/list";
 import { RouterModule } from "@angular/router";
 import { MenuItems } from "../interface/menu-items";
 import { MenuItemComponent } from "../menu-item/menu-item.component";
-import { LoginFacadeService } from "../../../shared/services/auth/login-facade.service";
+import { LoginFacadeService } from "@shared/services/auth/login-facade.service";
 
 
 @Component({

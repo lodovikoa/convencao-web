@@ -2,9 +2,9 @@ import { Component, computed, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from '@angular/material/button';
-import { LoginFacadeService } from '../../../shared/services/auth/login-facade.service';
+import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
 import { Router, RouterLink } from '@angular/router';
-import { LoggedInUserStoreService } from '../../../shared/services/auth/logged-in-user-store.service';
+import { LoggedInUserStoreService } from '@shared/services/auth/logged-in-user-store.service';
 import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
 
 @Component({

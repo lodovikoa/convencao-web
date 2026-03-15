@@ -1,0 +1,18 @@
+.success-snackbar {
+  --mdc-snackbar-container-color: #43a047 !important; /* Verde */
+  --mdc-snackbar-supporting-text-color: white !important;
+
+  // Garante que o botão de ação também mude de cor se necessário
+  .mat-mdc-snack-bar-action {
+    color: white !important;
+  }
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #d32f2f !important; /* Vermelho */
+  --mdc-snackbar-supporting-text-color: white !important;
+
+  .mat-mdc-snack-bar-action {
+    color: white !important;
+  }
+}

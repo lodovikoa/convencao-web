@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, of, throwError } from 'rxjs';
-import { UserCredentials } from '../../interfaces/auth/user-credentials';
-import { AuthTokenResponse } from '../../interfaces/auth/auth-token-response';
+import { UserCredentials } from '@shared/interfaces/auth/user-credentials';
+import { AuthTokenResponse } from '@shared/interfaces/auth/auth-token-response';
 
 @Injectable({
   providedIn: 'root',

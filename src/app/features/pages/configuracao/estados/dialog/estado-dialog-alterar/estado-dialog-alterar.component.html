@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Alterar Estado</h2>
+<mat-dialog-content>
+  <form [formGroup]="form" class="flex-column" style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
+
+    <mat-form-field appearance="outline">
+      <mat-label>UF</mat-label>
+      <input matInput
+             formControlName="dsUf"
+             maxlength="2"
+             placeholder="Ex: SP"
+             (input)="converterParaMaiusculo()">
+      @if (form.get('dsUf')?.invalid && form.get('dsUf')?.touched) {
+        <mat-error>Informe os 2 caracteres da UF</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput
+             formControlName="dsNome"
+             placeholder="Ex: São Paulo">
+      @if (form.get('dsNome')?.invalid && form.get('dsNome')?.touched) {
+        <mat-error>O nome deve ter no mínimo 3 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="form.invalid"
+          (click)="salvar()">
+    Salvar
+  </button>
+</mat-dialog-actions>

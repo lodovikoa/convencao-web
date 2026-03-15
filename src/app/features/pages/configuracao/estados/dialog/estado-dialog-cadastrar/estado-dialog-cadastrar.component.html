@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Cadastrar Estado</h2>
+    <mat-dialog-content [formGroup]="estadoForm">
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
+
+        <mat-form-field appearance="outline">
+          <mat-label>UF</mat-label>
+          <input matInput formControlName="dsUf" maxlength="2" placeholder="Ex: SP" (input)="toUpperCase('dsUf')">
+          @if (estadoForm.get('dsUf')?.invalid && estadoForm.get('dsUf')?.touched) {
+            <mat-error>A UF deve ter exatamente 2 caracteres.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nome do Estado</mat-label>
+          <input matInput formControlName="dsNome" placeholder="Ex: São Paulo">
+          @if (estadoForm.get('dsNome')?.invalid && estadoForm.get('dsNome')?.touched) {
+            <mat-error>O nome deve ter no mínimo 3 caracteres.</mat-error>
+          }
+        </mat-form-field>
+
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()">Cancelar</button>
+      <button mat-raised-button color="primary"
+              [disabled]="estadoForm.invalid"
+              [mat-dialog-close]="estadoForm.value">
+        Salvar
+      </button>
+    </mat-dialog-actions>

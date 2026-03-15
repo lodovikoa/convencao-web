@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { SessionStorageToken } from '../../../core/auth/tokens/session-storage-token';
+import { SessionStorageToken } from '@core/auth/tokens/session-storage-token';
 
 @Injectable({
   providedIn: 'root',

@@ -4,9 +4,9 @@ import { AuthService } from './auth.service';
 import { pipe, switchMap, tap, map, of } from 'rxjs';
 import { AuthTokenStorageService } from './auth-token-storage.service';
 import { LoggedInUserStoreService } from './logged-in-user-store.service';
-import { AuthTokenResponse } from '../../interfaces/auth/auth-token-response';
+import { AuthTokenResponse } from '@shared/interfaces/auth/auth-token-response';
 import { jwtDecode } from 'jwt-decode';
-import { AuthTokenDetails } from '../../interfaces/auth/auth-token-details';
+import { AuthTokenDetails } from '@shared/interfaces/auth/auth-token-details';
 
 @Injectable({
   providedIn: 'root',

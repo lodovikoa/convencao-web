@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from '@angular/material/sidenav';
