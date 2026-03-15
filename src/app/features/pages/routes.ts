@@ -7,7 +7,7 @@ import { VideosComponent } from "./content/videos/videos.component";
 import { PlaylistsComponent } from "./content/playlists/playlists.component";
 import { PostsComponent } from "./content/posts/posts.component";
 import { HomeComponent } from "./home/home.component";
-import { EstadoComponent } from "./configuracao/estados/listar/estado.component";
+import { EstadoComponent } from "./configuracao/estado/listar/estado.component";
 import { ConfiguracaoComponent } from "./configuracao/configuracao.component";
 
 export default [
