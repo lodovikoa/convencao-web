@@ -1,4 +1,4 @@
-import { Component, effect, inject, viewChild } from '@angular/core';
+import { Component, effect, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
 import { Estado } from '@shared/interfaces/configuracao/estado';
@@ -10,14 +10,17 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { EstadoDialogAlterarComponent } from '../dialog/estado-dialog-alterar/estado-dialog-alterar.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, switchMap} from 'rxjs';
+import { finalize, tap } from 'rxjs/operators'
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastrar/estado-dialog-cadastrar.component';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSortModule, Sort } from '@angular/material/sort'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @Component({
   selector: 'app-estado',
-  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSnackBarModule, MatPaginatorModule],
+  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSnackBarModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule],
   templateUrl: './estado.component.html',
   styleUrl: './estado.component.scss',
 })
@@ -27,6 +30,9 @@ export class EstadoComponent {
   private readonly estadoService = inject(EstadoService);
   private readonly snacBar = inject(MatSnackBar)
 
+  // Signal para controlar a exibição do spinner
+  isLoading = signal(false);
+
   // 1 - Refreência para o paginador usando a nova sintaxe do Signal (Angular 21)
   paginator = viewChild(MatPaginator);
 
@@ -34,19 +40,45 @@ export class EstadoComponent {
   datasource = new MatTableDataSource<Estado>([]);
 
   // Criamos um "gatilho". O valor inicial 'undefined' dispara a primeira busca.
-  private refreshList$ = new BehaviorSubject<{page: number, size: number}>({page: 0, size: 10});
+  private refreshList$ = new BehaviorSubject<{page: number, size: number, sort: string}>({ page: 0, size: 10, sort: 'dsNome,asc' });
 
   // O toSignal observa o 'refreshList$'.
   // O switchMap garante que, sempre que o gatilho for acionado, chamamos o listarEstados().
   estadosResponse = toSignal(
     this.refreshList$.pipe(
-      switchMap((params) => this.estadoService.listarEstados(params.page, params.size))
+      tap(() => this.isLoading.set(true)), // Inicia o loading ao disparar a requisição
+      switchMap((params) =>
+        this.estadoService.listarEstados(params.page, params.size, params.sort).pipe(
+         // delay(2000), // <--- ADICIONE ISSO: Simula um atraso de 2 segundos
+          finalize(() => this.isLoading.set(false)) // Desliga o loading ao finalizar (sucesso ou erro)
+        ))
     )
   );
+
+  // Função para capturar a mudança de ordenação
+  ordenar(event: Sort) {
+    if(!event.active || !event.direction) {
+      return;
+    }
+
+    // Resetar o índice visual do paginador
+    const pg = this.paginator();
+    if(pg) {
+      pg.pageIndex = 0;
+    }
+
+    // Disparar a nova busca na API
+    this.refreshList$.next({
+      ...this.refreshList$.value,
+      page: 0, // Resetamos para a primeira página ao ordenar
+      sort: `${event.active},${event.direction}`
+    });
+  }
 
   // 3 - Função para capturar a mudança de página no HTML
   mudouPagina(event: PageEvent) {
     this.refreshList$.next({
+      ...this.refreshList$.value,
       page: event.pageIndex,
       size: event.pageSize
     });
@@ -60,6 +92,12 @@ export class EstadoComponent {
       if (response && response.content) {
         // Alimenta a tabela apenas com a lista de registros
         this.datasource.data = response.content;
+
+        // Sincroniza o pageIndex do component visual com o que veio do servidor
+        const pg = this.paginator();
+        if(pg && response.pageable) {
+          pg.pageIndex = response.pageable.pageNumber;
+        }
       }
     });
   }
