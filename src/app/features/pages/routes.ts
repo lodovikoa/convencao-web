@@ -9,12 +9,14 @@ import { PostsComponent } from "./content/posts/posts.component";
 import { HomeComponent } from "./home/home.component";
 import { EstadoComponent } from "./configuracao/estado/listar/estado.component";
 import { ConfiguracaoComponent } from "./configuracao/configuracao.component";
+import { ConvencaoComponent } from "./configuracao/convencao/listar/convencao.component";
 
 export default [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent},
   { path: 'configuracao', component: ConfiguracaoComponent,
     children: [
+      { path: 'convencaoListar', component: ConvencaoComponent },
       { path: 'estadoListar', component: EstadoComponent }
     ]
    },

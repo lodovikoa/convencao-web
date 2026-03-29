@@ -14,10 +14,9 @@ import { BehaviorSubject, switchMap} from 'rxjs';
 import { finalize, tap } from 'rxjs/operators'
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastrar/estado-dialog-cadastrar.component';
-import { MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
-import { PortuguesPaginatorIntl } from '@shared/utilitarios/portugues-paginator-intl';
 
 @Component({
   selector: 'app-estado',
