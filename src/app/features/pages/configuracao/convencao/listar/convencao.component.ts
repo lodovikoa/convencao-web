@@ -10,13 +10,11 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BehaviorSubject, switchMap } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators'
+import { filter, finalize, tap } from 'rxjs/operators'
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-// Importe seus componentes de dialog de convenção (ajuste os caminhos)
-// import { ConvencaoDialogAlterarComponent } from '../dialog/convencao-dialog-alterar/convencao-dialog-alterar.component';
-// import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-cadastrar/convencao-dialog-cadastrar.component';
+import { ConvencaoDialogDetalharComponent } from '../dialog/convencao-dialog-detalhar/convencao-dialog-detalhar.component';
+import { ConvencaoDialogAlterarComponent } from '../dialog/convencao-dialog-alterar/convencao-dialog-alterar.component';
 
 @Component({
   selector: 'app-convencao',
@@ -69,6 +67,13 @@ export class ConvencaoComponent {
     this.refreshList$.next();
   }
 
+  visualizar(convencao: Convencao) {
+    this.dialog.open(ConvencaoDialogDetalharComponent, {
+      width: '600px',
+      data:convencao // Passa a convenção selecionada para o diálogo de detalhes
+    });
+  }
+
   cadastrar() {
     // Exemplo genérico - ajuste para seu componente de cadastro
     const dialogRef = this.dialog.open(ConfirmDialogComponent, { width: '400px' });
@@ -86,13 +91,25 @@ export class ConvencaoComponent {
   }
 
   editar(convencao: Convencao) {
-    // Exemplo de edição
-    /* const dialogRef = this.dialog.open(ConvencaoDialogAlterarComponent, {
-      width: '400px',
-      data: { ...convencao }
+  const dialogRef = this.dialog.open(ConvencaoDialogAlterarComponent, {
+    width: '700px',
+    data: { ...convencao } // Envia cópia para não alterar o datasource antes do tempo
+  });
+
+  dialogRef.afterClosed()
+    .pipe(filter(result => !!result)) // Só continua se o usuário clicou em Salvar
+    .subscribe(dadosAtualizados => {
+      this.convencaoService.editarConvencao(dadosAtualizados).subscribe({
+        next: () => {
+          this.notificar('Convenção atualizada com sucesso!');
+          this.recarregarDados();
+        },
+        error: (err) => {
+          console.error(err);
+          this.notificar('Erro ao atualizar convenção.');
+        }
+      });
     });
-    ... subscribe chamando convencaoService.editar
-    */
   }
 
   excluir(convencao: Convencao) {

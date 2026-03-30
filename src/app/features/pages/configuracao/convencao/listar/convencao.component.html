@@ -17,7 +17,11 @@
 
     <ng-container matColumnDef="dsReduzido">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome Reduzido </th>
-      <td mat-cell *matCellDef="let element"> {{element.dsReduzido}} </td>
+      <td mat-cell *matCellDef="let element">
+        <a (click)="visualizar(element)" style="cursor: pointer; color: #3f51b5; font-weight: 500;" >
+          {{element.dsReduzido}}
+        </a>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="dsConvencao">

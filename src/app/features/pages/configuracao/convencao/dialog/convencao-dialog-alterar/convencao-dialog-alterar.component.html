@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Alterar Convenção</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="grid-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome Reduzido</mat-label>
+      <input matInput formControlName="dsReduzido">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome da Convenção</mat-label>
+      <input matInput formControlName="dsConvencao">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>CNPJ</mat-label>
+      <input matInput formControlName="dsCnpj">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>E-mail</mat-label>
+      <input matInput formControlName="dsEmail">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Telefones</mat-label>
+      <input matInput formControlName="dsTelefones">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>WhatsApp</mat-label>
+      <input matInput formControlName="dsWatsapp">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>Endereço</mat-label>
+      <input matInput formControlName="dsEndereco">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" (click)="salvar()" [disabled]="form.invalid">Salvar</button>
+</mat-dialog-actions>
