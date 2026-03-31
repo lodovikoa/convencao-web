@@ -22,7 +22,7 @@ export class ConvencaoService {
   }
 
   // Edita os detalhes de uma convenção existente, identificada por seu ID
-  editarConvencao(convencao: Convencao): Observable<Convencao> {
+  editarConvencao(convencao: any): Observable<Convencao> {
     console.log("Convencao enviada: ", convencao);
     const url = `${this.API_URL}/alterar/${convencao.id}`;
     return this.http.put<Convencao>(url, convencao);

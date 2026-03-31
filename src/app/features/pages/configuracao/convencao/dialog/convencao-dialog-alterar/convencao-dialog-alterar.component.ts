@@ -1,26 +1,34 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
+import { Estado } from '@shared/interfaces/configuracao/estado';
+import { EstadoService } from '@shared/services/configuracao/estado.service';
 
 @Component({
   selector: 'app-convencao-dialog-alterar',
-  imports: [ CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule ],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule],
   templateUrl: './convencao-dialog-alterar.component.html',
   styleUrl: './convencao-dialog-alterar.component.scss',
 })
 export class ConvencaoDialogAlterarComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly estadoService = inject(EstadoService);
   private readonly dialogRef = inject(MatDialogRef<ConvencaoDialogAlterarComponent>);
   readonly data: Convencao = inject(MAT_DIALOG_DATA);
 
   form!: FormGroup;
 
+  estados = signal<Estado[]>([]); // Sinal para armazenar os estados
+
   ngOnInit(): void {
+    this.carregarEstados();
+
     this.form = this.fb.group({
       id: [this.data.id],
       dsReduzido: [this.data.dsReduzido, [Validators.required]],
@@ -39,9 +47,39 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
     });
   }
 
+  private carregarEstados(): void {
+    this.estadoService.listarTodosEstados().subscribe(result => {
+      this.estados.set(result);
+    });
+  }
+
+  // Função para comparar os objetos Estado no select
+  compararEstados(estado1: Estado, estado2: Estado): boolean {
+    return estado1 && estado2 ? estado1.id === estado2.id : estado1 === estado2;
+  }
+
+
+  // Na interface Convencao, o campo 'estado' é do tipo Estado, mas a API espera um campo 'estadoId' do tipo Long (ID do estado).
+  // Portanto, precisamos criar um objeto de envio (Payload) que contenha o campo 'estadoId' em vez do objeto 'estado' completo.
   salvar(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+      // 1. Pegamos todos os valores do formulário
+      const formValue = this.form.value;
+
+      // 2. Criamos o objeto de envio (Payload)
+      // Usamos 'any' aqui para permitir a criação do campo 'estadoId'
+      // que não existe na interface Convencao original
+      const payload: any = {
+        ...formValue,
+        // Extraímos apenas o ID do objeto Estado selecionado no ComboBox
+        estadoId: formValue.estado ? formValue.estado.id : null
+      };
+
+      // 3. Removemos o objeto 'estado' completo para a API receber apenas o Long (ID)
+      delete payload.estado;
+
+      // 4. Fechamos o diálogo passando o objeto formatado para o componente pai
+      this.dialogRef.close(payload);
     }
   }
 

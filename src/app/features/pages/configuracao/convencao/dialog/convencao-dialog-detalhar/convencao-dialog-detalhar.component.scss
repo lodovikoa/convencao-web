@@ -1,11 +1,29 @@
-.detalhe-grid p {
-  margin-bottom: 8px;
-  line-height: 1.4;
+.detalhe-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  p {
+    margin: 0; // Remove margens padrão para controle total via gap
+    line-height: 1.5;
+  }
+
+  hr {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+  }
 }
 
-hr {
-  margin: 15px 0;
-  border: 0;
-  border-top:
-  1px solid #eee;
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Divide em duas colunas iguais
+  gap: 16px; // Espaço entre as colunas
+
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

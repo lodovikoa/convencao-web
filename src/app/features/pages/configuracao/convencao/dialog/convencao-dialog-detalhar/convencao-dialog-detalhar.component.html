@@ -1,4 +1,38 @@
-<h2 mat-dialog-title>Detalhes da Convenção: {{ data.dsReduzido }}</h2>
+<h2 mat-dialog-title>Detalhes da Convenção: <strong>{{ data.dsReduzido }}</strong></h2>
+
+<mat-dialog-content class="mat-typography">
+  <div class="detalhe-container">
+    <p><strong>Nome Completo:</strong> {{ data.dsConvencao }}</p>
+    <p><strong>CNPJ:</strong> {{ data.dsCnpj }}</p>
+    <p><strong>E-mail:</strong> {{ data.dsEmail }}</p>
+    <p><strong>Telefones:</strong> {{ data.dsTelefones }}</p>
+    <p><strong>WhatsApp:</strong> {{ data.dsWatsapp }}</p>
+
+    <hr>
+
+    <p><strong>Endereço:</strong> {{ data.dsEndereco }}</p>
+
+    <div class="info-row">
+      <p><strong>Bairro:</strong> {{ data.dsBairro || '-' }}</p>
+      <p><strong>Cidade:</strong> {{ data.dsCidade || '-' }}</p>
+    </div>
+
+    <div class="info-row">
+      <p><strong>Estado:</strong> {{ data.estado?.dsUf || '-' }}</p>
+      <p><strong>CEP:</strong> {{ data.dsCep || '-' }}</p>
+    </div>
+
+    <p><strong>País:</strong> {{ data.dsPais }}</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close color="primary">Fechar</button>
+</mat-dialog-actions>
+
+
+
+<!-- <h2 mat-dialog-title>Detalhes da Convenção: {{ data.dsReduzido }}</h2>
     <mat-dialog-content class="mat-typography">
       <div class="detalhe-grid">
         <p><strong>Nome Completo:</strong> {{ data.dsConvencao }}</p>
@@ -15,4 +49,4 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close color="primary">Fechar</button>
-    </mat-dialog-actions>
+    </mat-dialog-actions> -->

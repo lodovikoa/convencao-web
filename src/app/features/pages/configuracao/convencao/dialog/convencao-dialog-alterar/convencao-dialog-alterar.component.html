@@ -2,14 +2,10 @@
 
 <mat-dialog-content>
   <form [formGroup]="form" class="grid-form">
+
     <mat-form-field appearance="outline">
       <mat-label>Nome Reduzido</mat-label>
       <input matInput formControlName="dsReduzido">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Nome da Convenção</mat-label>
-      <input matInput formControlName="dsConvencao">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -17,7 +13,13 @@
       <input matInput formControlName="dsCnpj">
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>Nome da Convenção</mat-label>
+      <input matInput formControlName="dsConvencao">
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
       <mat-label>E-mail</mat-label>
       <input matInput formControlName="dsEmail">
     </mat-form-field>
@@ -36,6 +38,36 @@
       <mat-label>Endereço</mat-label>
       <input matInput formControlName="dsEndereco">
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>Bairro</mat-label>
+      <input matInput formControlName="dsBairro">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>Cidade</mat-label>
+      <input matInput formControlName="dsCidade">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="estado" [compareWith]="compararEstados">
+        @for (estado of estados(); track estado.id) {
+          <mat-option [value]="estado">{{ estado.dsUf }} - {{ estado.dsNome }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>CEP</mat-label>
+      <input matInput formControlName="dsCep">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>País</mat-label>
+      <input matInput formControlName="dsPais">
+    </mat-form-field>
+
   </form>
 </mat-dialog-content>
 

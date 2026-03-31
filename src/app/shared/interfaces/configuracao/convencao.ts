@@ -7,7 +7,7 @@ export interface Convencao {
   dsEndereco: string;
   dsBairro: string;
   dsCidade: string;
-  estado: Estado;
+  estado?: Estado;
   dsPais: string;
   dsCep: string;
   dsCnpj: string;

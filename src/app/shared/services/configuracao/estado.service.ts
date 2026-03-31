@@ -17,6 +17,11 @@ export class EstadoService {
     return this.http.get<RespostaPaginada<Estado>>(url);
   }
 
+  // Lista todos os estados disponíveis
+  listarTodosEstados(): Observable<Estado[]> {
+    return this.http.get<Estado[]>(`${this.API_URL}/listar`);
+  }
+
   editarEstado(estado: Estado): Observable<Estado> {
     //console.log("Estado enviado: ", estado);
     const url = `${this.API_URL}/alterar/${estado.id}`;
