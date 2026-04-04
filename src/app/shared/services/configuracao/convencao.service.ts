@@ -35,6 +35,7 @@ export class ConvencaoService {
 
   // Cadastra uma nova convenção no sistema, utilizando os dados fornecidos
   cadastrarConvencao(convencao: Partial<Convencao>): Observable<Convencao> {
+    console.log("Convencao enviada: ", convencao);
     return this.http.post<Convencao>(`${this.API_URL}/cadastrar`, convencao);
   }
 

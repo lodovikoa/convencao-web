@@ -10,7 +10,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>CNPJ</mat-label>
-      <input matInput formControlName="dsCnpj">
+      <input matInput formControlName="dsCnpj" mask="00.000.000/0000-00" placeholder="__.___.___/____-__", [dropSpecialCharacters]="true">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
@@ -52,6 +52,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Estado</mat-label>
       <mat-select formControlName="estado" [compareWith]="compararEstados">
+        <mat-option [value]="null">Selecione um estado</mat-option>
         @for (estado of estados(); track estado.id) {
           <mat-option [value]="estado">{{ estado.dsUf }} - {{ estado.dsNome }}</mat-option>
         }

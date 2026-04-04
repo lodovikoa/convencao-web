@@ -9,10 +9,20 @@ import { MatSelectModule } from '@angular/material/select';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-convencao-dialog-alterar',
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule],
+  imports: [CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    NgxMaskDirective
+  ],
+  providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-alterar.component.html',
   styleUrl: './convencao-dialog-alterar.component.scss',
 })
@@ -54,8 +64,15 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
   }
 
   // Função para comparar os objetos Estado no select
-  compararEstados(estado1: Estado, estado2: Estado): boolean {
-    return estado1 && estado2 ? estado1.id === estado2.id : estado1 === estado2;
+  compararEstados(estado1: Estado | null, estado2: Estado | null): boolean {
+    // Se ambos forem nulos, são iguais
+    if (estado1 === null && estado2 === null) return true;
+
+    // Se um for nulo e o outro não, são diferentes
+    if (estado1 === null || estado2 === null) return false;
+
+    // Se ambos existem, compara pelo ID
+    return estado1.id === estado2.id;
   }
 
 

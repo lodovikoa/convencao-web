@@ -1,0 +1,87 @@
+<h2 mat-dialog-title>Cadastrar Convenção</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" style="padding-top: 10px;">
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Nome Reduzido</mat-label>
+        <input matInput formControlName="dsReduzido">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>CNPJ</mat-label>
+        <input matInput formControlName="dsCnpj" mask="00.000.000/0000-00" placeholder="__.___.___/____-__", [dropSpecialCharacters]="true">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nome da Convenção</mat-label>
+      <input matInput formControlName="dsConvencao">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>E-mail</mat-label>
+      <input matInput formControlName="dsEmail">
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Telefone</mat-label>
+        <input matInput formControlName="dsTelefones">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>WhatApp</mat-label>
+        <input matInput formControlName="dsWatsapp">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Endereço</mat-label>
+      <input matInput formControlName="dsEndereco">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Bairro</mat-label>
+      <input matInput formControlName="dsBairro">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Cidade</mat-label>
+      <input matInput formControlName="dsCidade">
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="estadoId">
+          <mat-option [value]="null">Selecione um estado</mat-option>
+          @for (estado of estados(); track estado.id) {
+            <mat-option [value]="estado.id">
+              {{ estado.dsUf }} - {{ estado.dsNome }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>CEP</mat-label>
+        <input matInput formControlName="dsCep">
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>País</mat-label>
+      <input matInput formControlName="dsPais">
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="salvar()">
+    Gravar
+  </button>
+</mat-dialog-actions>

@@ -15,6 +15,7 @@ import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/c
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ConvencaoDialogDetalharComponent } from '../dialog/convencao-dialog-detalhar/convencao-dialog-detalhar.component';
 import { ConvencaoDialogAlterarComponent } from '../dialog/convencao-dialog-alterar/convencao-dialog-alterar.component';
+import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-cadastrar/convencao-dialog-cadastrar.component';
 
 @Component({
   selector: 'app-convencao',
@@ -76,14 +77,22 @@ export class ConvencaoComponent {
 
   cadastrar() {
     // Exemplo genérico - ajuste para seu componente de cadastro
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, { width: '400px' });
+    const dialogRef = this.dialog.open(ConvencaoDialogCadastrarComponent, {
+      width: '800px',
+      disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
+    });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        this.isLoading.set(true);
         this.convencaoService.cadastrarConvencao(result).subscribe({
           next: () => {
             this.notificar('Convenção cadastrada com sucesso!');
             this.recarregarDados();
+          },
+          error: (err) => {
+            console.error(err);
+            this.isLoading.set(false);
           }
         });
       }
@@ -106,7 +115,6 @@ export class ConvencaoComponent {
         },
         error: (err) => {
           console.error(err);
-          this.notificar('Erro ao atualizar convenção.');
         }
       });
     });
