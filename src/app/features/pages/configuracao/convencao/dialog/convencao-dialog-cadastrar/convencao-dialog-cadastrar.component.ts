@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
-import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-convencao-dialog-cadastrar',
@@ -39,7 +39,9 @@ export class ConvencaoDialogCadastrarComponent {
     dsConvencao: ['', [Validators.required]],
     dsCnpj: [''],
     dsEmail: ['', [Validators.email]],
-    dsTelefones: [''],
+    dsTelefone1: [''],
+    dsTelefone2: [''],
+    dsTelefone3: [''],
     dsWatsapp: [''],
     dsCep: [''],
     dsEndereco: [''],

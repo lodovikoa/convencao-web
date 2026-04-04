@@ -25,13 +25,23 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Telefones</mat-label>
-      <input matInput formControlName="dsTelefones">
+      <mat-label>Telefone1</mat-label>
+      <input matInput formControlName="dsTelefone1" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Telefone2</mat-label>
+      <input matInput formControlName="dsTelefone2" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Telefone3</mat-label>
+      <input matInput formControlName="dsTelefone3" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>WhatsApp</mat-label>
-      <input matInput formControlName="dsWatsapp">
+      <input matInput formControlName="dsWatsapp" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
@@ -61,7 +71,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>CEP</mat-label>
-      <input matInput formControlName="dsCep">
+      <input matInput formControlName="dsCep" mask="00000-000" placeholder="_____-___", [dropSpecialCharacters]="true">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">

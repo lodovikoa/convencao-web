@@ -101,7 +101,8 @@ export class ConvencaoComponent {
 
   editar(convencao: Convencao) {
   const dialogRef = this.dialog.open(ConvencaoDialogAlterarComponent, {
-    width: '700px',
+    width: '800px',
+    disableClose: true, // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
     data: { ...convencao } // Envia cópia para não alterar o datasource antes do tempo
   });
 

@@ -3,10 +3,18 @@
 <mat-dialog-content class="mat-typography">
   <div class="detalhe-container">
     <p><strong>Nome Completo:</strong> {{ data.dsConvencao }}</p>
-    <p><strong>CNPJ:</strong> {{ data.dsCnpj }}</p>
+    <p><strong>CNPJ:</strong> {{ data.dsCnpj | mask: '00.000.000/0000-00' }}</p>
     <p><strong>E-mail:</strong> {{ data.dsEmail }}</p>
-    <p><strong>Telefones:</strong> {{ data.dsTelefones }}</p>
-    <p><strong>WhatsApp:</strong> {{ data.dsWatsapp }}</p>
+
+    <div class="info-row">
+      <p><strong>Telefone 1:</strong> {{ data.dsTelefone1 || '-' | mask: '(00) 00000-0000' }}</p>
+      <p><strong>Telefone 2:</strong> {{ data.dsTelefone2 || '-' | mask: '(00) 00000-0000' }}</p>
+    </div>
+
+    <div class="info-row">
+      <p><strong>Telefone 3:</strong> {{ data.dsTelefone3 || '-' | mask: '(00) 00000-0000' }}</p>
+      <p><strong>WhatsApp:</strong> {{ data.dsWatsapp || '-' | mask: '(00) 00000-0000' }}</p>
+    </div>
 
     <hr>
 
@@ -19,7 +27,7 @@
 
     <div class="info-row">
       <p><strong>Estado:</strong> {{ data.estado?.dsUf || '-' }}</p>
-      <p><strong>CEP:</strong> {{ data.dsCep || '-' }}</p>
+      <p><strong>CEP:</strong> {{ data.dsCep || '-'  | mask: '00000-000' }}</p>
     </div>
 
     <p><strong>País:</strong> {{ data.dsPais }}</p>
@@ -30,23 +38,3 @@
   <button mat-button mat-dialog-close color="primary">Fechar</button>
 </mat-dialog-actions>
 
-
-
-<!-- <h2 mat-dialog-title>Detalhes da Convenção: {{ data.dsReduzido }}</h2>
-    <mat-dialog-content class="mat-typography">
-      <div class="detalhe-grid">
-        <p><strong>Nome Completo:</strong> {{ data.dsConvencao }}</p>
-        <p><strong>CNPJ:</strong> {{ data.dsCnpj }}</p>
-        <p><strong>E-mail:</strong> {{ data.dsEmail }}</p>
-        <p><strong>Telefones:</strong> {{ data.dsTelefones }}</p>
-        <p><strong>WhatsApp:</strong> {{ data.dsWatsapp }}</p>
-        <hr>
-        <p><strong>Endereço:</strong> {{ data.dsEndereco }}</p>
-        <p><strong>Bairro:</strong> {{ data.dsBairro }} - <strong>Cidade:</strong> {{ data.dsCidade }}</p>
-        <p><strong>Estado:</strong> {{ data.estado.dsUf }} - <strong>CEP:</strong> {{ data.dsCep }}</p>
-        <p><strong>País:</strong> {{ data.dsPais }}</p>
-      </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close color="primary">Fechar</button>
-    </mat-dialog-actions> -->

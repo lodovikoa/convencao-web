@@ -12,6 +12,8 @@ export interface Convencao {
   dsCep: string;
   dsCnpj: string;
   dsEmail: string;
-  dsTelefones: string;
+  dsTelefone1: string;
+  dsTelefone2: string;
+  dsTelefone3: string;
   dsWatsapp: string;
 }
