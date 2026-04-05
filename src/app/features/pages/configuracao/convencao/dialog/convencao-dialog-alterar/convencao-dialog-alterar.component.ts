@@ -54,7 +54,6 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
       dsBairro: [this.data.dsBairro],
       dsCidade: [this.data.dsCidade],
       dsPais: [this.data.dsPais],
-      imLogo: [this.data.imLogo],
       estado: [this.data.estado] // Mantém o objeto estado original
     });
   }

@@ -3,7 +3,6 @@ export interface Convencao {
   id: number;
   dsReduzido: string;
   dsConvencao: string;
-  imLogo: string;
   dsEndereco: string;
   dsBairro: string;
   dsCidade: string;

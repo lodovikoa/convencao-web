@@ -2,6 +2,11 @@
 
 <mat-dialog-content class="mat-typography">
   <div class="detalhe-container">
+
+    <div class="logo-wrapper">
+      <img [src]="logoUrl" alt="Logo da Convenção" class="logo-imagem">
+    </div>
+
     <p><strong>Nome Completo:</strong> {{ data.dsConvencao }}</p>
     <p><strong>CNPJ:</strong> {{ data.dsCnpj | mask: '00.000.000/0000-00' }}</p>
     <p><strong>E-mail:</strong> {{ data.dsEmail }}</p>

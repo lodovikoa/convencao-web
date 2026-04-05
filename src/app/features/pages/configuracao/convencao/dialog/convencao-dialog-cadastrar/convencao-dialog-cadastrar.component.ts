@@ -48,7 +48,6 @@ export class ConvencaoDialogCadastrarComponent {
     dsBairro: [''],
     dsCidade: [''],
     dsPais: ['Brasil'],
-    imLogo: [null],
     estadoId: [null]
   });
 
