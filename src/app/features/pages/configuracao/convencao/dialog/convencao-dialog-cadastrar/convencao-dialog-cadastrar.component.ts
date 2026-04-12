@@ -35,8 +35,8 @@ export class ConvencaoDialogCadastrarComponent {
   estados = toSignal(this.estadoService.listarTodosEstados(), { initialValue: [] as Estado[] });
 
   form: FormGroup = this.fb.group({
-    dsReduzido: ['', [Validators.required, Validators.maxLength(50)]],
-    dsConvencao: ['', [Validators.required]],
+    dsReduzido: ['', [Validators.required, Validators.maxLength(20)]],
+    dsConvencao: ['', [Validators.required, Validators.maxLength(100)]],
     dsCnpj: [''],
     dsEmail: ['', [Validators.email]],
     dsTelefone1: [''],

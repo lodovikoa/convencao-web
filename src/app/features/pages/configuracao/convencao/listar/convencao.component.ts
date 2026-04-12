@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { filter, finalize, tap } from 'rxjs/operators'
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
@@ -35,7 +35,7 @@ import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-ca
 export class ConvencaoComponent {
   private readonly dialog = inject(MatDialog);
   private readonly convencaoService = inject(ConvencaoService);
-  private readonly snackBar = inject(MatSnackBar);
+  //private readonly snackBar = inject(MatSnackBar);
 
   isLoading = signal(false);
   datasource = new MatTableDataSource<Convencao>([]);
@@ -87,7 +87,6 @@ export class ConvencaoComponent {
         this.isLoading.set(true);
         this.convencaoService.cadastrarConvencao(result).subscribe({
           next: () => {
-            this.notificar('Convenção cadastrada com sucesso!');
             this.recarregarDados();
           },
           error: (err) => {
@@ -111,7 +110,6 @@ export class ConvencaoComponent {
     .subscribe(dadosAtualizados => {
       this.convencaoService.editarConvencao(dadosAtualizados).subscribe({
         next: () => {
-          this.notificar('Convenção atualizada com sucesso!');
           this.recarregarDados();
         },
         error: (err) => {
@@ -131,20 +129,10 @@ export class ConvencaoComponent {
       if (result) {
         this.convencaoService.excluirConvencao(convencao.id).subscribe({
           next: () => {
-            this.notificar('Convenção excluída com sucesso!');
             this.recarregarDados();
           }
         });
       }
-    });
-  }
-
-  private notificar(msg: string) {
-    this.snackBar.open(msg, 'Fechar', {
-      duration: 5000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar']
     });
   }
 }
