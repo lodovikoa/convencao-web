@@ -10,6 +10,7 @@ import { HomeComponent } from "./home/home.component";
 import { EstadoComponent } from "./configuracao/estado/listar/estado.component";
 import { ConfiguracaoComponent } from "./configuracao/configuracao.component";
 import { ConvencaoComponent } from "./configuracao/convencao/listar/convencao.component";
+import { DepartamentoComponent } from "./configuracao/departamento/listar/departamento.component";
 
 export default [
   { path: '', component: HomeComponent },
@@ -17,7 +18,8 @@ export default [
   { path: 'configuracao', component: ConfiguracaoComponent,
     children: [
       { path: 'convencaoListar', component: ConvencaoComponent },
-      { path: 'estadoListar', component: EstadoComponent }
+      { path: 'estadoListar', component: EstadoComponent },
+      { path: 'departamentoListar', component: DepartamentoComponent }
     ]
    },
   { path: 'comments', component: CommentsComponent},

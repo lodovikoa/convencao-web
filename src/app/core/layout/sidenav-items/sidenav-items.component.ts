@@ -30,7 +30,9 @@ export class SidenavItemsComponent {
     { icon: 'dashboard', label: 'Configuracao', route: 'configuracao', trancodes: ['T_CFT_ADMINISTRADOR'],
       subItems: [
         { icon: 'dashboard', label: 'Convenção', route: 'convencaoListar', trancodes: ['T_CFT_ADMINISTRADOR']},
+        { icon: 'dashboard', label: 'Departamentos', route: 'departamentoListar', trancodes: ['T_CFT_ADMINISTRADOR']},
         { icon: 'dashboard', label: 'Estados', route: 'estadoListar', trancodes: ['T_CFT_ADMINISTRADOR']}
+
       ]
      },
     {
