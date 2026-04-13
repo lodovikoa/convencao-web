@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ConvencaoDialogDetalharComponent } from '../dialog/convencao-dialog-detalhar/convencao-dialog-detalhar.component';
 import { ConvencaoDialogAlterarComponent } from '../dialog/convencao-dialog-alterar/convencao-dialog-alterar.component';
 import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-cadastrar/convencao-dialog-cadastrar.component';
+import { HasPermissionDirectiveDirective } from '@shared/directives/has-permission-directive.directive';
 
 @Component({
   selector: 'app-convencao',
@@ -27,7 +28,8 @@ import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-ca
     MatButtonModule,
     MatTooltipModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HasPermissionDirectiveDirective
   ],
   templateUrl: './convencao.component.html',
   styleUrl: './convencao.component.scss',
@@ -35,7 +37,6 @@ import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-ca
 export class ConvencaoComponent {
   private readonly dialog = inject(MatDialog);
   private readonly convencaoService = inject(ConvencaoService);
-  //private readonly snackBar = inject(MatSnackBar);
 
   isLoading = signal(false);
   datasource = new MatTableDataSource<Convencao>([]);

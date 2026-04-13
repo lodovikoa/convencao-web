@@ -17,10 +17,21 @@ import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastra
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { HasPermissionDirectiveDirective } from '@shared/directives/has-permission-directive.directive';
 
 @Component({
   selector: 'app-estado',
-  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSnackBarModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule],
+  imports: [CommonModule,
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatSnackBarModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
+    HasPermissionDirectiveDirective
+],
   templateUrl: './estado.component.html',
   styleUrl: './estado.component.scss',
 })

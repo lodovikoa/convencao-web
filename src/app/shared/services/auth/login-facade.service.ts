@@ -65,4 +65,14 @@ export class LoginFacadeService {
    private getDecodedToken(token: string) {
     this.authTokenDetails.set(jwtDecode<AuthTokenDetails>(token));
   }
+
+  hasPermission(permission: string): boolean {
+    const detalhes = this.tokenDetalhe();
+    if (!detalhes) return false;
+
+    // Ajuste o caminho conforme o JSON do seu Token (ex: detalhes.roles ou detalhes.permissions)
+    // Supondo que 'roles' seja um array de strings no seu AuthTokenDetails
+    const roles = detalhes.realm_access?.roles || [];
+    return roles.includes(permission);
+  }
 }
