@@ -8,41 +8,42 @@ import { Observable } from 'rxjs';
 })
 export class ConvencaoService {
 
-  private readonly API_URL = '/api';
+  private readonly API_URL = '/api/convencao';
+  private readonly API_URL_LOGO = '/api/logo';
   private readonly http = inject(HttpClient);
 
   // Lista todas as convenções disponíveis
   listarConvencao(): Observable<Convencao[]> {
-    return this.http.get<Convencao[]>(`${this.API_URL}/convencao/listar`);
+    return this.http.get<Convencao[]>(this.API_URL);
   }
 
   // Busca uma convenção específica pelo seu ID único
   buscarConvencaoPorId(id: number): Observable<Convencao> {
-    return this.http.get<Convencao>(`${this.API_URL}/convencao/id/${id}`);
+    return this.http.get<Convencao>(`${this.API_URL}/${id}`);
   }
 
   // Edita os detalhes de uma convenção existente, identificada por seu ID
   editarConvencao(convencao: any): Observable<Convencao> {
     console.log("Convencao enviada: ", convencao);
-    const url = `${this.API_URL}/convencao/alterar/${convencao.id}`;
+    const url = `${this.API_URL}/${convencao.id}`;
     return this.http.put<Convencao>(url, convencao);
   }
 
   // Exclui uma convenção do sistema, utilizando seu ID para identificação
   excluirConvencao(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/convencao/excluir/${id}`);
+    return this.http.delete<void>(`${this.API_URL}/${id}`);
   }
 
   // Cadastra uma nova convenção no sistema, utilizando os dados fornecidos
   cadastrarConvencao(convencao: Partial<Convencao>): Observable<Convencao> {
     console.log("Convencao enviada: ", convencao);
-    return this.http.post<Convencao>(`${this.API_URL}/convencao/cadastrar`, convencao);
+    return this.http.post<Convencao>(this.API_URL, convencao);
   }
 
   // Método para retornar a URL da logo baseado no ID da convenção
   obterLogoUrl(id: number | undefined): string {
     const imageId = id ?? 0; // Usar 0 como fallback se o ID for undefined
-    return `${this.API_URL}/logo/${imageId}.jpeg`;
+    return `${this.API_URL_LOGO}/${imageId}.jpeg`;
   }
 
 }
