@@ -10,17 +10,4 @@ export const routes: Routes = [
 
   { path: 'auth', loadChildren: () => import('./core/auth/routes') },
 
-  // { path: '',  pathMatch: 'full', redirectTo: 'login' },
-  // { path: 'login', component: LoginComponent },
-  // { path: 'dashboard', component: DashboardComponent },
-  // { path: 'content', component: ContentComponent,
-  //   children: [
-  //     { path: 'videos', component: VideosComponent },
-  //     { path: 'playlists', component: PlaylistsComponent },
-  //     { path: 'posts', component: PostsComponent }
-  //   ]
-  //  },
-  // { path: 'users', component: UsersComponent },
-  // { path: 'comments', component: CommentsComponent }
-
 ];
