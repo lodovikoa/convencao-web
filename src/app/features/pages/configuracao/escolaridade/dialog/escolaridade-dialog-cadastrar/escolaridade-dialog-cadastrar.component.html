@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Cadastrar Escolaridade</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" style="padding-top: 10px;">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Escolaridade</mat-label>
+      <input matInput formControlName="dsDescricao">
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="salvar()">
+    Gravar
+  </button>
+</mat-dialog-actions>
