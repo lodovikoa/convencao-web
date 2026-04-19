@@ -103,7 +103,7 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
       // 3. Removemos o objeto 'estado' completo para a API receber apenas o Long (ID)
       delete payload.estado;
 
-      this.estadoService.editarEstado(payload).subscribe({
+      this.ConvencaoService.editarConvencao(payload).subscribe({
         next: (res) => {
           this.isLoading.set(false);
           this.dialogRef.close(true);

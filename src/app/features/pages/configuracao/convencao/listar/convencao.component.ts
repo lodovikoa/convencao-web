@@ -127,6 +127,12 @@ export class ConvencaoComponent {
       if (result) {
         this.convencaoService.excluirConvencao(convencao.id).subscribe({
           next: () => {
+            this.snacBar.open('Convenção excluída com sucesso!', 'Fechar', {
+              duration: 10000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            });
             this.recarregarDados();
           }
         });
