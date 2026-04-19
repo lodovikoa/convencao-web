@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { Estado } from '@shared/interfaces/configuracao/estado';
+import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
@@ -20,7 +23,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    MatProgressSpinnerModule
   ],
   providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-cadastrar.component.html',
@@ -30,6 +34,9 @@ export class ConvencaoDialogCadastrarComponent {
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<ConvencaoDialogCadastrarComponent>);
   private readonly estadoService = inject(EstadoService);
+  private readonly convencaoService = inject(ConvencaoService);
+
+  isLoading = signal(false);
 
   // Carrega os estados da API e transforma em Signal para usar no select
   estados = toSignal(this.estadoService.listarTodosEstados(), { initialValue: [] as Estado[] });
@@ -51,14 +58,22 @@ export class ConvencaoDialogCadastrarComponent {
     estadoId: [null]
   });
 
-  salvar() {
+  onSave() {
     if (this.form.valid) {
-      // Retorna os dados do formulário para o componente pai
-      this.dialogRef.close(this.form.value);
+      this.isLoading.set(true);
+      this.convencaoService.cadastrarConvencao(this.form.value as Convencao).subscribe({
+        next: (res) => {
+          this.isLoading.set(false);
+          this.dialogRef.close(true);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+        }
+       });
     }
   }
 
-  cancelar() {
+  onCancel() {
     this.dialogRef.close(null);
   }
 

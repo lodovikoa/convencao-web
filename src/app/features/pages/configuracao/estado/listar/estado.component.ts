@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { EstadoDialogAlterarComponent } from '../dialog/estado-dialog-alterar/estado-dialog-alterar.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { BehaviorSubject, switchMap} from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators'
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastrar/estado-dialog-cadastrar.component';
@@ -31,7 +31,7 @@ import { HasPermissionDirectiveDirective } from '@shared/directives/has-permissi
     MatSortModule,
     MatProgressSpinnerModule,
     HasPermissionDirectiveDirective
-],
+  ],
   templateUrl: './estado.component.html',
   styleUrl: './estado.component.scss',
 })
@@ -51,7 +51,7 @@ export class EstadoComponent {
   datasource = new MatTableDataSource<Estado>([]);
 
   // Criamos um "gatilho". O valor inicial 'undefined' dispara a primeira busca.
-  private refreshList$ = new BehaviorSubject<{page: number, size: number, sort: string}>({ page: 0, size: 10, sort: 'dsNome,asc' });
+  private refreshList$ = new BehaviorSubject<{ page: number, size: number, sort: string }>({ page: 0, size: 10, sort: 'dsNome,asc' });
 
   // O toSignal observa o 'refreshList$'.
   // O switchMap garante que, sempre que o gatilho for acionado, chamamos o listarEstados().
@@ -60,7 +60,7 @@ export class EstadoComponent {
       tap(() => this.isLoading.set(true)), // Inicia o loading ao disparar a requisição
       switchMap((params) =>
         this.estadoService.listarEstados(params.page, params.size, params.sort).pipe(
-         // delay(2000), // <--- ADICIONE ISSO: Simula um atraso de 2 segundos
+          // delay(2000), // <--- ADICIONE ISSO: Simula um atraso de 2 segundos
           finalize(() => this.isLoading.set(false)) // Desliga o loading ao finalizar (sucesso ou erro)
         ))
     )
@@ -68,13 +68,13 @@ export class EstadoComponent {
 
   // Função para capturar a mudança de ordenação
   ordenar(event: Sort) {
-    if(!event.active || !event.direction) {
+    if (!event.active || !event.direction) {
       return;
     }
 
     // Resetar o índice visual do paginador
     const pg = this.paginator();
-    if(pg) {
+    if (pg) {
       pg.pageIndex = 0;
     }
 
@@ -106,7 +106,7 @@ export class EstadoComponent {
 
         // Sincroniza o pageIndex do component visual com o que veio do servidor
         const pg = this.paginator();
-        if(pg && response.pageable) {
+        if (pg && response.pageable) {
           pg.pageIndex = response.pageable.pageNumber;
         }
       }
@@ -126,28 +126,24 @@ export class EstadoComponent {
 
     const dialogRef = this.dialog.open(EstadoDialogAlterarComponent, {
       width: '400px',
-      data: { ...estado }  // Passa uma cópia para não alterar a lista original antes da hora
+      data: { ...estado },  // Passa uma cópia para não alterar a lista original antes da hora
+      disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.estadoService.editarEstado(result).subscribe({
-          next: () => {
-            this.snacBar.open('Estado atualizado com sucesso!', 'Fechar', {
-              duration: 10000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              panelClass: ['success-snackbar']
-            });
-            this.recarregarDados();
-          },
-          error: (err) => {
-            console.log(err);
-          }
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Estado atualizado com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
+        this.recarregarDados();
       }
+
     });
   }
+
 
   excluir(estado: Estado) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -182,29 +178,21 @@ export class EstadoComponent {
     });
   }
 
-  // Cadastrar novo Estado
   cadastrarEstado() {
     const dialogRef = this.dialog.open(EstadoDialogCadastrarComponent, {
-      width: '400px'
+      width: '400px',
+      disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.estadoService.cadastrarEstado(result).subscribe({
-          next: () => {
-            this.snacBar.open('Estado cadastrado com sucesso!', 'Fechar', {
-              duration: 10000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              panelClass: ['success-snackbar']
-            });
-            this.recarregarDados();
-          },
-
-          error: (err) => {
-            console.log(err);
-          }
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Estado cadastrado com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
+        this.recarregarDados();
       }
     });
   }

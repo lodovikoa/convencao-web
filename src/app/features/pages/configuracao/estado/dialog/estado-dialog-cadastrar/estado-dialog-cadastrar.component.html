@@ -20,11 +20,17 @@
 
       </div>
     </mat-dialog-content>
+
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-raised-button color="primary"
-              [disabled]="estadoForm.invalid"
-              [mat-dialog-close]="estadoForm.value">
-        Salvar
+      <button mat-raised-button
+              color="primary"
+              [disabled]="estadoForm.invalid || isLoading()"
+              (click)="onSave()">
+          @if(isLoading()) {
+            <mat-spinner diameter="20" style="display: inline-block;"></mat-spinner>
+          } @else {
+            Salvar
+          }
       </button>
     </mat-dialog-actions>

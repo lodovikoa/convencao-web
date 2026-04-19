@@ -8,9 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BehaviorSubject, switchMap } from 'rxjs';
-import { filter, finalize, tap } from 'rxjs/operators'
+import { finalize, tap } from 'rxjs/operators'
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ConvencaoDialogDetalharComponent } from '../dialog/convencao-dialog-detalhar/convencao-dialog-detalhar.component';
@@ -37,6 +37,7 @@ import { HasPermissionDirectiveDirective } from '@shared/directives/has-permissi
 export class ConvencaoComponent {
   private readonly dialog = inject(MatDialog);
   private readonly convencaoService = inject(ConvencaoService);
+  private readonly snacBar = inject(MatSnackBar)
 
   isLoading = signal(false);
   datasource = new MatTableDataSource<Convencao>([]);
@@ -72,51 +73,47 @@ export class ConvencaoComponent {
   visualizar(convencao: Convencao) {
     this.dialog.open(ConvencaoDialogDetalharComponent, {
       width: '600px',
-      data:convencao // Passa a convenção selecionada para o diálogo de detalhes
+      data: convencao // Passa a convenção selecionada para o diálogo de detalhes
     });
   }
 
   cadastrar() {
-    // Exemplo genérico - ajuste para seu componente de cadastro
     const dialogRef = this.dialog.open(ConvencaoDialogCadastrarComponent, {
       width: '800px',
       disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.isLoading.set(true);
-        this.convencaoService.cadastrarConvencao(result).subscribe({
-          next: () => {
-            this.recarregarDados();
-          },
-          error: (err) => {
-            console.error(err);
-            this.isLoading.set(false);
-          }
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Convenção cadastrada com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
+
+        this.recarregarDados();
       }
     });
   }
 
   editar(convencao: Convencao) {
-  const dialogRef = this.dialog.open(ConvencaoDialogAlterarComponent, {
-    width: '800px',
-    disableClose: true, // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
-    data: { ...convencao } // Envia cópia para não alterar o datasource antes do tempo
-  });
+    const dialogRef = this.dialog.open(ConvencaoDialogAlterarComponent, {
+      width: '800px',
+      disableClose: true, // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
+      data: { ...convencao } // Envia cópia para não alterar o datasource antes do tempo
+    });
 
-  dialogRef.afterClosed()
-    .pipe(filter(result => !!result)) // Só continua se o usuário clicou em Salvar
-    .subscribe(dadosAtualizados => {
-      this.convencaoService.editarConvencao(dadosAtualizados).subscribe({
-        next: () => {
-          this.recarregarDados();
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Convenção atualizada com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.recarregarDados();
+      }
     });
   }
 

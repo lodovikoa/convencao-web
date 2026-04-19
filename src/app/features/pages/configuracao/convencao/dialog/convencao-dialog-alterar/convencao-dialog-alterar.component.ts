@@ -5,11 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 
 @Component({
   selector: 'app-convencao-dialog-alterar',
@@ -20,7 +22,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    MatProgressSpinner
   ],
   providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-alterar.component.html',
@@ -30,7 +33,10 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly estadoService = inject(EstadoService);
   private readonly dialogRef = inject(MatDialogRef<ConvencaoDialogAlterarComponent>);
-  readonly data: Convencao = inject(MAT_DIALOG_DATA);
+  private readonly data: Convencao = inject(MAT_DIALOG_DATA);
+  private readonly ConvencaoService = inject(ConvencaoService);
+
+  isLoading = signal(false);
 
   form!: FormGroup;
 
@@ -79,8 +85,9 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
 
   // Na interface Convencao, o campo 'estado' é do tipo Estado, mas a API espera um campo 'estadoId' do tipo Long (ID do estado).
   // Portanto, precisamos criar um objeto de envio (Payload) que contenha o campo 'estadoId' em vez do objeto 'estado' completo.
-  salvar(): void {
+  onSave() {
     if (this.form.valid) {
+      this.isLoading.set(true);
       // 1. Pegamos todos os valores do formulário
       const formValue = this.form.value;
 
@@ -96,8 +103,15 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
       // 3. Removemos o objeto 'estado' completo para a API receber apenas o Long (ID)
       delete payload.estado;
 
-      // 4. Fechamos o diálogo passando o objeto formatado para o componente pai
-      this.dialogRef.close(payload);
+      this.estadoService.editarEstado(payload).subscribe({
+        next: (res) => {
+          this.isLoading.set(false);
+          this.dialogRef.close(true);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+        }
+      });
     }
   }
 

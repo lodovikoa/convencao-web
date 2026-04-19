@@ -1,4 +1,4 @@
-import { Component, Inject, inject } from '@angular/core';
+import { Component, Inject, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Estado } from '@shared/interfaces/configuracao/estado';
@@ -6,17 +6,30 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { EstadoService } from '@shared/services/configuracao/estado.service';
 
 @Component({
   selector: 'app-estado-form-dialog',
-  imports: [ CommonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, ReactiveFormsModule ],
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './estado-dialog-alterar.component.html',
   styleUrl: './estado-dialog-alterar.component.scss',
 })
 export class EstadoDialogAlterarComponent {
 
   private readonly fb = inject(FormBuilder);
+  private estadoService = inject(EstadoService);
   private readonly dialogRef = inject(MatDialogRef<EstadoDialogAlterarComponent>);
+
+  isLoading = signal(false);
 
   form: FormGroup;
 
@@ -37,13 +50,23 @@ export class EstadoDialogAlterarComponent {
     }
   }
 
-  salvar() {
+  onSave() {
     if(this.form.valid) {
-      this.dialogRef.close(this.form.value);
+      this.isLoading.set(true);
+
+      this.estadoService.editarEstado(this.form.value as Estado).subscribe({
+        next: (res) => {
+          this.isLoading.set(false);
+          this.dialogRef.close(true);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+        }
+       });
     }
   }
 
-  cancelar() {
+  onCancel() {
     this.dialogRef.close();
   }
 

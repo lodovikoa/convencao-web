@@ -28,11 +28,15 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-button (click)="onCancel()">Cancelar</button>
   <button mat-raised-button
           color="primary"
-          [disabled]="form.invalid || form.pristine"
-          (click)="salvar()">
-    Salvar
+          [disabled]="form.invalid || form.pristine || isLoading()"
+          (click)="onSave()">
+      @if(isLoading()) {
+        <mat-spinner diameter="20" style="display: inline-block;"></mat-spinner>
+      } @else {
+        Salvar
+      }
   </button>
 </mat-dialog-actions>
