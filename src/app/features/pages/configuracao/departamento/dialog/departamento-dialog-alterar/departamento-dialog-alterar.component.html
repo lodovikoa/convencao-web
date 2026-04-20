@@ -18,7 +18,7 @@
       <mat-select formControlName="convencao" [compareWith]="compararConvencao">
         <mat-option [value]="null">Selecione uma Convenção</mat-option>
         @for (convencao of convencaos(); track convencao.id) {
-          <mat-option [value]="convencao">{{ convencao.dsReduzido }}</mat-option>
+        <mat-option [value]="convencao">{{ convencao.dsReduzido }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -28,5 +28,12 @@
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-raised-button color="primary" (click)="salvar()" [disabled]="form.invalid">Salvar</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading()" (click)="onSave()">
+    @if(isLoading()) {
+    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+      Salvar
+    } @else {
+    Salvar
+    }
+  </button>
 </mat-dialog-actions>

@@ -33,6 +33,7 @@ export class DepartamentoComponent {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly departamentoService = inject(DepartamentoService);
+  private readonly snacBar = inject(MatSnackBar)
 
   isLoading = signal(false);
   datasource = new MatTableDataSource<Departamento>([]);
@@ -72,18 +73,16 @@ export class DepartamentoComponent {
       disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
      });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.isLoading.set(true);
-        this.departamentoService.cadastrarDepartamento(result).subscribe({
-          next: () => {
-            this.recarregarDados();
-          },
-          error: (err) => {
-            console.error(err);
-            this.isLoading.set(false);
-          }
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Departamento cadastrado com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
+
+        this.recarregarDados();
       }
     });
   }
@@ -96,18 +95,17 @@ export class DepartamentoComponent {
         data: { ...departamento } // Envia cópia para não alterar o datasource antes do tempo
       });
 
-      dialogRef.afterClosed()
-        .pipe(filter(result => !!result)) // Só continua se o usuário clicou em Salvar
-        .subscribe(dadosAtualizados => {
-          this.departamentoService.editarDepartamento(dadosAtualizados).subscribe({
-            next: () => {
-              this.recarregarDados();
-            },
-            error: (err) => {
-              console.error(err);
-            }
-          });
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Departamento atualizado com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
         });
+        this.recarregarDados();
+      }
+    });
   }
 
   excluir(departamento: Departamento) {
@@ -121,6 +119,12 @@ export class DepartamentoComponent {
       if (result) {
         this.departamentoService.excluirDepartamento(departamento.id).subscribe({
           next: () => {
+            this.snacBar.open('Departamento excluído com sucesso!', 'Fechar', {
+              duration: 10000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            });
             this.recarregarDados();
           }
         });

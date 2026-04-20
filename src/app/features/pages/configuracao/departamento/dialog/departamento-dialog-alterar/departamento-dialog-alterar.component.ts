@@ -1,25 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { Departamento } from '@shared/interfaces/configuracao/departamento';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
+import { DepartamentoService } from '@shared/services/configuracao/departamento.service';
 
 
 @Component({
   selector: 'app-departamento-dialog-alterar',
-  imports: [ CommonModule,
+  imports: [CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressSpinner
   ],
   templateUrl: './departamento-dialog-alterar.component.html',
   styleUrl: './departamento-dialog-alterar.component.scss',
@@ -30,6 +33,9 @@ export class DepartamentoDialogAlterarComponent {
   private readonly convencaoService = inject(ConvencaoService);
   private readonly dialogRef = inject(MatDialogRef<DepartamentoDialogAlterarComponent>);
   readonly data: Departamento = inject(MAT_DIALOG_DATA);
+  readonly departamentoService = inject(DepartamentoService);
+
+  isLoading = signal(false);
 
   form!: FormGroup;
 
@@ -67,27 +73,34 @@ export class DepartamentoDialogAlterarComponent {
 
   // Na interface Departamento, o campo 'convencao' é do tipo Convencao, mas a API espera um campo 'convencaoId' do tipo Long (ID da convencao).
   // Portanto, precisamos criar um objeto de envio (Payload) que contenha o campo 'convencaoId' em vez do objeto 'convencao' completo.
-  salvar(): void {
-    if (this.form.valid) {
-      // 1. Pegamos todos os valores do formulário
-      const formValue = this.form.value;
-
-      // 2. Criamos o objeto de envio (Payload)
-      // Usamos 'any' aqui para permitir a criação do campo 'convencaoId'
-      // que não existe na interface Convencao original
-      const payload: any = {
-        ...formValue,
-        // Extraímos apenas o ID do objeto Convencao selecionado no ComboBox
-        convencaoId: formValue.convencao ? formValue.convencao.id : null
-      };
-
-      // 3. Removemos o objeto 'convencao' completo para a API receber apenas o Long (ID)
-      delete payload.convencao;
-
-      // 4. Fechamos o diálogo passando o objeto formatado para o componente pai
-      this.dialogRef.close(payload);
+  onSave(): void {
+    if (!this.form.valid) {
+      return
     }
-  }
+    // 1. Pegamos todos os valores do formulário
+    const formValue = this.form.value;
 
+    // 2. Criamos o objeto de envio (Payload)
+    // Usamos 'any' aqui para permitir a criação do campo 'convencaoId'
+    // que não existe na interface Convencao original
+    const payload: any = {
+      ...formValue,
+      // Extraímos apenas o ID do objeto Convencao selecionado no ComboBox
+      convencaoId: formValue.convencao ? formValue.convencao.id : null
+    };
+
+    // 3. Removemos o objeto 'convencao' completo para a API receber apenas o Long (ID)
+    delete payload.convencao;
+
+    this.departamentoService.editarDepartamento(payload).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.dialogRef.close(true);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      }
+    });
+  }
 
 }

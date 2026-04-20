@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Escolaridade } from '@shared/interfaces/configuracao/escolaridade';
 import { EscolaridadeService } from '@shared/services/configuracao/escolaridade.service';
@@ -17,7 +18,8 @@ import { EscolaridadeService } from '@shared/services/configuracao/escolaridade.
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './escolaridade-dialog-alterar.component.html',
   styleUrl: './escolaridade-dialog-alterar.component.scss',
@@ -28,6 +30,8 @@ export class EscolaridadeDialogAlterarComponent {
   private readonly escolaridadeService = inject(EscolaridadeService);
   private readonly dialogRef = inject(MatDialogRef<EscolaridadeDialogAlterarComponent>);
   readonly data: Escolaridade = inject(MAT_DIALOG_DATA);
+
+  isLoading = signal(false);
 
   form!: FormGroup;
 
@@ -59,13 +63,20 @@ export class EscolaridadeDialogAlterarComponent {
       return escolaridade1.id === escolaridade2.id;
     }
 
-  salvar() {
-    if(this.form.valid) {
-      this.dialogRef.close(this.form.value);
+  onSave() {
+    if(!this.form.valid) {
+      return;
     }
+
+    this.escolaridadeService.editarEscolaridade(this.form.value as Escolaridade).subscribe({
+      next: (res) => {
+        this.isLoading.set(false);
+        this.dialogRef.close(true);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+      }
+    });
   }
 
-  cancelar() {
-    this.dialogRef.close();
-  }
 }

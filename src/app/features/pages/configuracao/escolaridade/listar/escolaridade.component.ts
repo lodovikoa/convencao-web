@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { EscolaridadeService } from '@shared/services/configuracao/escolaridade.service';
@@ -18,7 +18,7 @@ import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/c
 
 @Component({
   selector: 'app-escolaridade',
-  imports: [ CommonModule,
+  imports: [CommonModule,
     MatTableModule,
     MatIconModule,
     MatButtonModule,
@@ -34,6 +34,7 @@ export class EscolaridadeComponent {
 
   private readonly dialog = inject(MatDialog);
   private readonly escolaridadeService = inject(EscolaridadeService);
+  private readonly snacBar = inject(MatSnackBar)
 
   isLoading = signal(false);
   datasource = new MatTableDataSource<Escolaridade>([]);
@@ -67,64 +68,66 @@ export class EscolaridadeComponent {
 
   cadastrar() {
     // Lógica para abrir o diálogo de cadastro
-      const dialogRef = this.dialog.open(EscolaridadeDialogCadastrarComponent, {
-        width: '600px',
-        disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
-       });
+    const dialogRef = this.dialog.open(EscolaridadeDialogCadastrarComponent, {
+      width: '600px',
+      disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
+    });
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.isLoading.set(true);
-          this.escolaridadeService.cadastrarEscolaridade(result).subscribe({
-            next: () => {
-              this.recarregarDados();
-            },
-            error: (err) => {
-              console.error(err);
-              this.isLoading.set(false);
-            }
-          });
-        }
-      });
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Escolaridade cadastrada com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.recarregarDados();
+      }
+    });
   }
 
   editar(escolaridade: Escolaridade) {
     // Lógica para abrir o diálogo de edição
-      const dialogRef = this.dialog.open(EscolaridadeDialogAlterarComponent, {
-          width: '600px',
-          disableClose: true, // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
-          data: { ...escolaridade } // Envia cópia para não alterar o datasource antes do tempo
-        });
+    const dialogRef = this.dialog.open(EscolaridadeDialogAlterarComponent, {
+      width: '600px',
+      disableClose: true, // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
+      data: { ...escolaridade } // Envia cópia para não alterar o datasource antes do tempo
+    });
 
-        dialogRef.afterClosed()
-          .pipe(filter(result => !!result)) // Só continua se o usuário clicou em Salvar
-          .subscribe(dadosAtualizados => {
-            this.escolaridadeService.editarEscolaridade(dadosAtualizados).subscribe({
-              next: () => {
-                this.recarregarDados();
-              },
-              error: (err) => {
-                console.error(err);
-              }
-            });
-          });
+    dialogRef.afterClosed().subscribe(saved => {
+      if (saved) {
+        this.snacBar.open('Escolaridade atualizada com sucesso!', 'Fechar', {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.recarregarDados();
+      }
+    });
   }
 
   excluir(escolaridade: Escolaridade) {
     // Lógica para abrir o diálogo de confirmação e excluir a escolaridade
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '350px',
-        data: { nome: escolaridade.dsDescricao } // Ajuste para o campo correto da sua interface
-      });
+      width: '350px',
+      data: { nome: escolaridade.dsDescricao } // Ajuste para o campo correto da sua interface
+    });
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.escolaridadeService.excluirEscolaridade(escolaridade.id).subscribe({
-            next: () => {
-              this.recarregarDados();
-            }
-          });
-        }
-      });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.escolaridadeService.excluirEscolaridade(escolaridade.id).subscribe({
+          next: () => {
+            this.snacBar.open('Escolaridade excluída com sucesso!', 'Fechar', {
+              duration: 10000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: ['success-snackbar']
+            });
+            this.recarregarDados();
+          }
+        });
+      }
+    });
   }
 }

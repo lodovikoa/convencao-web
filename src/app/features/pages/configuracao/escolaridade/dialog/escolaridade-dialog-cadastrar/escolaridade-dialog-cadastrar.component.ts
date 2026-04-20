@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { EscolaridadeService } from '../../../../../../shared/services/configuracao/escolaridade.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Escolaridade } from '@shared/interfaces/configuracao/escolaridade';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-escolaridade-dialog-cadastrar',
@@ -18,7 +19,8 @@ import { Escolaridade } from '@shared/interfaces/configuracao/escolaridade';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './escolaridade-dialog-cadastrar.component.html',
   styleUrl: './escolaridade-dialog-cadastrar.component.scss',
@@ -29,20 +31,30 @@ export class EscolaridadeDialogCadastrarComponent {
   private readonly dialogRef = inject(MatDialogRef<EscolaridadeDialogCadastrarComponent>);
   private readonly escolaridadeService = inject(EscolaridadeService);
 
-  escolaridades = toSignal(this.escolaridadeService.listarEscolaridades(), { initialValue: [] as Escolaridade[] });
+  isLoading = signal(false);
 
   form: FormGroup = this.fb.group({
     dsDescricao: ['', [Validators.required, Validators.maxLength(40)]],
   });
 
-  salvar() {
-    if (this.form.valid) {
-      // Retorna os dados do formulário para o componente pai
-      this.dialogRef.close(this.form.value);
+  onSave() {
+    if (!this.form.valid) {
+      return;
     }
+
+    this.escolaridadeService.cadastrarEscolaridade(this.form.value as Escolaridade).subscribe({
+      next: (res) => {
+        this.isLoading.set(false);
+        this.dialogRef.close(true);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+      }
+    });
+
   }
 
-  cancelar() {
+  onCancel () {
     this.dialogRef.close(null);
   }
 }

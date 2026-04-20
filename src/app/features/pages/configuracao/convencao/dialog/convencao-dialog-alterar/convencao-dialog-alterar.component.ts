@@ -34,7 +34,7 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
   private readonly estadoService = inject(EstadoService);
   private readonly dialogRef = inject(MatDialogRef<ConvencaoDialogAlterarComponent>);
   private readonly data: Convencao = inject(MAT_DIALOG_DATA);
-  private readonly ConvencaoService = inject(ConvencaoService);
+  private readonly convencaoService = inject(ConvencaoService);
 
   isLoading = signal(false);
 
@@ -103,7 +103,7 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
       // 3. Removemos o objeto 'estado' completo para a API receber apenas o Long (ID)
       delete payload.estado;
 
-      this.ConvencaoService.editarConvencao(payload).subscribe({
+      this.convencaoService.editarConvencao(payload).subscribe({
         next: (res) => {
           this.isLoading.set(false);
           this.dialogRef.close(true);

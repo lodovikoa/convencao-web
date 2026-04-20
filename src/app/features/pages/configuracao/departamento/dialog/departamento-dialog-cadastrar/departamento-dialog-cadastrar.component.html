@@ -32,8 +32,15 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancelar()">Cancelar</button>
-  <button mat-raised-button color="primary" [disabled]="form.invalid" (click)="salvar()">
-    Gravar
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+      color="primary"
+      [disabled]="form.invalid || isLoading()"
+      (click)="onSave()">
+    @if(isLoading()) {
+      <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+    } @else {
+      Gravar
+    }
   </button>
 </mat-dialog-actions>
