@@ -15,7 +15,8 @@ import { DepartamentoService } from '@shared/services/configuracao/departamento.
 
 @Component({
   selector: 'app-departamento-dialog-alterar',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -32,8 +33,8 @@ export class DepartamentoDialogAlterarComponent {
   private readonly fb = inject(FormBuilder);
   private readonly convencaoService = inject(ConvencaoService);
   private readonly dialogRef = inject(MatDialogRef<DepartamentoDialogAlterarComponent>);
-  readonly data: Departamento = inject(MAT_DIALOG_DATA);
-  readonly departamentoService = inject(DepartamentoService);
+  private readonly data: Departamento = inject(MAT_DIALOG_DATA);
+  private readonly departamentoService = inject(DepartamentoService);
 
   isLoading = signal(false);
 

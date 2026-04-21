@@ -18,13 +18,15 @@ import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/c
 
 @Component({
   selector: 'app-departamento',
-  imports: [    CommonModule,
+  imports: [
+    CommonModule,
     MatTableModule,
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule],
+    MatProgressSpinnerModule
+  ],
   templateUrl: './departamento.component.html',
   styleUrl: './departamento.component.scss',
 })
@@ -33,7 +35,6 @@ export class DepartamentoComponent {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly departamentoService = inject(DepartamentoService);
-  private readonly snacBar = inject(MatSnackBar)
 
   isLoading = signal(false);
   datasource = new MatTableDataSource<Departamento>([]);
@@ -75,7 +76,7 @@ export class DepartamentoComponent {
 
     dialogRef.afterClosed().subscribe(saved => {
       if (saved) {
-        this.snacBar.open('Departamento cadastrado com sucesso!', 'Fechar', {
+        this.snackBar.open('Departamento cadastrado com sucesso!', 'Fechar', {
           duration: 10000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
@@ -97,7 +98,7 @@ export class DepartamentoComponent {
 
     dialogRef.afterClosed().subscribe(saved => {
       if (saved) {
-        this.snacBar.open('Departamento atualizado com sucesso!', 'Fechar', {
+        this.snackBar.open('Departamento atualizado com sucesso!', 'Fechar', {
           duration: 10000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
@@ -119,7 +120,7 @@ export class DepartamentoComponent {
       if (result) {
         this.departamentoService.excluirDepartamento(departamento.id).subscribe({
           next: () => {
-            this.snacBar.open('Departamento excluído com sucesso!', 'Fechar', {
+            this.snackBar.open('Departamento excluído com sucesso!', 'Fechar', {
               duration: 10000,
               horizontalPosition: 'center',
               verticalPosition: 'top',
