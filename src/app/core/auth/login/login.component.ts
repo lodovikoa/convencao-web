@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserCredentials } from '@shared/interfaces/auth/user-credentials';
 import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +20,9 @@ import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatIconModule],
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -31,6 +35,7 @@ export class LoginComponent {
 
   // Usando Signals para controle de estado (tendência do Angular 21)
   hidePassword = signal(true);
+  isLoading = signal(false);
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(5)]),
@@ -42,26 +47,32 @@ export class LoginComponent {
       return;
     }
 
+    this.isLoading.set(true);
+
     const payload: UserCredentials = {
       username: this.loginForm.controls.username.value as string,
       password: this.loginForm.controls.password.value as string
     }
 
-    this.loginFacadeService.login(payload).subscribe({
-      next: (ret) => {
-        this.router.navigate(['']);
-      },
-      error: (err: HttpErrorResponse) => {
-        if (err.status === 401) {
-          this.loginForm.setErrors({ invalidCredentials: true });
-          this.mensagemErroLogin = 'Credenciais inválidas, tente novamente.'
+    this.loginFacadeService.login(payload)
+      .pipe(
+        finalize(() => this.isLoading.set(false))
+      )
+      .subscribe({
+        next: (ret) => {
+          this.router.navigate(['']);
+        },
+        error: (err: HttpErrorResponse) => {
+          if (err.status === 401) {
+            this.loginForm.setErrors({ invalidCredentials: true });
+            this.mensagemErroLogin = 'Credenciais inválidas, tente novamente.'
+          }
+          if (err.status == 500) {
+            this.loginForm.setErrors({ invalidCredentials: true });
+            this.mensagemErroLogin = 'Erro de comunicação, informe ao administrador responável.'
+          }
         }
-        if (err.status == 500) {
-          this.loginForm.setErrors({ invalidCredentials: true });
-          this.mensagemErroLogin = 'Erro de comunicação, informe ao administrador responável.'
-        }
-      }
-    });
+      });
   }
 
   togglePassword() {

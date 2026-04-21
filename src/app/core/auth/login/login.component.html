@@ -1,4 +1,11 @@
 <div class="login-container">
+
+  @if(isLoading()) {
+  <div class="loading-overlay">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  }
+
   <mat-card class="login-card">
     <mat-card-header>
       <mat-card-title>Bem-vindo</mat-card-title>
@@ -7,9 +14,9 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       @if (loginForm.hasError('invalidCredentials')) {
-        <mat-card-subtitle>
-          <mat-error>{{erroLogin()}}</mat-error>
-        </mat-card-subtitle>
+      <mat-card-subtitle>
+        <mat-error>{{erroLogin()}}</mat-error>
+      </mat-card-subtitle>
       }
 
       <mat-card-content>
