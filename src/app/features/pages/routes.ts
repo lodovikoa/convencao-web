@@ -13,6 +13,7 @@ import { ConvencaoComponent } from "./configuracao/convencao/listar/convencao.co
 import { DepartamentoComponent } from "./configuracao/departamento/listar/departamento.component";
 import { EscolaridadeComponent } from "./configuracao/escolaridade/listar/escolaridade.component";
 import { CargoListarComponent } from "./configuracao/cargo/cargo-listar/cargo-listar.component";
+import { EstadocivilListarComponent } from "./configuracao/estadocivil/estadocivil-listar/estadocivil-listar.component";
 
 export default [
   { path: '', component: HomeComponent },
@@ -23,7 +24,8 @@ export default [
       { path: 'estadoListar', component: EstadoComponent },
       { path: 'departamentoListar', component: DepartamentoComponent },
       { path: 'escolaridadeListar', component: EscolaridadeComponent },
-      { path: 'cargoListar', component: CargoListarComponent }
+      { path: 'cargoListar', component: CargoListarComponent },
+      { path: 'estadocivilListar', component: EstadocivilListarComponent },
     ]
    },
   { path: 'comments', component: CommentsComponent},
