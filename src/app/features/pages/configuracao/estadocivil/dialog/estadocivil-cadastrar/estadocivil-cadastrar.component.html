@@ -1,1 +1,26 @@
-<p>estadocivil-cadastrar works!</p>
+<h2 mat-dialog-title>Cadastrar Estado Civil</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" style="padding-top: 10px;">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado Civil</mat-label>
+      <input matInput formControlName="dsEstadoCivil">
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+      color="primary"
+      [disabled]="form.invalid || isLoading()"
+      (click)="onSave()">
+      @if(isLoading()) {
+        <mat-spinner diameter="20" style="display: inline-block;"></mat-spinner>
+      } @else {
+        Gravar
+      }
+  </button>
+</mat-dialog-actions>

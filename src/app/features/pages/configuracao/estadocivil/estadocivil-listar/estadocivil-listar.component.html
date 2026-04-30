@@ -1,6 +1,6 @@
 <div class="header-container">
   <h2>Cadastro de Estado Civil</h2>
-  <button mat-raised-button color="primary" (click)="cadastrar()">
+  <button *appHasPermission="'T_CFT_MASTER'" mat-raised-button color="primary" (click)="cadastrar()">
     <mat-icon>add</mat-icon> Cadastrar Estado Civil
   </button>
 </div>
@@ -24,10 +24,10 @@
     <ng-container matColumnDef="acoes">
       <th mat-header-cell *matHeaderCellDef> Ações </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-icon-button color="primary" (click)="editar(element)">
+        <button *appHasPermission="'T_CFT_MASTER'" mat-icon-button color="primary" (click)="editar(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="excluir(element)">
+        <button *appHasPermission="'T_CFT_MASTER'" mat-icon-button color="warn" (click)="excluir(element)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>

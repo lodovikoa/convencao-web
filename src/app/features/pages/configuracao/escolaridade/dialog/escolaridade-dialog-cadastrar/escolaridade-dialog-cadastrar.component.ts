@@ -7,13 +7,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { EscolaridadeService } from '../../../../../../shared/services/configuracao/escolaridade.service';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Escolaridade } from '@shared/interfaces/configuracao/escolaridade';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-escolaridade-dialog-cadastrar',
-  imports: [ CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
