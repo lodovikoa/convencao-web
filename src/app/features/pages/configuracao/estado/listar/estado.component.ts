@@ -21,7 +21,8 @@ import { HasPermissionDirectiveDirective } from '@shared/directives/has-permissi
 
 @Component({
   selector: 'app-estado',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     MatTableModule,
     MatIconModule,
     MatButtonModule,
@@ -51,7 +52,7 @@ export class EstadoComponent {
   datasource = new MatTableDataSource<Estado>([]);
 
   // Criamos um "gatilho". O valor inicial 'undefined' dispara a primeira busca.
-  private refreshList$ = new BehaviorSubject<{ page: number, size: number, sort: string }>({ page: 0, size: 10, sort: 'dsNome,asc' });
+  private readonly refreshList$ = new BehaviorSubject<{ page: number, size: number, sort: string }>({ page: 0, size: 10, sort: 'dsNome,asc' });
 
   // O toSignal observa o 'refreshList$'.
   // O switchMap garante que, sempre que o gatilho for acionado, chamamos o listarEstados().
