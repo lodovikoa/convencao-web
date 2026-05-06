@@ -1,1 +1,36 @@
-<p>profissao-cadastrar works!</p>
+<h2 mat-dialog-title>Cadastrar Profissão</h2>
+    <mat-dialog-content [formGroup]="profissaoForm">
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
+        <mat-form-field appearance="outline">
+          <mat-label>Descrição</mat-label>
+          <input matInput formControlName="dsDescricao" placeholder="Ex: Engenheiro">
+          @if (profissaoForm.get('dsDescricao')?.invalid && profissaoForm.get('dsDescricao')?.touched) {
+            <mat-error>Verifique o tamanho máximo da descrição que não pode ultrapassar a 150 caracteres.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>CBO</mat-label>
+          <input matInput formControlName="dsCBO" placeholder="Ex: 1111-10">
+          @if (profissaoForm.get('dsCBO')?.invalid && profissaoForm.get('dsCBO')?.touched) {
+            <mat-error>Verifique o tamanho do CBO que deve ter de 6 caracteres.</mat-error>
+          }
+        </mat-form-field>
+
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()">Cancelar</button>
+      <button mat-raised-button
+              color="primary"
+              [disabled]="profissaoForm.invalid || isLoading()"
+              (click)="onSave()">
+          @if(isLoading()) {
+            <mat-spinner diameter="20" style="display: inline-block;"></mat-spinner>
+          } @else {
+            Salvar
+          }
+      </button>
+    </mat-dialog-actions>
+

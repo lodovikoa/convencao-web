@@ -17,6 +17,7 @@ import { ProfissaoAlterarComponent } from '../dialog/profissao-alterar/profissao
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
+import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-profissao-listar',
@@ -30,8 +31,10 @@ import { MatSortModule, Sort } from '@angular/material/sort';
     MatPaginatorModule,
     MatSortModule,
     MatProgressSpinnerModule,
-    HasPermissionDirectiveDirective
+    HasPermissionDirectiveDirective,
+    NgxMaskPipe
   ],
+  providers: [provideNgxMask()],
   templateUrl: './profissao-listar.component.html',
   styleUrl: './profissao-listar.component.scss',
 })

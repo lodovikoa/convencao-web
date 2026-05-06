@@ -1,14 +1,41 @@
-.form-row {
+.container {
+  margin: 20px;
+  border-radius: 8px;
+  overflow: hidden;   /* Garante que o border-radius apareça na tabela */
+  position: relative; /* Adicionado para ancorar o loading-overlay */
+  min-height: 200px;  /* Altura mínima para o spinner não achatar a tabela vazia */
+}
+
+/* Novo estilo para o loading */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 10;
   display: flex;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+table {
   width: 100%;
 }
 
-.full-width {
-  width: 100%;
-margin-bottom: 8px;
+.center-column {
+  text-align: center !important;
+  justify-content: center;
 }
 
-.flex-1 {
-  flex: 1;
+/* Estilo para destacar a coluna de ID */
+.mat-column-id {
+  width: 60px;
+  color: #666;
+}
+
+/* Estilo para a coluna UF */
+.mat-column-uf {
+  width: 100px;
 }
