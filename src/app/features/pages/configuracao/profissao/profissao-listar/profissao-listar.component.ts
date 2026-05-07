@@ -10,14 +10,17 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { HasPermissionDirectiveDirective } from '@shared/directives/has-permission-directive.directive';
 import { ProfissaoService } from '../../../../../shared/services/configuracao/profissao.service';
 import { Profissao } from '@shared/interfaces/configuracao/profissao';
-import { BehaviorSubject, finalize, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, finalize, switchMap, tap, debounceTime, Subject } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ProfissaoCadastrarComponent } from '../dialog/profissao-cadastrar/profissao-cadastrar.component';
 import { ProfissaoAlterarComponent } from '../dialog/profissao-alterar/profissao-alterar.component';
 import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
-import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { NgxMaskPipe, provideNgxMask, NgxMaskDirective } from 'ngx-mask';
+import { FormsModule, ɵInternalFormsSharedModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-profissao-listar',
@@ -32,8 +35,13 @@ import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
     MatSortModule,
     MatProgressSpinnerModule,
     HasPermissionDirectiveDirective,
-    NgxMaskPipe
-  ],
+    NgxMaskPipe,
+    ɵInternalFormsSharedModule,
+    NgxMaskDirective,
+    MatFormFieldModule,
+    FormsModule,
+    MatInputModule
+],
   providers: [provideNgxMask()],
   templateUrl: './profissao-listar.component.html',
   styleUrl: './profissao-listar.component.scss',
@@ -42,9 +50,17 @@ export class ProfissaoListarComponent {
 
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly ProfissaoService = inject(ProfissaoService);
+  private readonly profissaoService = inject(ProfissaoService);
+
+  private readonly searchSubject = new Subject<void>();
 
   isLoading = signal(false);
+
+  // Ojeto para bind do ngModel
+  filtros = {
+    dsDescricao: '',
+    dsCBO: ''
+  };
 
   // 1 - Refreência para o paginador usando a nova sintaxe do Signal (Angular 21)
   paginator = viewChild(MatPaginator);
@@ -52,7 +68,19 @@ export class ProfissaoListarComponent {
   datasource = new MatTableDataSource<Profissao>([]);
 
   // Criamos um "gatilho". O valor inicial 'undefined' dispara a primeira busca.
-  private readonly refreshList$ = new BehaviorSubject<{ page: number, size: number, sort: string }>({ page: 0, size: 10, sort: 'dsDescricao,asc' });
+  private readonly refreshList$ = new BehaviorSubject<{
+    page: number,
+    size: number,
+    sort: string,
+    dsDescricao?: string,
+    dsCBO?: string
+  }>({
+    page: 0,
+    size: 10,
+    sort: 'dsDescricao,asc',
+    dsDescricao: '',
+    dsCBO: ''
+  });
 
   displayedColumns: string[] = ['dsDescricao', 'dsCBO', 'acoes'];
 
@@ -60,8 +88,7 @@ export class ProfissaoListarComponent {
   profissoesResponse = toSignal(
     this.refreshList$.pipe(
       tap(() => this.isLoading.set(true)), // Inicia o loading ao disparar a requisição
-      switchMap((params) =>
-        this.ProfissaoService.listar(params.page, params.size, params.sort).pipe(
+      switchMap((p) => this.profissaoService.listar(p.page, p.size, p.sort, p.dsDescricao, p.dsCBO).pipe(
           // delay(2000), // <--- ADICIONE ISSO: Simula um atraso de 2 segundos
           finalize(() => this.isLoading.set(false)) // Desliga o loading ao finalizar (sucesso ou erro)
         ))
@@ -98,6 +125,11 @@ export class ProfissaoListarComponent {
   }
 
   constructor() {
+    // Configura o debounce para evitar chamadas excessivas à API enquanto o usuário digita
+    this.searchSubject.pipe(debounceTime(500)).subscribe(() => {
+      this.executarBusca();
+    });
+
     // 3 - Efeito que observa mudanças no Signal 'estados' e atualiza o Datasource
     effect(() => {
       const response = this.profissoesResponse();
@@ -112,6 +144,22 @@ export class ProfissaoListarComponent {
           pg.pageIndex = response.pageable.pageNumber;
         }
       }
+    });
+  }
+
+  aoDigitar() {
+    this.searchSubject.next();
+  }
+
+  private executarBusca() {
+    const pg = this.paginator();
+    if (pg) pg.pageIndex = 0;
+
+    this.refreshList$.next({
+      ...this.refreshList$.value,
+      page: 0,
+      dsDescricao: this.filtros.dsDescricao,
+      dsCBO: this.filtros.dsCBO
     });
   }
 
@@ -169,7 +217,7 @@ export class ProfissaoListarComponent {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          this.ProfissaoService.excluir(profissao.id).subscribe({
+          this.profissaoService.excluir(profissao.id).subscribe({
             next: () => {
               this.snackBar.open('Profissão excluída com sucesso!', 'Fechar', {
                 duration: 10000,

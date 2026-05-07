@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Profissao } from '@shared/interfaces/configuracao/profissao';
 import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-paginada';
@@ -12,9 +12,17 @@ export class ProfissaoService {
   private readonly API_URL = '/api/profissoes';
   private readonly http = inject(HttpClient);
 
-  listar(page: number = 0, size: number = 10, sort: string = 'dsDescricao,asc'): Observable<RespostaPaginada<Profissao>> {
-    const url = `${this.API_URL}/listarPage?page=${page}&size=${size}&sort=${sort}`;
-    return this.http.get<RespostaPaginada<Profissao>>(url);
+  listar(page: number = 0, size: number = 10, sort: string = 'dsDescricao,asc', dsDescricao?: string, dsCBO?: string): Observable<RespostaPaginada<Profissao>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', sort);
+
+      if(dsDescricao) { params = params.set('dsDescricao', dsDescricao) };
+      if(dsCBO) { params = params.set('dsCBO', dsCBO) }
+
+    const url = `${this.API_URL}/listarPage`;
+    return this.http.get<RespostaPaginada<Profissao>>(url, { params });
   }
 
   listarTodos(): Observable<Profissao[]> {

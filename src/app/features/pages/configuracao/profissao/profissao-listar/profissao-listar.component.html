@@ -16,12 +16,26 @@
   <table mat-table [dataSource]="datasource" matSort (matSortChange)="ordenar($event)">
 
     <ng-container matColumnDef="dsDescricao">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="header-filter-container">
+          <span mat-sort-header>Descrição</span>
+          <mat-form-field appearance="outline" class="compact-filter">
+            <input matInput placeholder="Filtrar..." [(ngModel)]="filtros.dsDescricao" (input)="aoDigitar()" (click)="$event.stopPropagation()">
+          </mat-form-field>
+        </div>
+      </th>
       <td mat-cell *matCellDef="let element"> {{element.dsDescricao}} </td>
     </ng-container>
 
     <ng-container matColumnDef="dsCBO">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> CBO </th>
+      <th mat-header-cell *matHeaderCellDef>
+        <div class="header-filter-container">
+          <span mat-sort-header>CBO</span>
+          <mat-form-field appearance="outline" class="compact-filter">
+            <input matInput placeholder="Filtrar..." [(ngModel)]="filtros.dsCBO" mask="0000-00" (input)="aoDigitar()" (click)="$event.stopPropagation()">
+          </mat-form-field>
+        </div>
+      </th>
       <td mat-cell *matCellDef="let element"> {{element.dsCBO || '-'  | mask: '0000-00' }} </td>
     </ng-container>
 
