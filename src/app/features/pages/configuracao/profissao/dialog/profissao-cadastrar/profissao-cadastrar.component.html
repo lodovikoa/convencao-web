@@ -5,7 +5,7 @@
           <mat-label>Descrição</mat-label>
           <input matInput formControlName="dsDescricao" placeholder="Ex: Engenheiro">
           @if (profissaoForm.get('dsDescricao')?.invalid && profissaoForm.get('dsDescricao')?.touched) {
-            <mat-error>Verifique o tamanho máximo da descrição que não pode ultrapassar a 150 caracteres.</mat-error>
+            <mat-error>Descrição é de preenchimento obrigatório com no máximo 150 caracteres.</mat-error>
           }
         </mat-form-field>
 
@@ -13,7 +13,7 @@
           <mat-label>CBO</mat-label>
           <input matInput formControlName="dsCBO" placeholder="Ex: 1111-10">
           @if (profissaoForm.get('dsCBO')?.invalid && profissaoForm.get('dsCBO')?.touched) {
-            <mat-error>Verifique o tamanho do CBO que deve ter de 6 caracteres.</mat-error>
+            <mat-error>CBO se preenchido deve ter 6 caracteres.</mat-error>
           }
         </mat-form-field>
 

@@ -32,8 +32,8 @@ export class ProfissaoCadastrarComponent {
   isLoading = signal(false);
 
   profissaoForm = this.fb.group({
-    dsDescricao: ['', Validators.required, Validators.minLength(150)],
-    dsCBO: ['', Validators.minLength(6), Validators.maxLength(6)],
+    dsDescricao: ['', [Validators.required, Validators.maxLength(150)]],
+    dsCBO: ['', [Validators.minLength(6), Validators.maxLength(6)]],
   });
 
   onSave(): void {
