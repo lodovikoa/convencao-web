@@ -171,7 +171,7 @@ export class ProfissaoListarComponent {
 
   cadastrar() {
     const dialogRef = this.dialog.open(ProfissaoCadastrarComponent, {
-      width: '400px',
+      width: '800px',
       disableClose: true
     });
 
@@ -190,7 +190,7 @@ export class ProfissaoListarComponent {
 
   editar(profissao: Profissao) {
     const dialogRef = this.dialog.open(ProfissaoAlterarComponent, {
-      width: '400px',
+      width: '800px',
       disableClose: true,
       data: { ...profissao }
     });

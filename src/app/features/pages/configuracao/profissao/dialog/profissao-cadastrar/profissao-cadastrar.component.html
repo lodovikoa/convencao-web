@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Cadastrar Profissão</h2>
     <mat-dialog-content [formGroup]="profissaoForm">
-      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
+      <div style="display: flex; flex-direction: column; gap: 30px; padding-top: 10px;">
         <mat-form-field appearance="outline">
           <mat-label>Descrição</mat-label>
           <input matInput formControlName="dsDescricao" placeholder="Ex: Engenheiro">
@@ -11,7 +11,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>CBO</mat-label>
-          <input matInput formControlName="dsCBO" placeholder="Ex: 1111-10">
+          <input matInput formControlName="dsCBO" mask="0000-00" placeholder="Ex: 1111-10">
           @if (profissaoForm.get('dsCBO')?.invalid && profissaoForm.get('dsCBO')?.touched) {
             <mat-error>CBO se preenchido deve ter 6 caracteres.</mat-error>
           }

@@ -26,7 +26,7 @@ import { EstadoService } from '@shared/services/configuracao/estado.service';
 export class EstadoDialogAlterarComponent {
 
   private readonly fb = inject(FormBuilder);
-  private estadoService = inject(EstadoService);
+  private readonly estadoService = inject(EstadoService);
   private readonly dialogRef = inject(MatDialogRef<EstadoDialogAlterarComponent>);
 
   isLoading = signal(false);

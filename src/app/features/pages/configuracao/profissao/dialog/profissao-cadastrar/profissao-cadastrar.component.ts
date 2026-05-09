@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Profissao } from '@shared/interfaces/configuracao/profissao';
 import { ProfissaoService } from '@shared/services/configuracao/profissao.service';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-profissao-cadastrar',
@@ -18,8 +19,10 @@ import { ProfissaoService } from '@shared/services/configuracao/profissao.servic
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    NgxMaskDirective
   ],
+  providers: [ provideNgxMask() ],
   templateUrl: './profissao-cadastrar.component.html',
   styleUrl: './profissao-cadastrar.component.scss',
 })
