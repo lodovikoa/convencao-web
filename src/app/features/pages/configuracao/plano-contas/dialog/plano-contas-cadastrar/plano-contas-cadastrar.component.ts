@@ -39,7 +39,7 @@ export class PlanoContasCadastrarComponent {
   convencaos = toSignal(this.convencaoService.listarConvencao(), { initialValue: [] as Convencao[] });
 
   form: FormGroup = this.fb.group({
-    cdConta: ['', [Validators.required, Validators.pattern(/^[0-9]*$/)]],
+    cdConta: ['', [Validators.required, Validators.pattern(/^\d*$/)]],
     dsConta: ['', [Validators.required, Validators.maxLength(100)]],
     tpConta: ['', [Validators.required, Validators.maxLength(1), Validators.pattern(/^[DC]$/)]],
     convencaoId: ['', [Validators.required]]

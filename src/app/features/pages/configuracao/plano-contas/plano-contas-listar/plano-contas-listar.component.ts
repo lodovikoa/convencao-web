@@ -133,7 +133,7 @@ export class PlanoContasListarComponent {
       if (result) {
         this.Service.excluir(entity.id).subscribe({
           next: () => {
-            this.snackBar.open('Departamento excluído com sucesso!', 'Fechar', {
+            this.snackBar.open('Plano de Contas excluído com sucesso!', 'Fechar', {
               duration: 10000,
               horizontalPosition: 'center',
               verticalPosition: 'top',
