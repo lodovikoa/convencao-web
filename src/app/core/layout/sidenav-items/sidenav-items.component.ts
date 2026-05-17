@@ -35,7 +35,8 @@ export class SidenavItemsComponent {
         { icon: 'dashboard', label: 'Escolaridades', route: 'escolaridadeListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR']},
         { icon: 'dashboard', label: 'Cargos', route: 'cargoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR']},
         { icon: 'dashboard', label: 'Estado Civil', route: 'estadocivilListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR']},
-        { icon: 'dashboard', label: 'Profissões', route: 'profissaoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR']}
+        { icon: 'dashboard', label: 'Profissões', route: 'profissaoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR']},
+        { icon: 'dashboard', label: 'Plano de Contas', route: 'planoContasListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR']}
 
       ]
      },

@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>Cadastrar Plano de Contas</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" style="padding-top: 10px;">
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Código da Conta</mat-label>
+        <input
+          matInput
+          formControlName="cdConta"
+          inputmode="numeric"
+          (input)="form.get('cdConta')?.setValue(form.get('cdConta')?.value.replace(/[^0-9]/g, ''))" >
+
+        @if (form.get('cdConta')?.hasError('pattern')) {
+          <mat-error>Apenas números são permitidos</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="flex-1">
+        <mat-label>Tipo</mat-label>
+        <input
+          matInput
+          formControlName="tpConta"
+          maxlength="1"
+          placeholder="(D)ébito ou (C)rébito"
+          (input)="form.get('tpConta')?.setValue(form.get('tpConta')?.value.toUpperCase().replace(/[^DC]/g, ''))" >
+
+        @if (form.get('tpConta')?.hasError('pattern')) {
+          <mat-error>Permitido apenas D (Débito) ou C (Crédito)</mat-error>
+        }
+      </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descrição da Conta</mat-label>
+        <input matInput formControlName="dsConta">
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Convenção</mat-label>
+          <mat-select formControlName="convencaoId">
+            <mat-option [value]="null">Selecione uma convenção</mat-option>
+            @for (convencao of convencaos(); track convencao.id) {
+              <mat-option [value]="convencao.id">
+                {{ convencao.dsReduzido }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button
+      color="primary"
+      [disabled]="form.invalid || isLoading()"
+      (click)="onSave()">
+    @if(isLoading()) {
+      <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+    } @else {
+      Gravar
+    }
+  </button>
+</mat-dialog-actions>
+

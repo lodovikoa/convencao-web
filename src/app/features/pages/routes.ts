@@ -15,6 +15,7 @@ import { EscolaridadeComponent } from "./configuracao/escolaridade/listar/escola
 import { CargoListarComponent } from "./configuracao/cargo/cargo-listar/cargo-listar.component";
 import { EstadocivilListarComponent } from "./configuracao/estadocivil/estadocivil-listar/estadocivil-listar.component";
 import { ProfissaoListarComponent } from "./configuracao/profissao/profissao-listar/profissao-listar.component";
+import { PlanoContasListarComponent } from "./configuracao/plano-contas/plano-contas-listar/plano-contas-listar.component";
 
 export default [
   { path: '', component: HomeComponent },
@@ -27,7 +28,8 @@ export default [
       { path: 'escolaridadeListar', component: EscolaridadeComponent },
       { path: 'cargoListar', component: CargoListarComponent },
       { path: 'estadocivilListar', component: EstadocivilListarComponent },
-      { path: 'profissaoListar', component: ProfissaoListarComponent }
+      { path: 'profissaoListar', component: ProfissaoListarComponent },
+      { path: 'planoContasListar', component: PlanoContasListarComponent }
     ]
    },
   { path: 'comments', component: CommentsComponent},
