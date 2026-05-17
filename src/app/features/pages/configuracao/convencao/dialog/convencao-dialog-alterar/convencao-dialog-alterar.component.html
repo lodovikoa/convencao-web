@@ -86,7 +86,7 @@
   <button mat-button mat-dialog-close>Cancelar</button>
   <button mat-raised-button
       color="primary"
-      [disabled]="form.invalid || isLoading()"
+      [disabled]="form.invalid || !form.dirty || isLoading()"
       (click)="onSave()">
       @if(isLoading()) {
         <mat-spinner diameter="20" style="display: inline-block;"></mat-spinner>

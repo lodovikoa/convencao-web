@@ -28,7 +28,11 @@
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading()" (click)="onSave()">
+  <button
+      mat-raised-button
+      color="primary"
+      [disabled]="form.invalid || !form.dirty || isLoading()"
+      (click)="onSave()">
     @if(isLoading()) {
     <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
       Salvar
