@@ -18,8 +18,8 @@ export class PlanoContasService {
     return this.http.get(`${this.API_URL}/${id}`);
   }
 
-  cadastrar(planoContas: Partial<PlanoContas>): Observable<PlanoContas> {
-    return this.http.post<PlanoContas>(this.API_URL, planoContas);
+  cadastrar(entity: Partial<PlanoContas>): Observable<PlanoContas> {
+    return this.http.post<PlanoContas>(this.API_URL, entity);
   }
 
   editar(entity: any): Observable<PlanoContas> {

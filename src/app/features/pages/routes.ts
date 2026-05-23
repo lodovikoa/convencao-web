@@ -16,6 +16,8 @@ import { CargoListarComponent } from "./configuracao/cargo/cargo-listar/cargo-li
 import { EstadocivilListarComponent } from "./configuracao/estadocivil/estadocivil-listar/estadocivil-listar.component";
 import { ProfissaoListarComponent } from "./configuracao/profissao/profissao-listar/profissao-listar.component";
 import { PlanoContasListarComponent } from "./configuracao/plano-contas/plano-contas-listar/plano-contas-listar.component";
+import { TipoLancamentoListarComponent } from "./configuracao/tipo-lancamento/tipo-lancamento-listar/tipo-lancamento-listar.component";
+import { RegiaoListarComponent } from "./configuracao/regiao/regiao-listar/regiao-listar.component";
 
 export default [
   { path: '', component: HomeComponent },
@@ -29,7 +31,9 @@ export default [
       { path: 'cargoListar', component: CargoListarComponent },
       { path: 'estadocivilListar', component: EstadocivilListarComponent },
       { path: 'profissaoListar', component: ProfissaoListarComponent },
-      { path: 'planoContasListar', component: PlanoContasListarComponent }
+      { path: 'planoContasListar', component: PlanoContasListarComponent },
+      { path: 'tipoLancamentoListar', component: TipoLancamentoListarComponent },
+      { path: 'regiaoListar', component: RegiaoListarComponent }
     ]
    },
   { path: 'comments', component: CommentsComponent},
