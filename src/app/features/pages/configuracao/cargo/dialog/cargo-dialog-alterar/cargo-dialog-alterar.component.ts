@@ -11,6 +11,7 @@ import { Cargo } from '@shared/interfaces/configuracao/cargo';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { CargoService } from '@shared/services/configuracao/cargo.service';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
+import { compareEntities } from '../../../../../../shared/interfaces/utilitarios/compare.util';
 
 @Component({
   selector: 'app-cargo-dialog-alterar',
@@ -35,6 +36,8 @@ export class CargoDialogAlterarComponent {
   private readonly data: Cargo = inject(MAT_DIALOG_DATA);
   private readonly convencaoService = inject(ConvencaoService);
 
+  readonly compararConvencao = compareEntities<Convencao>;
+
   isLoading = signal(false);
 
   form!: FormGroup;
@@ -58,15 +61,10 @@ export class CargoDialogAlterarComponent {
     });
   }
 
-  compararConvencao(convencao1: Convencao | null, convencao2: Convencao | null): boolean {
-    if (convencao1 === null && convencao2 === null) return true; // Ambos são nulos, considerados iguais
-    if (convencao1 === null || convencao2 === null) return false; // Um é nulo e o outro não, considerados diferentes
-    return convencao1.id === convencao2.id; // Compara os IDs das Convencões para determinar se são iguais
-  }
-
   onSave(): void {
     if (this.form.invalid) return;
 
+    this.isLoading.set(true);
     const forValue = this.form.value;
     const payload: any = {
       ...forValue,

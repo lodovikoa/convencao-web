@@ -11,6 +11,7 @@ import { MoedaBrDirective } from '@shared/directives/moeda-br.directive';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { PlanoContas } from '@shared/interfaces/configuracao/plano-contas';
 import { TipoLancamento } from '@shared/interfaces/configuracao/tipo-lancamento';
+import { compareEntities } from '@shared/interfaces/utilitarios/compare.util';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 import { PlanoContasService } from '@shared/services/configuracao/plano-contas.service';
 import { TipoLancamentoService } from '@shared/services/configuracao/tipo-lancamento.service';
@@ -38,6 +39,9 @@ export class TipoLancamentoAlterarComponent {
   private readonly dialogRef = inject(MatDialogRef<TipoLancamentoAlterarComponent>);
   private readonly data: TipoLancamento = inject(MAT_DIALOG_DATA);
   private readonly service = inject(TipoLancamentoService);
+
+  readonly compararConvencao = compareEntities<Convencao>;
+  readonly compararPlanoContas = compareEntities<PlanoContas>;
 
   isLoading = signal(false);
 
@@ -70,34 +74,13 @@ export class TipoLancamentoAlterarComponent {
     });
   }
 
-  // Função para comparar os objetos Convencao no select
-  compararConvencao(convencao1: Convencao | null, convencao2: Convencao | null): boolean {
-    // Se ambos forem nulos, são iguais
-    if (convencao1 === null && convencao2 === null) return true;
-
-    // Se um for nulo e o outro não, são diferentes
-    if (convencao1 === null || convencao2 === null) return false;
-
-    // Se ambos existem, compara pelo ID
-    return convencao1.id === convencao2.id;
-  }
-
-  // Função para comparar os objetos Plano de Contas no select
-  compararPlanoContas(planoContas1: PlanoContas | null, planoContas2: PlanoContas | null): boolean {
-    // Se ambos forem nulos, são iguais
-    if (planoContas1 === null && planoContas2 === null) return true;
-
-    // Se um for nulo e o outro não, são diferentes
-    if (planoContas1 === null || planoContas2 === null) return false;
-
-    // Se ambos existem, compara pelo ID
-    return planoContas1.id === planoContas2.id;
-  }
-
   onSave(): void {
     if (!this.form.valid) {
       return
     }
+
+    this.isLoading.set(true);
+
     // 1. Pegamos todos os valores do formulário
     const formValue = this.form.value;
 

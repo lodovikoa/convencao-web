@@ -9,6 +9,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { Regiao } from '@shared/interfaces/configuracao/regiao';
+import { compareEntities } from '@shared/interfaces/utilitarios/compare.util';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 import { RegiaoService } from '@shared/services/configuracao/regiao.service';
 
@@ -34,6 +35,8 @@ export class RegiaoAlterarComponent {
   private readonly data: Regiao = inject(MAT_DIALOG_DATA);
   private readonly service = inject(RegiaoService);
 
+  readonly compararConvencao = compareEntities<Convencao>;
+
   isLoading = signal(false);
 
   form!: FormGroup;
@@ -55,22 +58,12 @@ export class RegiaoAlterarComponent {
     });
   }
 
-  // Função para comparar os objetos Convencao no select
-  compararConvencao(convencao1: Convencao | null, convencao2: Convencao | null): boolean {
-    // Se ambos forem nulos, são iguais
-    if (convencao1 === null && convencao2 === null) return true;
-
-    // Se um for nulo e o outro não, são diferentes
-    if (convencao1 === null || convencao2 === null) return false;
-
-    // Se ambos existem, compara pelo ID
-    return convencao1.id === convencao2.id;
-  }
-
   onSave(): void {
     if (!this.form.valid) {
       return
     }
+
+    this.isLoading.set(true);
     // 1. Pegamos todos os valores do formulário
     const formValue = this.form.value;
 

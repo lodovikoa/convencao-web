@@ -9,6 +9,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { Departamento } from '@shared/interfaces/configuracao/departamento';
+import { compareEntities } from '@shared/interfaces/utilitarios/compare.util';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 import { DepartamentoService } from '@shared/services/configuracao/departamento.service';
 
@@ -36,6 +37,8 @@ export class DepartamentoDialogAlterarComponent {
   private readonly data: Departamento = inject(MAT_DIALOG_DATA);
   private readonly departamentoService = inject(DepartamentoService);
 
+  readonly compararConvencao = compareEntities<Convencao>;
+
   isLoading = signal(false);
 
   form!: FormGroup;
@@ -59,25 +62,15 @@ export class DepartamentoDialogAlterarComponent {
     });
   }
 
-  // Função para comparar os objetos Convencao no select
-  compararConvencao(convencao1: Convencao | null, convencao2: Convencao | null): boolean {
-    // Se ambos forem nulos, são iguais
-    if (convencao1 === null && convencao2 === null) return true;
-
-    // Se um for nulo e o outro não, são diferentes
-    if (convencao1 === null || convencao2 === null) return false;
-
-    // Se ambos existem, compara pelo ID
-    return convencao1.id === convencao2.id;
-  }
-
-
   // Na interface Departamento, o campo 'convencao' é do tipo Convencao, mas a API espera um campo 'convencaoId' do tipo Long (ID da convencao).
   // Portanto, precisamos criar um objeto de envio (Payload) que contenha o campo 'convencaoId' em vez do objeto 'convencao' completo.
   onSave(): void {
     if (!this.form.valid) {
       return
     }
+
+    this.isLoading.set(true);
+
     // 1. Pegamos todos os valores do formulário
     const formValue = this.form.value;
 
