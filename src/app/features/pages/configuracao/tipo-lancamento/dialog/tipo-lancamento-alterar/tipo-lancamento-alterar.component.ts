@@ -70,7 +70,7 @@ export class TipoLancamentoAlterarComponent {
     });
   }
 
-    // Função para comparar os objetos Convencao no select
+  // Função para comparar os objetos Convencao no select
   compararConvencao(convencao1: Convencao | null, convencao2: Convencao | null): boolean {
     // Se ambos forem nulos, são iguais
     if (convencao1 === null && convencao2 === null) return true;
@@ -82,7 +82,7 @@ export class TipoLancamentoAlterarComponent {
     return convencao1.id === convencao2.id;
   }
 
-      // Função para comparar os objetos Plano de Contas no select
+  // Função para comparar os objetos Plano de Contas no select
   compararPlanoContas(planoContas1: PlanoContas | null, planoContas2: PlanoContas | null): boolean {
     // Se ambos forem nulos, são iguais
     if (planoContas1 === null && planoContas2 === null) return true;
