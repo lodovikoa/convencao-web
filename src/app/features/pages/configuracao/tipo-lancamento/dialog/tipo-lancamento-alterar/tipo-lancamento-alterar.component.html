@@ -1,1 +1,49 @@
-<p>tipo-lancamento-alterar works!</p>
+<h2 mat-dialog-title>Alterar Tipos de Lancamento</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="grid-form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tipo de Lançamento</mat-label>
+      <input matInput formControlName="dsTipoLancamento">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Valor</mat-label>
+      <input matInput placeholder="R$ 0,00" formControlName="vlTipoLancamento" appMoedaBr>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>Conta Contábil</mat-label>
+      <mat-select formControlName="planoContas" [compareWith]="compararPlanoContas">
+        <mat-option [value]="null">Selecione uma Conta Contábil</mat-option>
+        @for (planoContas of planoContas(); track planoContas.id) {
+        <mat-option [value]="planoContas">{{ planoContas.dsConta }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width" style="grid-column: span 2;">
+      <mat-label>Convenção</mat-label>
+      <mat-select formControlName="convencao" [compareWith]="compararConvencao">
+        <mat-option [value]="null">Selecione uma Convenção</mat-option>
+        @for (convencao of convencaos(); track convencao.id) {
+        <mat-option [value]="convencao">{{ convencao.dsReduzido }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid || !form.dirty || isLoading()" (click)="onSave()">
+    @if(isLoading()) {
+    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+    Salvar
+    } @else {
+    Salvar
+    }
+  </button>
+</mat-dialog-actions>

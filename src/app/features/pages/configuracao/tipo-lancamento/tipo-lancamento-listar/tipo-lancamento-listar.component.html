@@ -1,1 +1,61 @@
-<p>tipo-lancamento-listar works!</p>
+<div class="header-container">
+  <h2>Cadastro de Tipos de Lançamento</h2>
+  <button mat-raised-button color="primary" (click)="cadastrar()">
+    <mat-icon>add</mat-icon> Cadastrar Tipo de Lançamento
+  </button>
+</div>
+
+<div class="container mat-elevation-z4">
+
+  @if(isLoading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  }
+
+  <table mat-table [dataSource]="datasource" matSort (matSortChange)="ordenar($event)">
+
+    <ng-container matColumnDef="dsTipoLancamento">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Lançamento </th>
+      <td mat-cell *matCellDef="let element"> {{element.dsTipoLancamento}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="vlTipoLancamento">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
+      <td mat-cell *matCellDef="let element"> {{ element.vlTipoLancamento | currency:'BRL':true }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="planoContas.dsConta">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Conta Contábil </th>
+      <td mat-cell *matCellDef="let element"> {{element.planoContas?.dsConta}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="planoContas.tpConta">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo de Conta </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.planoContas?.tpConta === 'D' ? 'Débito' : element.planoContas?.tpConta === 'C' ? 'Crédito' : element.planoContas?.tpConta }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="convencao.dsReduzido">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Convenção </th>
+      <td mat-cell *matCellDef="let element"> {{element.convencao?.dsReduzido}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef> Ações </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button color="primary" (click)="editar(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="excluir(element)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</div>
