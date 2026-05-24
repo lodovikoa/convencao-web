@@ -18,7 +18,7 @@
       <mat-select formControlName="planoContas" [compareWith]="compararPlanoContas">
         <mat-option [value]="null">Selecione uma Conta Contábil</mat-option>
         @for (planoContas of planoContas(); track planoContas.id) {
-        <mat-option [value]="planoContas">{{ planoContas.dsConta }}</mat-option>
+        <mat-option [value]="planoContas">{{ planoContas.dsConta }} - ({{ planoContas.tpConta === 'D' ? 'Débito' : planoContas.tpConta === 'C' ? 'Crédito' : planoContas.tpConta }})</mat-option>
         }
       </mat-select>
     </mat-form-field>

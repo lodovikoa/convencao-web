@@ -24,7 +24,7 @@
           <mat-option [value]="null">Selecione uma conta</mat-option>
           @for (plano of planoContas(); track plano.id) {
           <mat-option [value]="plano.id">
-            {{ plano.dsConta }}
+            {{ plano.dsConta  }} - ({{ plano.tpConta === 'D' ? 'Débito' : plano.tpConta === 'C' ? 'Crédito' : plano.tpConta }})
           </mat-option>
           }
         </mat-select>
