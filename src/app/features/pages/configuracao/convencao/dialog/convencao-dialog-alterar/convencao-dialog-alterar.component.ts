@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -27,6 +27,7 @@ import { ConvencaoService } from '@shared/services/configuracao/convencao.servic
   ],
   providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-alterar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './convencao-dialog-alterar.component.scss',
 })
 export class ConvencaoDialogAlterarComponent implements OnInit {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal, ViewChild } from '@angular/core';
+import { Component, effect, inject, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,6 +29,7 @@ import { MatSort, MatSortModule, Sort } from '@angular/material/sort';
     MatProgressSpinnerModule
   ],
   templateUrl: './plano-contas-listar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './plano-contas-listar.component.scss',
 })
 export class PlanoContasListarComponent {

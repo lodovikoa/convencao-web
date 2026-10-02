@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { HeaderComponent } from '../header/header.component';
 import { RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -9,6 +9,7 @@ import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
   selector: 'app-layout',
   imports: [HeaderComponent, RouterOutlet, MatSidenavModule, SidenavItemsComponent],
   templateUrl: './layout.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './layout.component.scss',
 })
 export class LayoutComponent {

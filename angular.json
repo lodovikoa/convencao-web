@@ -39,7 +39,10 @@
             ],
             "styles": ["src/styles.scss"],
             "stylePreprocessorOptions": {
-              "includePaths": ["src/styles"]
+              "includePaths": ["src/styles"],
+              "sass": {
+                "silenceDeprecations": ["import"]
+              }
             }
           },
           "configurations": {

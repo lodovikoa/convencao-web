@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -27,6 +27,7 @@ import { DepartamentoService } from '@shared/services/configuracao/departamento.
     MatProgressSpinner
   ],
   templateUrl: './departamento-dialog-alterar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './departamento-dialog-alterar.component.scss',
 })
 export class DepartamentoDialogAlterarComponent {

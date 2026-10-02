@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, effect, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
 import { Estado } from '@shared/interfaces/configuracao/estado';
@@ -34,6 +34,7 @@ import { HasPermissionDirectiveDirective } from '@shared/directives/has-permissi
     HasPermissionDirectiveDirective
   ],
   templateUrl: './estado.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './estado.component.scss',
 })
 export class EstadoComponent {

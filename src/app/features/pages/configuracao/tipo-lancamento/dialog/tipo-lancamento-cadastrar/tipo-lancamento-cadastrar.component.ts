@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +30,7 @@ import { TipoLancamentoService } from '@shared/services/configuracao/tipo-lancam
     MoedaBrDirective
   ],
   templateUrl: './tipo-lancamento-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './tipo-lancamento-cadastrar.component.scss',
 })
 export class TipoLancamentoCadastrarComponent {

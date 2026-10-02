@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, Input, signal } from "@angular/core";
+import { Component, computed, inject, Input, signal, ChangeDetectionStrategy } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
 import { RouterModule } from "@angular/router";
@@ -12,6 +12,7 @@ import { LoginFacadeService } from "@shared/services/auth/login-facade.service";
   selector: 'app-sidenav-items',
   imports: [ CommonModule, MatListModule, MatIconModule, RouterModule, MenuItemComponent],
   templateUrl: './sidenav-items.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sidenav-items.component.scss',
 })
 export class SidenavItemsComponent {

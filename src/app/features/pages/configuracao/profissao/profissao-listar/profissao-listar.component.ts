@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, effect, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,6 +44,7 @@ import { MatInputModule } from '@angular/material/input';
 ],
   providers: [provideNgxMask()],
   templateUrl: './profissao-listar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './profissao-listar.component.scss',
 })
 export class ProfissaoListarComponent {

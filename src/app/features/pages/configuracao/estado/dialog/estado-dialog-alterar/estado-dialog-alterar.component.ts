@@ -1,4 +1,4 @@
-import { Component, Inject, inject, signal } from '@angular/core';
+import { Component, Inject, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Estado } from '@shared/interfaces/configuracao/estado';
@@ -21,6 +21,7 @@ import { EstadoService } from '@shared/services/configuracao/estado.service';
     MatProgressSpinnerModule
   ],
   templateUrl: './estado-dialog-alterar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './estado-dialog-alterar.component.scss',
 })
 export class EstadoDialogAlterarComponent {

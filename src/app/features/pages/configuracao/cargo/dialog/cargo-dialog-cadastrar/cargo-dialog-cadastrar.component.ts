@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +26,7 @@ import { ConvencaoService } from '@shared/services/configuracao/convencao.servic
     MatProgressSpinnerModule
   ],
   templateUrl: './cargo-dialog-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './cargo-dialog-cadastrar.component.scss',
 })
 export class CargoDialogCadastrarComponent {

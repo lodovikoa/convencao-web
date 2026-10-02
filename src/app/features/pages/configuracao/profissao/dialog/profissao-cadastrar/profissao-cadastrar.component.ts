@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -24,6 +24,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   ],
   providers: [ provideNgxMask() ],
   templateUrl: './profissao-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './profissao-cadastrar.component.scss',
 })
 export class ProfissaoCadastrarComponent {

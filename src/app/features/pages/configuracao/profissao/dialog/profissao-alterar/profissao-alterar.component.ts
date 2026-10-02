@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, inject, signal } from '@angular/core';
+import { Component, Inject, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -24,6 +24,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   ],
   providers: [ provideNgxMask() ],
   templateUrl: './profissao-alterar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './profissao-alterar.component.scss',
 })
 export class ProfissaoAlterarComponent {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,6 +28,7 @@ import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/c
     HasPermissionDirectiveDirective
   ],
   templateUrl: './escolaridade.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './escolaridade.component.scss',
 })
 export class EscolaridadeComponent {

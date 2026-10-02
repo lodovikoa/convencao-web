@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItems } from '../interface/menu-items';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
   selector: 'app-menu-item',
   imports: [ MatListModule, RouterModule, MatIconModule],
   templateUrl: './menu-item.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './menu-item.component.scss',
 })
 

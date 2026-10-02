@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -23,6 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule
   ],
   templateUrl: './escolaridade-dialog-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './escolaridade-dialog-cadastrar.component.scss',
 })
 export class EscolaridadeDialogCadastrarComponent {

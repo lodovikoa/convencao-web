@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { SidenavVisibilityService } from '../store/sidenav-visibility.service';
   selector: 'app-header',
   imports: [MatToolbarModule, MatIconModule, MatButtonModule, RouterLink],
   templateUrl: './header.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {

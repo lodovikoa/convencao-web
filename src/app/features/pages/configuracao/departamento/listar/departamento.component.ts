@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -28,6 +28,7 @@ import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/c
     MatProgressSpinnerModule
   ],
   templateUrl: './departamento.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './departamento.component.scss',
 })
 export class DepartamentoComponent {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
@@ -15,6 +15,7 @@ import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 ],
 providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-detalhar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './convencao-dialog-detalhar.component.scss',
 })
 export class ConvencaoDialogDetalharComponent {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +28,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
   ],
   providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './convencao-dialog-cadastrar.component.scss',
 })
 export class ConvencaoDialogCadastrarComponent {

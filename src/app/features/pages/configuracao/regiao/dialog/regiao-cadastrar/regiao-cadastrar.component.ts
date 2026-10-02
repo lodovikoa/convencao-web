@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +26,7 @@ import { RegiaoService } from '@shared/services/configuracao/regiao.service';
     MatProgressSpinnerModule
   ],
   templateUrl: './regiao-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './regiao-cadastrar.component.scss',
 })
 export class RegiaoCadastrarComponent {

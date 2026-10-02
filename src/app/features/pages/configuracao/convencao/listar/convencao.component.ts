@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
@@ -32,6 +32,7 @@ import { HasPermissionDirectiveDirective } from '@shared/directives/has-permissi
     HasPermissionDirectiveDirective
   ],
   templateUrl: './convencao.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './convencao.component.scss',
 })
 export class ConvencaoComponent {

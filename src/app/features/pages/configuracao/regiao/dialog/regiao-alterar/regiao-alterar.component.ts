@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -26,6 +26,7 @@ import { RegiaoService } from '@shared/services/configuracao/regiao.service';
     MatProgressSpinner
   ],
   templateUrl: './regiao-alterar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './regiao-alterar.component.scss',
 })
 export class RegiaoAlterarComponent {
