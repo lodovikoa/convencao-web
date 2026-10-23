@@ -56,7 +56,7 @@
       [disabled]="form.invalid || !form.dirty || isLoading()"
       (click)="onSave()" >
     @if(isLoading()) {
-    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+    <mat-progress-spinner diameter="20" mode="indeterminate" />
     Salvar
     } @else {
     Salvar
