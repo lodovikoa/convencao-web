@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Regiao } from '@shared/interfaces/configuracao/regiao';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class RegiaoService {
 
   private readonly API_URL = '/api/regiao';

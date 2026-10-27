@@ -1,12 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Profissao } from '@shared/interfaces/configuracao/profissao';
 import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-paginada';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ProfissaoService {
 
   private readonly API_URL = '/api/profissoes';

@@ -1,9 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { SessionStorageToken } from '@core/auth/tokens/session-storage-token';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthTokenStorageService {
 
   private readonly key: string = 'convencao-auth-token';

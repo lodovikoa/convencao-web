@@ -1,12 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-paginada';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class EstadoService {
 
   private readonly API_URL = '/api/estados';

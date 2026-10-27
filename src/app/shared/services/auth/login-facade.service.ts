@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { inject, signal, computed, Service } from '@angular/core';
 import { UserCredentials } from '../../interfaces/auth/user-credentials';
 import { AuthService } from './auth.service';
 import { pipe, switchMap, tap, map, of } from 'rxjs';
@@ -8,9 +8,7 @@ import { AuthTokenResponse } from '@shared/interfaces/auth/auth-token-response';
 import { jwtDecode } from 'jwt-decode';
 import { AuthTokenDetails } from '@shared/interfaces/auth/auth-token-details';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class LoginFacadeService {
 
   private readonly authService = inject(AuthService);

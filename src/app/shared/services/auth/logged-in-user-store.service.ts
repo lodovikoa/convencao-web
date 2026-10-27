@@ -1,9 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, signal, Service } from '@angular/core';
 import { User } from '@shared/interfaces/auth/user';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class LoggedInUserStoreService {
 
   private readonly state = signal<User | null>(null)

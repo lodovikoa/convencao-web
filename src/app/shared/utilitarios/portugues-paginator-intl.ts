@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 
-@Injectable()
+@Service({ autoProvided: false })
 export class PortuguesPaginatorIntl extends MatPaginatorIntl {
   override itemsPerPageLabel = 'Itens por página:';
   override nextPageLabel = 'Próxima página';

@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { PlanoContas } from '@shared/interfaces/configuracao/plano-contas';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class PlanoContasService {
   private readonly API_URL = '/api/planocontas';
   private readonly http = inject(HttpClient);
