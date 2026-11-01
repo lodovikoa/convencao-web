@@ -32,7 +32,7 @@ export class SidebarComponent {
   submenuToggle = output<string>();
   itemClick = output<void>();
 
-  menuList: MenuItem[] = [
+  rawMenuList: MenuItem[] = [
      {
       id: 'dashboard',
       title: 'Dashboard',
@@ -44,7 +44,6 @@ export class SidebarComponent {
       id: 'configuracao',
       title: 'Configuracao',
       icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
-      trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'],
       subItems: [
          { id: 'convencao', title: 'Convenção', route: '/configuracao/convencaoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
          { id: 'departamento', title: 'Departamentos', route: '/configuracao/departamentoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
@@ -75,8 +74,41 @@ export class SidebarComponent {
     }
   ];
 
+  // Computed signal que filtra automaticamente os menus com base nas regras de trancodes
+  menuList = computed(() => {
+    const roles = this.userTrancodes();
+
+    const hasAccess = (trancodes?: string[]): boolean => {
+      // Se não houver trancodes opcionais configurados, exibe por padrão
+      if (!trancodes || trancodes.length === 0) {
+        return true;
+      }
+      // Verifica se pelo menos um dos trancodes do item está presente nas roles do usuário
+      console.log('trancodes aplicação:', trancodes, ' Roles do usuário:', roles);
+      return trancodes.some(code => roles?.includes(code));
+    };
+
+    return this.rawMenuList
+      .map(item => {
+        // Se o item possui subItems, filtramos os subItems primeiro
+        if (item.subItems && item.subItems.length > 0) {
+          const filteredSubItems = item.subItems.filter(sub => hasAccess(sub.trancodes));
+
+          // Se o item pai tem subitens, mas todos foram filtrados/removidos, retornamos null para omitir o pai também
+          if (filteredSubItems.length === 0) {
+            return null;
+          }
+
+          return { ...item, subItems: filteredSubItems };
+        }
+
+        // Se for um item normal, validamos o acesso dele
+        return hasAccess(item.trancodes) ? item : null;
+      })
+      .filter((item): item is MenuItem => item !== null); // Remove os nulos da lista final
+  });
+
   toggleSubmenu(id: string) {
-    console.log('Trancodes: ', this.userTrancodes());
     this.submenuToggle.emit(id);
   }
 

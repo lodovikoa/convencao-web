@@ -13,7 +13,7 @@
 >
   <div class="w-64 flex flex-col h-full">
     <ul class="menu p-4 text-base-content gap-1">
-      @for (item of menuList; track item.id) {
+      @for (item of menuList(); track item.id) {
         <li>
           @if (item.subItems && item.subItems.length > 0) {
             <details [open]="expandedSubmenuId() === item.id">
