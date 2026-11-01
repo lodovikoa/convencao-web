@@ -1,0 +1,28 @@
+<div class="min-h-screen bg-base-100 flex flex-col">
+  <!-- TOPO -->
+  <app-header
+    [companyName]="companyName()"
+    [userName]="userName()"
+    [userRole]="userRole()"
+    [currentTheme]="currentTheme()"
+    (toggleSidebar)="toggleSidebar()"
+    (toggleTheme)="toggleTheme()"
+  />
+
+  <!-- CONTAINER ABAIXO DA TOPBAR -->
+  <div class="flex flex-1 pt-16 relative overflow-hidden">
+    <!-- MENU LATERAL -->
+    <app-sidebar
+      [isOpen]="isSidebarOpen()"
+      [expandedSubmenuId]="expandedSubmenuId()"
+      (toggle)="toggleSidebar()"
+      (submenuToggle)="toggleSubmenu($event)"
+      (itemClick)="onItemClick()"
+    />
+
+    <!-- TELA CENTRAL (SUBSTITUÍDA PELAS ROTAS DO ANGULAR) -->
+    <main class="flex-1 p-6 overflow-y-auto w-full bg-base-100 transition-all duration-300">
+      <router-outlet />
+    </main>
+  </div>
+</div>

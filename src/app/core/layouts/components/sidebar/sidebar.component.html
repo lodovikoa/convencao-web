@@ -1,0 +1,50 @@
+<!-- CAMADA ESCURA DE FUNDO (MOBILE) -->
+@if (isOpen()) {
+  <div
+    class="fixed inset-0 bg-black/50 z-30 sm:hidden transition-opacity duration-300"
+    (click)="toggle.emit()">
+  </div>
+}
+
+<aside
+  class="bg-base-200 border-r border-base-300 z-40 flex flex-col shrink-0 transition-all duration-700 ease-in-out sm:relative fixed inset-y-0 left-0 top-16 sm:top-0 shadow-2xl sm:shadow-none overflow-hidden"
+  [class.w-64]="isOpen()"
+  [class.w-0]="!isOpen()"
+>
+  <div class="w-64 flex flex-col h-full">
+    <ul class="menu p-4 text-base-content gap-1">
+      @for (item of menuList; track item.id) {
+        <li>
+          @if (item.subItems && item.subItems.length > 0) {
+            <details [open]="expandedSubmenuId() === item.id">
+              <summary (click)="$event.preventDefault(); toggleSubmenu(item.id)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
+                </svg>
+                <span class="font-medium whitespace-nowrap">{{ item.title }}</span>
+              </summary>
+
+              <ul>
+                @for (sub of item.subItems; track sub.id) {
+                  <li>
+                    <a [routerLink]="sub.route" (click)="onItemClick()" class="py-2 pl-4 text-sm hover:bg-base-300 rounded-lg whitespace-nowrap">
+                      {{ sub.title }}
+                    </a>
+                  </li>
+                }
+              </ul>
+            </details>
+          } @else {
+            <a [routerLink]="item.route || '#'" (click)="onItemClick()" class="font-medium hover:bg-base-300 whitespace-nowrap">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon" />
+              </svg>
+              {{ item.title }}
+            </a>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</aside>
+
