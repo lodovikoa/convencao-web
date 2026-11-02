@@ -1,7 +1,8 @@
-import { Component, signal, effect, HostListener } from '@angular/core';
+import { Component, signal, effect, HostListener, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../components/header/header.component';
 import { SidebarComponent } from '../components/sidebar/sidebar.component';
+import { LoginFacadeService } from '../../../shared/services/auth/login-facade.service';
 
 @Component({
   imports: [RouterOutlet, HeaderComponent, SidebarComponent],
@@ -11,12 +12,33 @@ import { SidebarComponent } from '../components/sidebar/sidebar.component';
   templateUrl: './main-layout.component.html'
 })
 export class MainLayoutComponent {
+
+  private readonly loginFacadeService = inject(LoginFacadeService);
+
   isSidebarOpen = signal<boolean>(true);
   expandedSubmenuId = signal<string | null>(null);
 
-  companyName = signal<string>('Tech Enterprise Inc.');
-  userName = signal<string>('Ludovico Ardissão');
-  userRole = signal<string>('Administrador');
+  companyName = signal<string>('CONFRATERES');
+
+  // Transformado em computed para reagir dinamicamente quando o usuário logar/deslogar
+  userName = computed(() => this.loginFacadeService.tokenDetalhe()?.name.trim() || 'Não identificado');
+  userRole = computed(() => this.loginFacadeService.tokenDetalhe()?.user_type || 'Não identificado');
+
+  userInitials = computed(() => {
+    const name = this.userName();
+    if (!name) return 'ND';
+    const parts = name.split(/\s+/);
+
+    // Se o nome tiver apenas uma palavra, retorna as duas primeiras letras em maiúsculas
+    if (parts.length === 1) {
+      return parts[0].substring(0, 2).toUpperCase();
+    }
+
+    const firsInitial = parts[0].charAt(0).toUpperCase();
+    const lastInitial = parts[parts.length - 1].charAt(0).toUpperCase();
+    return firsInitial + lastInitial;
+  });
+
 
   currentTheme = signal<'light' | 'dark'>('light');
 

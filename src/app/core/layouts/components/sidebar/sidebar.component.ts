@@ -84,7 +84,6 @@ export class SidebarComponent {
         return true;
       }
       // Verifica se pelo menos um dos trancodes do item está presente nas roles do usuário
-      console.log('trancodes aplicação:', trancodes, ' Roles do usuário:', roles);
       return trancodes.some(code => roles?.includes(code));
     };
 
