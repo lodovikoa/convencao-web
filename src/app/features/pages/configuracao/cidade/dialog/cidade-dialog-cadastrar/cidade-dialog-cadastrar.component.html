@@ -1,0 +1,135 @@
+<dialog #modalCadastro class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-base-100 text-base-content border border-base-200 shadow-2xl max-w-lg">
+
+    <!-- Cabeçalho do Modal -->
+    <div class="flex justify-between items-center pb-4 mb-4 border-b border-base-200">
+      <h3 class="font-bold text-lg text-base-content">Cadastrar Nova Cidade</h3>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="fechar()">✕</button>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error mb-4 text-sm py-2 shadow-sm">
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <!-- Formulário -->
+    <form (submit)="salvar($event)" class="space-y-4">
+
+      <!-- Nome da Cidade (IBGE) -->
+      <div class="form-control">
+        <label for="cad-dsNomeIbge" class="label"><span class="label-text font-semibold">Nome da Cidade (IBGE) *</span></label>
+        <input
+          id="cad-dsNomeIbge"
+          name="dsNomeIbge"
+          type="text"
+          placeholder="Ex: Cariacica"
+          maxlength="50"
+          class="input input-bordered w-full bg-base-100 text-base-content"
+          [ngModel]="dsNomeIbge()"
+          (ngModelChange)="atualizarNomeIbge($event)"
+          required
+          autocomplete="off"
+        />
+        <label class="label">
+          <span class="label-text-alt text-base-content/60">{{ dsNomeIbge().length }}/50 caracteres</span>
+        </label>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Código IBGE -->
+        <div class="form-control">
+          <label for="cad-cdIbge" class="label"><span class="label-text font-semibold">Código IBGE *</span></label>
+          <input
+            id="cad-cdIbge"
+            name="cdIbge"
+            type="text"
+            placeholder="Ex: 3201308"
+            maxlength="7"
+            class="input input-bordered w-full bg-base-100 text-base-content font-mono"
+            [ngModel]="cdIbge()"
+            (ngModelChange)="atualizarIbge($event)"
+            required
+            autocomplete="off"
+          />
+          <label class="label">
+            <span class="label-text-alt text-base-content/60">Máx. 7 dígitos numéricos</span>
+          </label>
+        </div>
+
+        <!-- Combobox de UF do Estado -->
+        <div class="form-control">
+          <label for="cad-estadoUf" class="label"><span class="label-text font-semibold">Estado (UF) *</span></label>
+          <select
+            id="cad-estadoUf"
+            name="estadoUf"
+            class="select select-bordered w-full bg-base-100 text-base-content font-medium"
+            [ngModel]="estadoUf()"
+            (ngModelChange)="estadoUf.set($event)"
+            required>
+            <option value="" disabled selected>Selecione o estado...</option>
+            @for (est of estados(); track est.id) {
+              <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Nome TOM -->
+        <div class="form-control">
+          <label for="cad-dsNomeTom" class="label"><span class="label-text font-semibold">Nome TOM (Opcional)</span></label>
+          <input
+            id="cad-dsNomeTom"
+            name="dsNomeTom"
+            type="text"
+            placeholder="Nome TOM"
+            maxlength="50"
+            class="input input-bordered w-full bg-base-100 text-base-content"
+            [ngModel]="dsNomeTom()"
+            (ngModelChange)="atualizarNomeTom($event)"
+            autocomplete="off"
+          />
+          <label class="label">
+            <span class="label-text-alt text-base-content/60">{{ dsNomeTom().length }}/50 caracteres</span>
+          </label>
+        </div>
+
+        <!-- Código TOM -->
+        <div class="form-control">
+          <label for="cad-cdTom" class="label"><span class="label-text font-semibold">Código TOM (Opcional)</span></label>
+          <input
+            id="cad-cdTom"
+            name="cdTom"
+            type="text"
+            placeholder="Código TOM"
+            maxlength="5"
+            class="input input-bordered w-full bg-base-100 text-base-content font-mono"
+            [ngModel]="cdTom()"
+            (ngModelChange)="atualizarTom($event)"
+            autocomplete="off"
+          />
+          <label class="label">
+            <span class="label-text-alt text-base-content/60">Máx. 5 dígitos numéricos</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Rodapé / Ações -->
+      <div class="modal-action pt-4 border-t border-base-200">
+        <button type="button" class="btn btn-ghost" (click)="fechar()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando()">
+          @if (salvando()) {
+            <span class="loading loading-spinner loading-xs"></span>
+            Salvando...
+          } @else {
+            Cadastrar
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>fechar</button>
+  </form>
+</dialog>

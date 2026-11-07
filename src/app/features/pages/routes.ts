@@ -18,6 +18,7 @@ import { ProfissaoListarComponent } from "./configuracao/profissao/profissao-lis
 import { PlanoContasListarComponent } from "./configuracao/plano-contas/plano-contas-listar/plano-contas-listar.component";
 import { TipoLancamentoListarComponent } from "./configuracao/tipo-lancamento/tipo-lancamento-listar/tipo-lancamento-listar.component";
 import { RegiaoListarComponent } from "./configuracao/regiao/regiao-listar/regiao-listar.component";
+import { CidadeComponent } from "./configuracao/cidade/listar/cidade.component";
 
 export default [
   { path: '', component: HomeComponent },
@@ -26,6 +27,7 @@ export default [
     children: [
       { path: 'convencaoListar', component: ConvencaoComponent },
       { path: 'estadoListar', component: EstadoComponent },
+      { path: 'cidadeListar', component: CidadeComponent },
       { path: 'departamentoListar', component: DepartamentoComponent },
       { path: 'escolaridadeListar', component: EscolaridadeComponent },
       { path: 'cargoListar', component: CargoListarComponent },

@@ -1,0 +1,160 @@
+<div class="p-6 max-w-7xl mx-auto">
+  <div class="card bg-base-100 shadow-xl border border-base-200 text-base-content">
+    <div class="card-body">
+
+      <!-- Cabeçalho, Botão Novo abaixo do título e Seletor de Tamanho -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div class="flex flex-col gap-2">
+          <h2 class="card-title text-2xl font-bold text-base-content">Cidades Cadastradas</h2>
+          <button
+            class="btn btn-primary btn-sm gap-2 w-fit shadow-sm hover:scale-[1.02] hover:shadow-md transition-all duration-200"
+            (click)="abrirModalCadastrar()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Nova Cidade
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="select-tamanho-pagina" class="text-sm font-medium text-base-content/70 whitespace-nowrap">Itens por página:</label>
+          <select id="select-tamanho-pagina" class="select select-bordered select-sm text-base-content bg-base-100" (change)="mudarTamanho($event)" [value]="size()">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Estado de Carregamento -->
+      @if (loading()) {
+        <div class="flex justify-center items-center py-20">
+          <span class="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+      } @else {
+        <!-- Tabela DaisyUI -->
+        <div class="overflow-x-auto">
+          <table class="table table-zebra w-full text-base-content">
+            <thead>
+              <tr class="text-base-content/80 align-top">
+                <th>
+                  <div class="flex flex-col gap-1.5">
+                    <label for="input-filtro-cidade">Cidade</label>
+                    <input
+                      id="input-filtro-cidade"
+                      name="filtroCidade"
+                      type="text"
+                      placeholder="Filtrar cidade..."
+                      class="input input-bordered input-xs w-full bg-base-100 text-base-content font-normal"
+                      [value]="inputNome()"
+                      (input)="atualizarFiltro('nome', $event)"
+                      autocomplete="off"
+                    />
+                  </div>
+                </th>
+                <th>
+                  <div class="flex flex-col gap-1.5">
+                    <label for="input-filtro-ibge">Código IBGE</label>
+                    <input
+                      id="input-filtro-ibge"
+                      name="filtroIbge"
+                      type="text"
+                      placeholder="Filtrar IBGE..."
+                      class="input input-bordered input-xs w-full bg-base-100 text-base-content font-normal"
+                      [value]="inputIbge()"
+                      (input)="atualizarFiltro('ibge', $event)"
+                      autocomplete="off"
+                    />
+                  </div>
+                </th>
+                <th>
+                  <div class="flex flex-col gap-1.5">
+                    <label for="input-filtro-uf">UF</label>
+                    <input
+                      id="input-filtro-uf"
+                      name="filtroUf"
+                      type="text"
+                      placeholder="UF..."
+                      class="input input-bordered input-xs w-16 bg-base-100 text-base-content font-normal uppercase"
+                      [value]="inputUf()"
+                      maxlength="2"
+                      (input)="atualizarFiltro('uf', $event)"
+                      autocomplete="off"
+                    />
+                  </div>
+                </th>
+                <th class="pt-3">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (cidade of cidades(); track cidade.id) {
+                <tr>
+                  <td class="font-semibold text-base-content">{{ cidade.dsNomeIbge }}</td>
+                  <td class="font-mono text-base-content/80">{{ cidade.cdIbge }}</td>
+                  <td>
+                    <span class="badge badge-primary badge-outline font-bold">
+                      {{ cidade.estado?.dsUf }}
+                    </span>
+                  </td>
+                  <td class="text-base-content/90">{{ cidade.estado?.dsNome }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="text-center py-8 text-base-content/60">
+                    Nenhuma cidade encontrada.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Rodapé de Paginação -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-base-200">
+          <div class="text-sm text-base-content/70">
+            Mostrando página <span class="font-bold text-base-content">{{ page() + 1 }}</span> de <span class="font-bold text-base-content">{{ totalPages() }}</span>
+            (Total de <span class="font-bold text-base-content">{{ totalElements() }}</span> cidades)
+          </div>
+
+          <!-- Botões de Paginação DaisyUI (Join) -->
+          <div class="join">
+            <button
+              class="join-item btn btn-sm"
+              [disabled]="isFirst()"
+              (click)="mudarPagina(0)"
+              title="Primeira página">
+              ««
+            </button>
+            <button
+              class="join-item btn btn-sm"
+              [disabled]="isFirst()"
+              (click)="mudarPagina(page() - 1)">
+              « Anterior
+            </button>
+            <button class="join-item btn btn-sm btn-disabled">
+              {{ page() + 1 }} / {{ totalPages() || 1 }}
+            </button>
+            <button
+              class="join-item btn btn-sm"
+              [disabled]="isLast()"
+              (click)="mudarPagina(page() + 1)">
+              Próxima »
+            </button>
+            <button
+              class="join-item btn btn-sm"
+              [disabled]="isLast()"
+              (click)="mudarPagina(totalPages() - 1)"
+              title="Última página">
+              »»
+            </button>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>
+
+<!-- Componente Dialog de Cadastro -->
+<app-cidade-dialog-cadastrar #dialogCadastrar (salvo)="recarregarLista()"></app-cidade-dialog-cadastrar>

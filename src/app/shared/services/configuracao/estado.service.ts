@@ -21,7 +21,6 @@ export class EstadoService {
   }
 
   editarEstado(estado: Estado): Observable<Estado> {
-    //console.log("Estado enviado: ", estado);
     const url = `${this.API_URL}/${estado.id}`;
     return this.http.put<Estado>(url, estado);
   }

@@ -59,9 +59,8 @@ export class ConvencaoDialogAlterarComponent implements OnInit {
       dsCep: [this.data.dsCep],
       dsEndereco: [this.data.dsEndereco],
       dsBairro: [this.data.dsBairro],
-      dsCidade: [this.data.dsCidade],
+      cidade: [this.data.cidade],
       dsPais: [this.data.dsPais],
-      estado: [this.data.estado] // Mantém o objeto estado original
     });
   }
 

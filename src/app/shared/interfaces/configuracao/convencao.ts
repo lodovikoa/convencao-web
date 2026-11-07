@@ -1,11 +1,13 @@
+import { Cidade } from './cidade';
 import { Estado } from './estado';
+
 export interface Convencao {
   id: number;
   dsReduzido: string;
   dsConvencao: string;
   dsEndereco: string;
   dsBairro: string;
-  dsCidade: string;
+  cidade?: Cidade;
   estado?: Estado;
   dsPais: string;
   dsCep: string;

@@ -48,6 +48,7 @@ export class SidebarComponent {
          { id: 'convencao', title: 'Convenção', route: '/configuracao/convencaoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
          { id: 'departamento', title: 'Departamentos', route: '/configuracao/departamentoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
          { id: 'estado', title: 'Estados', route: '/configuracao/estadoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
+         { id: 'cidade', title: 'Cidades', route: '/configuracao/cidadeListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
          { id: 'escolaridade', title: 'Escolaridades', route: '/configuracao/escolaridadeListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
          { id: 'cargo', title: 'Cargos', route: '/configuracao/cargoListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
          { id: 'estadocivil', title: 'Estado Civil', route: '/configuracao/estadocivilListar', trancodes: ['T_CFT_MASTER', 'T_CFT_ADMINISTRADOR'] },
