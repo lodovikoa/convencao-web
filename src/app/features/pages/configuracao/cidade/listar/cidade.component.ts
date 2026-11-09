@@ -6,9 +6,10 @@ import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-pagina
 import { CidadeService } from '@shared/services/configuracao/cidade.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeDialogCadastrarComponent } from '../dialog/cidade-dialog-cadastrar/cidade-dialog-cadastrar.component';
+import { CidadeDialogDetalharComponent } from '../dialog/cidade-dialog-detalhar/cidade-dialog-detalhar.component';
 
 @Component({
-  imports: [CommonModule, CidadeDialogCadastrarComponent],
+  imports: [CommonModule, CidadeDialogCadastrarComponent, CidadeDialogDetalharComponent],
   selector: 'app-cidade',
   styleUrl: './cidade.component.scss',
   templateUrl: './cidade.component.html',
@@ -17,6 +18,7 @@ export class CidadeComponent {
   private readonly cidadeService = inject(CidadeService);
 
   @ViewChild('dialogCadastrar') dialogCadastrar!: CidadeDialogCadastrarComponent;
+  @ViewChild('dialogDetalhar') dialogDetalhar!: CidadeDialogDetalharComponent;
 
   // Estados reativos com Signal
   protected readonly page = signal<number>(0);
@@ -107,6 +109,12 @@ export class CidadeComponent {
   protected abrirModalCadastrar(): void {
     if (this.dialogCadastrar) {
       this.dialogCadastrar.abrir();
+    }
+  }
+
+  protected abrirModalDetalhar(id: number): void {
+    if (this.dialogDetalhar) {
+      this.dialogDetalhar.abrir(id);
     }
   }
 

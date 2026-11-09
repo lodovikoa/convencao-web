@@ -18,9 +18,16 @@ export class CidadeService {
     return this.http.get<Cidade[]>(this.API_URL);
   }
 
+  /**
+   * Buscar uma cidade específica pelo ID
+   * @param id Identificador único da cidade
+   */
+  buscarCidadePorId(id: number): Observable<Cidade> {
+    return this.http.get<Cidade>(`${this.API_URL}/${id}`);
+  }
 
   /*
-  * Lista todas as cidades disponíveis
+  * Lista todas as cidades disponíveis Paginado
   * @Param page Número da página (iniciado com 0)
   * @Param size Número de itens por página
   * @Param nome Nome da cidade
@@ -51,6 +58,7 @@ export class CidadeService {
 
   // Edita uma cidade existente
   editarCidade(cidade: Cidade): Observable<Cidade> {
+    console.log('Editando cidade:', cidade);
     const url = `${this.API_URL}/${cidade.id}`;
     return this.http.put<Cidade>(url, cidade);
   }
@@ -62,6 +70,7 @@ export class CidadeService {
 
   // Cadastra uma nova cidade
   cadastrarCidade(cidade: Partial<Cidade>): Observable<Cidade> {
+    console.log('Cadastrando cidade:', cidade);
     return this.http.post<Cidade>(this.API_URL, cidade);
   }
 
