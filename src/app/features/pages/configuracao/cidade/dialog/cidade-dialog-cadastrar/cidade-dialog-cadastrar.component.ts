@@ -125,12 +125,8 @@ export class CidadeDialogCadastrarComponent implements OnInit {
         this.fechar();
       },
       error: (err) => {
-        const mensagemErro = err?.error?.message || `Erro ao salvar a cidade. \n` +
-          `Código: ${err.error.cdStatus}\n` +
-          `${err.error.dsTitulo}\n` +
-          `${err.error.dsMensUsuario}`;
+        console.error('Erro ao cadastrar nova cidade:', err);
         this.salvando.set(false);
-        this.abrirModalErro(mensagemErro);
       }
     });
   }
