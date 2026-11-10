@@ -7,12 +7,6 @@
       <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="fechar()">✕</button>
     </div>
 
-    @if (errorMessage()) {
-      <div class="alert alert-error mb-4 text-sm py-2 shadow-sm">
-        <span>{{ errorMessage() }}</span>
-      </div>
-    }
-
     <!-- Formulário -->
     <form (submit)="salvar($event)" class="space-y-4">
 
@@ -21,13 +15,12 @@
         <label for="cad-dsNomeIbge" class="label"><span class="label-text font-semibold">Nome da Cidade (IBGE) *</span></label>
         <input
           id="cad-dsNomeIbge"
-          name="dsNomeIbge"
           type="text"
           placeholder="Ex: Cariacica"
           maxlength="50"
           class="input input-bordered w-full bg-base-100 text-base-content"
-          [ngModel]="dsNomeIbge()"
-          (ngModelChange)="atualizarNomeIbge($event)"
+          [value]="dsNomeIbge()"
+          (input)="atualizarNomeIbge($any($event.target).value)"
           required
           autocomplete="off"
         />
@@ -42,13 +35,12 @@
           <label for="cad-cdIbge" class="label"><span class="label-text font-semibold">Código IBGE *</span></label>
           <input
             id="cad-cdIbge"
-            name="cdIbge"
             type="text"
             placeholder="Ex: 3201308"
             maxlength="7"
             class="input input-bordered w-full bg-base-100 text-base-content font-mono"
-            [ngModel]="cdIbge()"
-            (ngModelChange)="atualizarIbge($event)"
+            [value]="cdIbge()"
+            (input)="atualizarIbge($any($event.target).value)"
             required
             autocomplete="off"
           />
@@ -62,10 +54,9 @@
           <label for="cad-estadoUf" class="label"><span class="label-text font-semibold">Estado (UF) *</span></label>
           <select
             id="cad-estadoUf"
-            name="estadoUf"
             class="select select-bordered w-full bg-base-100 text-base-content font-medium"
-            [ngModel]="estadoUf()"
-            (ngModelChange)="estadoUf.set($event)"
+            [value]="estadoUf()"
+            (input)="estadoUf.set($any($event.target).value)"
             required>
             <option value="" disabled selected>Selecione o estado...</option>
             @for (est of estados(); track est.id) {
@@ -81,13 +72,12 @@
           <label for="cad-dsNomeTom" class="label"><span class="label-text font-semibold">Nome TOM (Opcional)</span></label>
           <input
             id="cad-dsNomeTom"
-            name="dsNomeTom"
             type="text"
             placeholder="Nome TOM"
             maxlength="50"
             class="input input-bordered w-full bg-base-100 text-base-content"
-            [ngModel]="dsNomeTom()"
-            (ngModelChange)="atualizarNomeTom($event)"
+            [value]="dsNomeTom()"
+            (input)="atualizarNomeTom($any($event.target).value)"
             autocomplete="off"
           />
           <label class="label">
@@ -100,13 +90,12 @@
           <label for="cad-cdTom" class="label"><span class="label-text font-semibold">Código TOM (Opcional)</span></label>
           <input
             id="cad-cdTom"
-            name="cdTom"
             type="text"
             placeholder="Código TOM"
             maxlength="5"
             class="input input-bordered w-full bg-base-100 text-base-content font-mono"
-            [ngModel]="cdTom()"
-            (ngModelChange)="atualizarTom($event)"
+            [value]="cdTom()"
+            (input)="atualizarTom($any($event.target).value)"
             autocomplete="off"
           />
           <label class="label">
@@ -130,6 +119,29 @@
     </form>
   </div>
   <form method="dialog" class="modal-backdrop">
-    <button>fechar</button>
+    <button type="button" (click)="fechar()">fechar</button>
+  </form>
+</dialog>
+
+<!-- Modal DaisyUI de Erro Interno (Mantém o modal de cadastro aberto ao fechar) -->
+<dialog #errorDialog class="modal modal-middle z-50">
+  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
+    <div class="flex justify-center mb-3">
+      <div class="w-12 h-12 rounded-full bg-error/20 flex items-center justify-center text-error">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+    </div>
+    <h3 class="font-bold text-lg text-error">Atenção!</h3>
+    <p class="py-2 text-sm text-base-content/80 whitespace-pre-line">
+      {{ errorMessageModal() }}
+    </p>
+    <div class="modal-action justify-center mt-4">
+      <button type="button" class="btn btn-error btn-sm px-6" (click)="fecharModalErro()">OK</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" (click)="fecharModalErro()">fechar</button>
   </form>
 </dialog>

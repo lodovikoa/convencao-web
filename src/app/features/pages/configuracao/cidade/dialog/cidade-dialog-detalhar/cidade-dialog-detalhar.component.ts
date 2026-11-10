@@ -19,8 +19,10 @@ export class CidadeDialogDetalharComponent {
   private readonly estadoService = inject(EstadoService);
 
   private readonly dialogRef = viewChild<ElementRef<HTMLDialogElement>>('dialogElement');
+  private readonly confirmDialogRef = viewChild<ElementRef<HTMLDialogElement>>('confirmDialogElement');
 
-  readonly atualizado = output<void>();
+  protected readonly atualizado = output<string>();
+  protected readonly excluido = output<string>();
 
   protected readonly loading = signal<boolean>(false);
   protected readonly editando = signal<boolean>(false);
@@ -115,21 +117,21 @@ export class CidadeDialogDetalharComponent {
 
     const estadoSelecionado = this.estadosList().find(e => e.id === Number(formValues.estadoId));
     const ufDestino = estadoSelecionado ? estadoSelecionado.dsUf : original.estado?.dsUf;
+    const nomeCidade = formValues.dsNomeIbge ?? original.dsNomeIbge;
 
-    // Monta o objeto sem enviar o objeto "estado" completo, apenas as propriedades básicas e o estadoUF
     const cidadeParaAtualizar: any = {
       id: original.id,
       cdIbge: formValues.cdIbge ?? original.cdIbge,
       cdTom: formValues.cdTom ?? original.cdTom,
       dsNomeTom: formValues.dsNomeTom ?? original.dsNomeTom,
-      dsNomeIbge: formValues.dsNomeIbge ?? original.dsNomeIbge,
+      dsNomeIbge: nomeCidade,
       estadoUf: ufDestino
     };
 
     this.cidadeService.editarCidade(cidadeParaAtualizar).subscribe({
       next: () => {
         this.loading.set(false);
-        this.atualizado.emit();
+        this.atualizado.emit(nomeCidade);
         this.fechar();
       },
       error: (err) => {
@@ -138,4 +140,36 @@ export class CidadeDialogDetalharComponent {
       }
     });
   }
+
+  // Abre o modal daisyUI de confirmação de exclusão
+  protected abrirModalConfirmarExclusao(): void {
+    this.confirmDialogRef()?.nativeElement.showModal();
+  }
+
+  // Fecha o modal daisyUI de confirmação de exclusão
+  protected fecharModalConfirmarExclusao(): void {
+    this.confirmDialogRef()?.nativeElement.close();
+  }
+
+  // Executa a exclusão da cidade após a confirmação do usuário
+  protected confirmarExclusao(): void {
+    const id = this.cidadeId();
+    const nome = this.cidadeCompleta()?.dsNomeIbge ?? '';
+    if (!id) return;
+
+    this.fecharModalConfirmarExclusao();
+    this.loading.set(true);
+    this.cidadeService.excluirCidade(id).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.excluido.emit(nome);
+        this.fechar();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir cidade:', err);
+        this.loading.set(false);
+      }
+    });
+  }
+
 }

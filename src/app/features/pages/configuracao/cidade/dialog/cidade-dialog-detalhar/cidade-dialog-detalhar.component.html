@@ -1,3 +1,4 @@
+<!-- Modal Principal de Detalhes / Edição -->
 <dialog #dialogElement class="modal modal-bottom sm:modal-middle">
   <div class="modal-box w-11/12 max-w-2xl bg-base-100 text-base-content shadow-2xl border border-base-200">
 
@@ -94,21 +95,31 @@
 
         </div>
 
-        <div class="modal-action mt-6 pt-4 border-t border-base-200">
-          @if (!editando()) {
-            <button type="button" class="btn btn-outline btn-primary" (click)="alternarEdicao()">
-              Editar Dados
-            </button>
-            <button type="button" class="btn" (click)="fechar()">Fechar</button>
-          } @else {
-            <button type="button" class="btn btn-ghost" (click)="alternarEdicao()">Cancelar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading()">
-              @if (loading()) {
-                <span class="loading loading-spinner loading-sm"></span>
-              }
-              Salvar Alterações
-            </button>
-          }
+        <div class="modal-action mt-6 pt-4 border-t border-base-200 flex justify-between items-center">
+          <div>
+            @if (!editando()) {
+              <button type="button" class="btn btn-outline btn-error btn-sm" (click)="abrirModalConfirmarExclusao()">
+                Excluir Cidade
+              </button>
+            }
+          </div>
+
+          <div class="flex gap-2">
+            @if (!editando()) {
+              <button type="button" class="btn btn-outline btn-primary" (click)="alternarEdicao()">
+                Editar Dados
+              </button>
+              <button type="button" class="btn" (click)="fechar()">Fechar</button>
+            } @else {
+              <button type="button" class="btn btn-ghost" (click)="alternarEdicao()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading()">
+                @if (loading()) {
+                  <span class="loading loading-spinner loading-sm"></span>
+                }
+                Salvar Alterações
+              </button>
+            }
+          </div>
         </div>
       </form>
     }
@@ -116,5 +127,22 @@
   </div>
   <form method="dialog" class="modal-backdrop">
     <button (click)="fechar()">fechar</button>
+  </form>
+</dialog>
+
+<!-- Modal DaisyUI de Confirmação de Exclusão -->
+<dialog #confirmDialogElement class="modal modal-middle">
+  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
+    <h3 class="font-bold text-lg text-error">Confirmação de Exclusão</h3>
+    <p class="py-4">
+      Deseja realmente excluir a cidade <span class="font-bold">"{{ cidadeCompleta()?.dsNomeIbge }}"</span>?
+    </p>
+    <div class="modal-action justify-center gap-4">
+      <button type="button" class="btn btn-ghost" (click)="fecharModalConfirmarExclusao()">NÃO</button>
+      <button type="button" class="btn btn-error" (click)="confirmarExclusao()">SIM</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="fecharModalConfirmarExclusao()">fechar</button>
   </form>
 </dialog>

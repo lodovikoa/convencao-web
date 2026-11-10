@@ -17,9 +17,10 @@ export class CidadeDialogCadastrarComponent implements OnInit {
   private readonly estadoService = inject(EstadoService);
 
   @ViewChild('modalCadastro') private readonly modalCadastroRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('errorDialog') private readonly errorDialogRef!: ElementRef<HTMLDialogElement>;
 
-  // Output para notificar o componente pai após o cadastro bem-sucedido
-  protected readonly salvo = output<void>();
+  // Output modificado para emitir o nome da cidade cadastrada
+  protected readonly salvo = output<string>();
 
   // Estados reativos do formulário
   protected readonly cdIbge = signal<string>('');
@@ -32,7 +33,7 @@ export class CidadeDialogCadastrarComponent implements OnInit {
   protected readonly estados = signal<Estado[]>([]);
 
   protected readonly salvando = signal<boolean>(false);
-  protected readonly errorMessage = signal<string | null>(null);
+  protected readonly errorMessageModal = signal<string | null>(null);
 
   public ngOnInit(): void {
     this.carregarEstados();
@@ -63,6 +64,21 @@ export class CidadeDialogCadastrarComponent implements OnInit {
     }
   }
 
+  protected abrirModalErro(mensagem: string): void {
+    this.errorMessageModal.set(mensagem);
+    if (this.errorDialogRef?.nativeElement) {
+      this.errorDialogRef.nativeElement.showModal();
+    }
+  }
+
+  protected fecharModalErro(): void {
+    if (this.errorDialogRef?.nativeElement) {
+      this.errorDialogRef.nativeElement.close();
+    }
+    this.errorMessageModal.set(null);
+    // O modal de cadastro principal permanece aberto intacto aqui.
+  }
+
   // Tratadores com restrições solicitadas
   protected atualizarIbge(valor: string): void {
     const apenasNumeros = valor.replace(/\D/g, '').slice(0, 7);
@@ -85,17 +101,18 @@ export class CidadeDialogCadastrarComponent implements OnInit {
 
   protected salvar(event: Event): void {
     event.preventDefault();
-    this.errorMessage.set(null);
 
     if (!this.dsNomeIbge().trim() || !this.cdIbge().trim() || !this.estadoUf().trim()) {
-      this.errorMessage.set('Preencha os campos obrigatórios (Cidade, Código IBGE e UF).');
+      this.abrirModalErro('Preencha os campos obrigatórios (Cidade, Código IBGE e UF).');
       return;
     }
+
+    const nomeCidade = this.dsNomeIbge().trim();
 
     const payload: any = {
       cdIbge: this.cdIbge().trim(),
       cdTom: this.cdTom().trim() || undefined,
-      dsNomeIbge: this.dsNomeIbge().trim(),
+      dsNomeIbge: nomeCidade,
       dsNomeTom: this.dsNomeTom().trim() || undefined,
       estadoUf: this.estadoUf().trim()
     };
@@ -104,13 +121,16 @@ export class CidadeDialogCadastrarComponent implements OnInit {
     this.cidadeService.cadastrarCidade(payload).subscribe({
       next: () => {
         this.salvando.set(false);
-        this.salvo.emit();
+        this.salvo.emit(nomeCidade);
         this.fechar();
       },
       error: (err) => {
-        console.error('Erro ao cadastrar cidade:', err);
-        this.errorMessage.set(err?.error?.message || 'Erro ao salvar a cidade. Verifique os dados informados.');
+        const mensagemErro = err?.error?.message || `Erro ao salvar a cidade. \n` +
+          `Código: ${err.error.cdStatus}\n` +
+          `${err.error.dsTitulo}\n` +
+          `${err.error.dsMensUsuario}`;
         this.salvando.set(false);
+        this.abrirModalErro(mensagemErro);
       }
     });
   }
@@ -121,6 +141,6 @@ export class CidadeDialogCadastrarComponent implements OnInit {
     this.dsNomeIbge.set('');
     this.dsNomeTom.set('');
     this.estadoUf.set('');
-    this.errorMessage.set(null);
+    this.errorMessageModal.set(null);
   }
 }

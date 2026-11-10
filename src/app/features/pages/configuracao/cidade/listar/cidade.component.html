@@ -91,7 +91,7 @@
               @for (cidade of cidades(); track cidade.id) {
                 <tr>
                   <td class="font-semibold text-base-content">
-                    <a class="link link-primary hover:underline cursos-point font-bold" (click)="abrirModalDetalhar(cidade.id)">
+                    <a class="link link-primary hover:underline cursor-pointer font-bold" (click)="abrirModalDetalhar(cidade.id)">
                        {{ cidade.dsNomeIbge }}
                     </a>
                   </td>
@@ -161,7 +161,37 @@
 </div>
 
 <!-- Componente Dialog de Cadastro -->
-<app-cidade-dialog-cadastrar #dialogCadastrar (salvo)="recarregarLista()"></app-cidade-dialog-cadastrar>
+<app-cidade-dialog-cadastrar
+  #dialogCadastrar
+  (salvo)="onCidadeCadastrada($event)">
+</app-cidade-dialog-cadastrar>
 
-<!-- Componente Dialog de Detalhamento -->
-<app-cidade-dialog-detalhar #dialogDetalhar (atualizado)="recarregarLista()"></app-cidade-dialog-detalhar>
+<!-- Componente Dialog de Detalhamento / Edição -->
+<app-cidade-dialog-detalhar
+  #dialogDetalhar
+  (atualizado)="onCidadeAtualizada($event)"
+  (excluido)="onCidadeExcluida($event)">
+</app-cidade-dialog-detalhar>
+
+<!-- Modal DaisyUI Unificado de Sucesso (Cadastro e Exclusão) -->
+ <dialog #successDialog class="modal modal-middle">
+  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
+    <div class="flex justify-center mb-3">
+      <div class="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center text-success">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    </div>
+    <h3 class="font-bold text-lg text-success">Operação Realizada!</h3>
+    <p class="py-2 text-sm text-base-content/80">
+      {{ mensagemSucessoModal() }}
+    </p>
+    <div class="modal-action justify-center mt-4">
+      <button type="button" class="btn btn-primary btn-sm px-6" (click)="fecharModalSucesso()">OK</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button (click)="fecharModalSucesso()">fechar</button>
+  </form>
+ </dialog>

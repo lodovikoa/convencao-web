@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal, ViewChild, ElementRef } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Cidade } from '@shared/interfaces/configuracao/cidade';
 import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-paginada';
@@ -19,6 +19,7 @@ export class CidadeComponent {
 
   @ViewChild('dialogCadastrar') dialogCadastrar!: CidadeDialogCadastrarComponent;
   @ViewChild('dialogDetalhar') dialogDetalhar!: CidadeDialogDetalharComponent;
+  @ViewChild('successDialog') successDialog!: ElementRef<HTMLDialogElement>;
 
   // Estados reativos com Signal
   protected readonly page = signal<number>(0);
@@ -26,10 +27,14 @@ export class CidadeComponent {
   protected readonly loading = signal<boolean>(false);
   protected readonly triggerReload = signal<number>(0);
 
+  // Controle do modal de sucesso de exclusão
+  protected readonly cidadeExcluidaNome = signal<string>('');
+
   // Signals brutos digitados pelo usuário instantaneamente
   protected readonly inputNome = signal<string>('');
   protected readonly inputIbge = signal<string>('');
   protected readonly inputUf = signal<string>('');
+  protected readonly mensagemSucessoModal = signal<string>('');
 
   // Signals com debounce de 1000ms aplicados automaticamente usando toObservable + toSignal
   protected readonly filtroNome = toSignal(
@@ -118,6 +123,44 @@ export class CidadeComponent {
     }
   }
 
+    // Disparado quando o modal de cadastro é concluído com sucesso
+  protected onCidadeCadastrada(nomeCidade: string): void {
+    this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi cadastrada com sucesso.`);
+    this.recarregarLista();
+
+    if(this.successDialog) {
+      this.successDialog.nativeElement.showModal();
+    }
+  }
+
+  // Disparado quando o modal de detalhes conclui a edição com sucesso
+  protected onCidadeAtualizada(nomeCidade: string): void {
+    this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi atualizada com sucesso.`);
+    this.recarregarLista();
+
+    if(this.successDialog) {
+      this.successDialog.nativeElement.showModal();
+    }
+  }
+
+  // Disparado quando o modal de detalhes confirma a exclusão
+  protected onCidadeExcluida(nomeCidade: string): void {
+    this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi excluída com sucesso.`);
+    this.recarregarLista();
+
+    // Abre o modal nativo DaisyUI de sucesso
+    if(this.successDialog) {
+      this.successDialog.nativeElement.showModal();
+    }
+  }
+
+  protected fecharModalSucesso(): void {
+    if(this.successDialog) {
+      this.successDialog.nativeElement.close();
+    }
+    this.mensagemSucessoModal.set('');
+  }
+
   protected recarregarLista(): void {
     this.triggerReload.update(v => v + 1);
   }
@@ -133,4 +176,5 @@ export class CidadeComponent {
     this.size.set(novoTamanho);
     this.page.set(0);
   }
+
 }
