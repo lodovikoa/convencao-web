@@ -15,62 +15,70 @@
         <span class="loading loading-spinner loading-lg text-primary"></span>
       </div>
     } @else {
-      <form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-col gap-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <form (ngSubmit)="salvar()" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <!-- Nome da Cidade (IBGE) primeiro -->
-          <div class="form-control md:col-span-2">
-            <label for="input-detalhar-nome-ibge" class="label"><span class="label-text font-medium">Nome da cidade (IBGE)</span></label>
+          <!-- 1. Nome da Cidade (IBGE) -->
+          <div class="form-control">
+            <label for="input-detalhar-nome-ibge" class="label"><span class="label-text font-medium">Nome da cidade (IBGE) *</span></label>
             <input
               id="input-detalhar-nome-ibge"
               type="text"
-              formControlName="dsNomeIbge"
               maxlength="50"
               class="input input-bordered w-full bg-base-100 text-base-content"
+              [value]="cidadeForm.dsNomeIbge().value()"
+              (input)="cidadeForm.dsNomeIbge().value.set($any($event.target).value)"
+              [readonly]="!editando()"
+              required
             />
           </div>
 
-          <!-- Código IBGE depois -->
+          <!-- 2. Código IBGE -->
           <div class="form-control">
-            <label for="input-detalhar-cd-ibge" class="label"><span class="label-text font-medium">Código IBGE</span></label>
+            <label for="input-detalhar-cd-ibge" class="label"><span class="label-text font-medium">Código IBGE *</span></label>
             <input
               id="input-detalhar-cd-ibge"
               type="text"
-              formControlName="cdIbge"
               maxlength="7"
-              (input)="aplicarMascaraApenasNumeros($event, 'cdIbge', 7)"
               class="input input-bordered w-full font-mono bg-base-100 text-base-content"
+              [value]="cidadeForm.cdIbge().value()"
+              (input)="aplicarMascaraNumeros('cdIbge', 7, $event)"
+              [readonly]="!editando()"
+              required
             />
           </div>
 
-          <!-- Nome da cidade (TOM) primeiro -->
-          <div class="form-control md:col-span-2">
+          <!-- 3. Nome da cidade (TOM) -->
+          <div class="form-control">
             <label for="input-detalhar-ds-nome-tom" class="label"><span class="label-text font-medium">Nome da cidade (TOM)</span></label>
             <input
               id="input-detalhar-ds-nome-tom"
               type="text"
-              formControlName="dsNomeTom"
               maxlength="50"
               class="input input-bordered w-full bg-base-100 text-base-content"
+              [value]="cidadeForm.dsNomeTom().value()"
+              (input)="cidadeForm.dsNomeTom().value.set($any($event.target).value)"
+              [readonly]="!editando()"
             />
           </div>
 
-          <!-- Código TOM depois -->
+          <!-- 4. Código TOM -->
           <div class="form-control">
             <label for="input-detalhar-cd-tom" class="label"><span class="label-text font-medium">Código TOM</span></label>
             <input
               id="input-detalhar-cd-tom"
               type="text"
-              formControlName="cdTom"
               maxlength="5"
-              (input)="aplicarMascaraApenasNumeros($event, 'cdTom', 5)"
               class="input input-bordered w-full font-mono bg-base-100 text-base-content"
+              [value]="cidadeForm.cdTom().value()"
+              (input)="aplicarMascaraNumeros('cdTom', 5, $event)"
+              [readonly]="!editando()"
             />
           </div>
 
-          <!-- Estado (UF) -->
-          <div class="form-control md:col-span-3">
-            <label for="select-detalhar-estado" class="label"><span class="label-text font-medium">Estado (UF)</span></label>
+          <!-- 5. Estado (UF) -->
+          <div class="form-control md:col-span-2">
+            <label for="select-detalhar-estado" class="label"><span class="label-text font-medium">Estado (UF) *</span></label>
 
             @if (!editando()) {
               <input
@@ -83,9 +91,11 @@
             } @else {
               <select
                 id="select-detalhar-estado"
-                formControlName="estadoId"
-                class="select select-bordered w-full bg-base-100 text-base-content">
-                <option [value]="null" disabled>Selecione um estado...</option>
+                class="select select-bordered w-full bg-base-100 text-base-content"
+                [value]="cidadeForm.estadoId().value() ?? ''"
+                (change)="atualizarEstadoId($any($event.target).value)"
+                required>
+                <option value="" disabled>Selecione um estado...</option>
                 @for (est of estadosList(); track est.id) {
                   <option [value]="est.id">{{ est.dsUf }} - {{ est.dsNome }}</option>
                 }
@@ -112,7 +122,7 @@
               <button type="button" class="btn" (click)="fechar()">Fechar</button>
             } @else {
               <button type="button" class="btn btn-ghost" (click)="alternarEdicao()">Cancelar</button>
-              <button type="submit" class="btn btn-primary" [disabled]="form.invalid || loading()">
+              <button type="submit" class="btn btn-primary" [disabled]="!cidadeForm().valid() || loading()">
                 @if (loading()) {
                   <span class="loading loading-spinner loading-sm"></span>
                 }
