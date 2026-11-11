@@ -92,12 +92,12 @@
               <select
                 id="select-detalhar-estado"
                 class="select select-bordered w-full bg-base-100 text-base-content"
-                [value]="cidadeForm.estadoId().value() ?? ''"
+                [value]="cidadeForm.estadoId().value() ?? 9"
                 (change)="atualizarEstadoId($any($event.target).value)"
                 required>
                 <option value="" disabled>Selecione um estado...</option>
                 @for (est of estadosList(); track est.id) {
-                  <option [value]="est.id">{{ est.dsUf }} - {{ est.dsNome }}</option>
+                  <option [value]="est.id" [selected]="est.id === cidadeForm.estadoId().value()">{{ est.dsUf }} - {{ est.dsNome }}</option>
                 }
               </select>
             }

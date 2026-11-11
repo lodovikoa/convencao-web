@@ -132,18 +132,20 @@ private preencherFormularioComDadosOriginais(): void {
     const cidade = this.cidadeCompleta();
     if (!cidade) return;
 
+    const idEstadoOriginal = (cidade as any).estadoId ?? cidade.estado?.id ?? null;
+
     // Atualiza os valores do model mantendo rigorosamente o ID do estado original
     this.formModel.set({
       dsNomeIbge: cidade.dsNomeIbge ?? '',
       cdIbge: cidade.cdIbge ?? '',
       dsNomeTom: cidade.dsNomeTom ?? '',
       cdTom: cidade.cdTom ?? '',
-      estadoId: cidade.estado?.id ?? null
+      estadoId: idEstadoOriginal
     });
 
     // Garante explicitamente que o nó do signal form receba o ID correto
-    if (cidade.estado?.id) {
-      this.cidadeForm.estadoId().value.set(cidade.estado.id);
+    if (this.cidadeForm?.estadoId) {
+      this.cidadeForm.estadoId().value.set(idEstadoOriginal);
     }
   }
 

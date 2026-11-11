@@ -10,29 +10,30 @@
     <!-- Formulário Reativo -->
     <form [formGroup]="form" (ngSubmit)="salvar($event)" class="space-y-4">
 
-      <!-- Nome da Cidade (IBGE) -->
-      <div class="form-control">
-        <label for="cad-dsNomeIbge" class="label"><span class="label-text font-semibold">Nome da Cidade (IBGE) *</span></label>
-        <input
-          id="cad-dsNomeIbge"
-          type="text"
-          placeholder="Ex: Cariacica"
-          maxlength="50"
-          class="input input-bordered w-full bg-base-100 text-base-content"
-          formControlName="dsNomeIbge"
-          (input)="aplicarMascaraTexto('dsNomeIbge', 50, $event)"
-          autocomplete="off"/>
-        <label class="label">
-          <span class="label-text-alt text-base-content/60">
-            {{ form.get('dsNomeIbge')?.value?.length || 0 }}/50 caracteres
-          </span>
-        </label>
-      </div>
+      <!-- Linha 1: Nome da Cidade (IBGE) e Código IBGE -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Nome da Cidade (IBGE) - Ocupa 2 colunas -->
+        <div class="form-control sm:col-span-2">
+          <label for="cad-dsNomeIbge" class="label"><span class="label-text font-semibold">Nome da Cidade (IBGE) *</span></label>
+          <input
+            id="cad-dsNomeIbge"
+            type="text"
+            placeholder="Ex: Cariacica"
+            maxlength="50"
+            class="input input-bordered w-full bg-base-100 text-base-content"
+            formControlName="dsNomeIbge"
+            (input)="aplicarMascaraTexto('dsNomeIbge', 50, $event)"
+            autocomplete="off"/>
+          <label class="label">
+            <span class="label-text-alt text-base-content/60">
+              {{ form.get('dsNomeIbge')?.value?.length || 0 }}/50 caracteres
+            </span>
+          </label>
+        </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Código IBGE -->
-        <div class="form-control">
-          <label for="cad-cdIbge" class="label"><span class="label-text font-semibold">Código IBGE *</span></label>
+        <!-- Código IBGE - Ocupa 1 coluna -->
+        <div class="form-control sm:col-span-1">
+          <label for="cad-cdIbge" class="label"><span class="label-text font-semibold">Cód. IBGE *</span></label>
           <input
             id="cad-cdIbge"
             type="text"
@@ -44,28 +45,15 @@
             autocomplete="off"
           />
           <label class="label">
-            <span class="label-text-alt text-base-content/60">Máx. 7 dígitos numéricos</span>
+            <span class="label-text-alt text-base-content/60">Máx. 7 dígitos</span>
           </label>
-        </div>
-
-        <!-- Combobox de UF do Estado -->
-        <div class="form-control">
-          <label for="cad-estadoUf" class="label"><span class="label-text font-semibold">Estado (UF) *</span></label>
-          <select
-            id="cad-estadoUf"
-            class="select select-bordered w-full bg-base-100 text-base-content font-medium"
-            formControlName="estadoUf">
-            <option value="" disabled selected>Selecione o estado...</option>
-            @for (est of estados(); track est.id) {
-              <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
-            }
-          </select>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Nome TOM -->
-        <div class="form-control">
+      <!-- Linha 2: Nome TOM e Código TOM -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Nome TOM - Ocupa 2 colunas -->
+        <div class="form-control sm:col-span-2">
           <label for="cad-dsNomeTom" class="label"><span class="label-text font-semibold">Nome TOM (Opcional)</span></label>
           <input
             id="cad-dsNomeTom"
@@ -84,13 +72,13 @@
           </label>
         </div>
 
-        <!-- Código TOM -->
-        <div class="form-control">
-          <label for="cad-cdTom" class="label"><span class="label-text font-semibold">Código TOM (Opcional)</span></label>
+        <!-- Código TOM - Ocupa 1 coluna -->
+        <div class="form-control sm:col-span-1">
+          <label for="cad-cdTom" class="label"><span class="label-text font-semibold">Cód. TOM</span></label>
           <input
             id="cad-cdTom"
             type="text"
-            placeholder="Código TOM"
+            placeholder="Cód. TOM"
             maxlength="5"
             class="input input-bordered w-full bg-base-100 text-base-content font-mono"
             formControlName="cdTom"
@@ -98,9 +86,23 @@
             autocomplete="off"
           />
           <label class="label">
-            <span class="label-text-alt text-base-content/60">Máx. 5 dígitos numéricos</span>
+            <span class="label-text-alt text-base-content/60">Máx. 5 dígitos</span>
           </label>
         </div>
+      </div>
+
+      <!-- Linha 3: Estado (UF) em largura total -->
+      <div class="form-control">
+        <label for="cad-estadoUf" class="label"><span class="label-text font-semibold">Estado (UF) *</span></label>
+        <select
+          id="cad-estadoUf"
+          class="select select-bordered w-full bg-base-100 text-base-content font-medium"
+          formControlName="estadoUf">
+          <option value="" disabled selected>Selecione o estado...</option>
+          @for (est of estados(); track est.id) {
+            <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
+          }
+        </select>
       </div>
 
       <!-- Rodapé / Ações -->

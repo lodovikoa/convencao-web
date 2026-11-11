@@ -54,8 +54,12 @@ export class CidadeComponent {
     { initialValue: '' }
   );
 
+  // Ajustado: só dispara a pesquisa se a UF tiver exatamente 2 caracteres, senão envia vazio
   protected readonly filtroUf = toSignal(
-    toObservable(computed(() => this.filtroModel().uf)).pipe(distinctUntilChanged()),
+    toObservable(computed(() => {
+      const uf = this.filtroModel().uf.trim();
+      return uf.length === 2 ? uf : '';
+    })).pipe(debounceTime(500),distinctUntilChanged()),
     { initialValue: '' }
   );
 
