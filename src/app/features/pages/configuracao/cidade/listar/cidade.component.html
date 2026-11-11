@@ -47,7 +47,7 @@
                       type="text"
                       placeholder="Filtrar cidade..."
                       class="input input-bordered input-xs w-full bg-base-100 text-base-content font-normal"
-                      [value]="inputNome()"
+                      [value]="filtroModel().nome"
                       (input)="atualizarFiltro('nome', $event)"
                       autocomplete="off"
                     />
@@ -62,7 +62,7 @@
                       type="text"
                       placeholder="Filtrar IBGE..."
                       class="input input-bordered input-xs w-full bg-base-100 text-base-content font-normal"
-                      [value]="inputIbge()"
+                      [value]="filtroModel().ibge"
                       (input)="atualizarFiltro('ibge', $event)"
                       autocomplete="off"
                     />
@@ -77,7 +77,7 @@
                       type="text"
                       placeholder="UF..."
                       class="input input-bordered input-xs w-16 bg-base-100 text-base-content font-normal uppercase"
-                      [value]="inputUf()"
+                      [value]="filtroModel().uf"
                       maxlength="2"
                       (input)="atualizarFiltro('uf', $event)"
                       autocomplete="off"
@@ -173,7 +173,7 @@
   (excluido)="onCidadeExcluida($event)">
 </app-cidade-dialog-detalhar>
 
-<!-- Modal DaisyUI Unificado de Sucesso (Cadastro e Exclusão) -->
+<!-- Modal DaisyUI Unificado de Sucesso -->
  <dialog #successDialog class="modal modal-middle">
   <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
     <div class="flex justify-center mb-3">
@@ -192,6 +192,6 @@
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">
-    <button (click)="fecharModalSucesso()">fechar</button>
+    <button type="button" (click)="fecharModalSucesso()">fechar</button>
   </form>
  </dialog>

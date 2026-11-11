@@ -8,6 +8,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeDialogCadastrarComponent } from '../dialog/cidade-dialog-cadastrar/cidade-dialog-cadastrar.component';
 import { CidadeDialogDetalharComponent } from '../dialog/cidade-dialog-detalhar/cidade-dialog-detalhar.component';
 
+// Interface do Modelo de Filtros baseada seu padrão
+interface FiltroCidadeModel {
+  nome: string;
+  ibge: string;
+  uf: string;
+}
+
 @Component({
   imports: [CommonModule, CidadeDialogCadastrarComponent, CidadeDialogDetalharComponent],
   selector: 'app-cidade',
@@ -21,34 +28,34 @@ export class CidadeComponent {
   @ViewChild('dialogDetalhar') dialogDetalhar!: CidadeDialogDetalharComponent;
   @ViewChild('successDialog') successDialog!: ElementRef<HTMLDialogElement>;
 
-  // Estados reativos com Signal
+  // Modelo reativo utilizando o padrão solicitado
+  protected readonly filtroModel = signal<FiltroCidadeModel>({
+    nome: '',
+    ibge: '',
+    uf: ''
+  });
+
+  // Estados reativos de paginação e controles
   protected readonly page = signal<number>(0);
   protected readonly size = signal<number>(10);
   protected readonly loading = signal<boolean>(false);
   protected readonly triggerReload = signal<number>(0);
 
-  // Controle do modal de sucesso de exclusão
-  protected readonly cidadeExcluidaNome = signal<string>('');
-
-  // Signals brutos digitados pelo usuário instantaneamente
-  protected readonly inputNome = signal<string>('');
-  protected readonly inputIbge = signal<string>('');
-  protected readonly inputUf = signal<string>('');
   protected readonly mensagemSucessoModal = signal<string>('');
 
-  // Signals com debounce de 1000ms aplicados automaticamente usando toObservable + toSignal
+  // Signals com debounce de aplicados sobre as propriedades do model e filtros
   protected readonly filtroNome = toSignal(
-    toObservable(this.inputNome).pipe(debounceTime(1000), distinctUntilChanged()),
+    toObservable(computed(() => this.filtroModel().nome)).pipe(debounceTime(1000), distinctUntilChanged()),
     { initialValue: '' }
   );
 
   protected readonly filtroIbge = toSignal(
-    toObservable(this.inputIbge).pipe(debounceTime(1000), distinctUntilChanged()),
+    toObservable(computed(() => this.filtroModel().ibge)).pipe(debounceTime(1000), distinctUntilChanged()),
     { initialValue: '' }
   );
 
   protected readonly filtroUf = toSignal(
-    toObservable(this.inputUf).pipe(distinctUntilChanged()),
+    toObservable(computed(() => this.filtroModel().uf)).pipe(distinctUntilChanged()),
     { initialValue: '' }
   );
 
@@ -89,26 +96,22 @@ export class CidadeComponent {
     });
   }
 
-  protected atualizarFiltro(tipo: 'nome' | 'ibge' | 'uf', event: Event): void {
+  // Atualizador centralizado do model de filtros reativo
+  protected atualizarFiltro(campo: keyof FiltroCidadeModel, event: Event): void {
     const input = event.target as HTMLInputElement;
     let valor = input.value;
 
     this.page.set(0);
 
-    if (tipo === 'nome') {
-      this.inputNome.set(valor);
-    } else if (tipo === 'ibge') {
-      this.inputIbge.set(valor);
-    } else if (tipo === 'uf') {
+    if(campo === 'uf') {
       valor = valor.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
       input.value = valor;
-
-      if (valor.length === 2) {
-        this.inputUf.set(valor);
-      } else {
-        this.inputUf.set('');
-      }
     }
+
+    this.filtroModel.update(model => ({
+      ...model,
+      [campo]: valor
+    }));
   }
 
   protected abrirModalCadastrar(): void {
