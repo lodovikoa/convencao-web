@@ -5,7 +5,7 @@ import { Estado } from '@shared/interfaces/configuracao/estado';
 import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-paginada'; // Sua interface existente
 import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastrar/estado-dialog-cadastrar.component';
 import { EstadoDialogDetalharComponent } from '../dialog/estado-dialog-detalhar/estado-dialog-detalhar.component';
-import { HasPermissionDirectiveDirective } from '@shared/directives/has-permission-directive.directive';
+import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
 
 interface PaginationParams {
   page: number;
@@ -16,7 +16,6 @@ interface PaginationParams {
 @Component({
   selector: 'app-estado',
   imports: [
-    HasPermissionDirectiveDirective,
     EstadoDialogCadastrarComponent,
     EstadoDialogDetalharComponent
   ],
@@ -26,37 +25,41 @@ interface PaginationParams {
 })
 export class EstadoComponent {
   private readonly estadoService = inject(EstadoService);
+  private readonly loginFacade = inject(LoginFacadeService); // Injetando o serviço real do seu projeto
 
-  @ViewChild('successDialog') public readonly successDialog!: ElementRef<HTMLDialogElement>;
-  @ViewChild('cadastrarDialog') public readonly cadastrarDialog!: ElementRef<HTMLDialogElement>;
-  @ViewChild('detalharDialog') public readonly detalharDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('successDialog') protected readonly successDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('cadastrarDialog') protected readonly cadastrarDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('detalharDialog') protected readonly detalharDialog!: ElementRef<HTMLDialogElement>;
 
-  public readonly mensagemSucessoModal = signal<string>('');
-  public readonly estadoSelecionado = signal<Estado | null>(null);
+  protected readonly mensagemSucessoModal = signal<string>('');
+  protected readonly estadoSelecionado = signal<Estado | null>(null);
+
+  // Verificação de permissão centralizada no TS usando o serviço que você já tem
+  protected readonly temPermissaoCadastrar = computed(() => this.loginFacade.hasPermission('T_CFT_MASTER'));
 
 // 1. Signal que armazena os parâmetros atuais de paginação/ordenação
   private readonly queryParams = signal<PaginationParams>({ page: 0, size: 10, sort: 'dsNome,asc' });
 
   // 2. rxResource utilizando `params` e `stream`
-  public readonly estadosResource = rxResource({
+  protected readonly estadosResource = rxResource({
     params: () => this.queryParams(),
     stream: ({ params }) => this.estadoService.listarEstados(params.page, params.size, params.sort)
   });
 
   // 3. Computed para expor o loading diretamente do resource
-  public readonly isLoading = computed(() => this.estadosResource.isLoading());
+  protected readonly isLoading = computed(() => this.estadosResource.isLoading());
 
   // 4. Computed tipado corretamente com a sua interface de resposta paginada
-  public readonly estadosResponse = computed(() => this.estadosResource.value() as RespostaPaginada<Estado> | undefined);
+  protected readonly estadosResponse = computed(() => this.estadosResource.value() as RespostaPaginada<Estado> | undefined);
 
   // 5. Computed para extrair a lista com segurança
-  public readonly estadosList = computed(() => this.estadosResponse()?.content ?? []);
+  protected readonly estadosList = computed(() => this.estadosResponse()?.content ?? []);
 
-  public recarregarDados(): void {
+  protected recarregarDados(): void {
     this.estadosResource.reload(); // Recarrega o resource nativamente
   }
 
-  public ordenar(coluna: string): void {
+  protected ordenar(coluna: string): void {
     const atual = this.queryParams();
     const [col, dir] = atual.sort.split(',');
     const novaDir = col === coluna && dir === 'asc' ? 'desc' : 'asc';
@@ -68,7 +71,7 @@ export class EstadoComponent {
     });
   }
 
-  public mudarPagina(pagina: number): void {
+  protected mudarPagina(pagina: number): void {
     const pageTotal = this.estadosResponse()?.pageable?.pageTotal || 1;
     if (pagina < 0 || pagina >= pageTotal) return;
 
@@ -78,7 +81,7 @@ export class EstadoComponent {
     }));
   }
 
-  public mudarItensPorPagina(event: Event): void {
+  protected mudarItensPorPagina(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const novoSize = Number(selectElement.value);
 
@@ -89,12 +92,12 @@ export class EstadoComponent {
     }));
   }
 
-  public detalhar(estado: Estado): void {
+  protected detalhar(estado: Estado): void {
     this.estadoSelecionado.set({ ...estado });
     this.detalharDialog?.nativeElement.showModal();
   }
 
-  public fecharDetalharDialog(resultado?: { acao: 'atualizado' | 'excluido'; nomeEstado: string }): void {
+  protected fecharDetalharDialog(resultado?: { acao: 'atualizado' | 'excluido'; nomeEstado: string }): void {
     this.detalharDialog?.nativeElement.close();
     this.estadoSelecionado.set(null);
 
@@ -109,11 +112,11 @@ export class EstadoComponent {
     }
   }
 
-  public cadastrarEstado(): void {
+  protected cadastrarEstado(): void {
     this.cadastrarDialog?.nativeElement.showModal();
   }
 
-  public fecharCadastrarDialog(salvo: boolean, nomeEstado?: string): void {
+  protected fecharCadastrarDialog(salvo: boolean, nomeEstado?: string): void {
     this.cadastrarDialog?.nativeElement.close();
 
     if (salvo) {

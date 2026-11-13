@@ -1,7 +1,8 @@
-import { Component, inject, signal, ChangeDetectionStrategy, ViewChild, ElementRef, input, output, effect } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, ViewChild, ElementRef, input, output, effect, computed } from '@angular/core';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
 import { form, required, minLength, maxLength, FormField, disabled } from '@angular/forms/signals';
+import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
 
 @Component({
   selector: 'app-estado-dialog-detalhar',
@@ -12,14 +13,17 @@ import { form, required, minLength, maxLength, FormField, disabled } from '@angu
 })
 export class EstadoDialogDetalharComponent {
   private readonly estadoService: EstadoService = inject(EstadoService);
+  private readonly loginFacade = inject(LoginFacadeService)
 
   public readonly estado = input.required<Estado>();
   public readonly fecharModal = output<{ acao: 'atualizado' | 'excluido'; nomeEstado: string } | undefined>();
 
   @ViewChild('confirmDialogRef') public readonly confirmDialogRef!: ElementRef<HTMLDialogElement>;
 
-  public readonly isLoading = signal<boolean>(false);
-  public readonly isEditing = signal<boolean>(false);
+  protected readonly isLoading = signal<boolean>(false);
+  protected readonly isEditing = signal<boolean>(false);
+
+  protected readonly temPermissaoCadastrarExcluir = computed(() => this.loginFacade.hasPermission('T_CFT_MASTER'));
 
   protected readonly formModel = signal<Estado>({
     id: 0,
@@ -50,27 +54,27 @@ export class EstadoDialogDetalharComponent {
     });
   }
 
-  public ativarEdicao(): void {
+  protected ativarEdicao(): void {
     this.isEditing.set(true);
   }
 
-  public cancelarEdicao(): void {
+  protected cancelarEdicao(): void {
     this.formModel.set({ ...this.estado() });
     this.isEditing.set(false);
   }
 
-  public onUfInput(event: Event): void {
+  protected onUfInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const upperValue = input.value.toUpperCase();
     this.formModel.update(model => ({ ...model, dsUf: upperValue }));
   }
 
-  public onNomeInput(event: Event): void {
+  protected onNomeInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.formModel.update(model => ({ ...model, dsNome: input.value }));
   }
 
-  public salvarAlteracoes(): void {
+  protected salvarAlteracoes(): void {
     if (this.estadoForm().valid()) {
       this.isLoading.set(true);
       const nomeAtualizado = this.formModel().dsNome;
@@ -115,7 +119,7 @@ export class EstadoDialogDetalharComponent {
     });
   }
 
-  public fechar(): void {
+  protected fechar(): void {
     this.fecharModal.emit(undefined);
   }
 }

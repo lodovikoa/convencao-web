@@ -14,7 +14,7 @@ export class EstadoDialogCadastrarComponent {
   private readonly estadoService: EstadoService = inject(EstadoService);
 
   public readonly fechar = output<{ salvo: boolean; nomeEstado?: string }>();
-  public readonly isLoading = signal<boolean>(false);
+  protected readonly isLoading = signal<boolean>(false);
 
   protected readonly formModel = signal<Omit<Estado, 'id' | 'links'>>({
     dsUf: '',
@@ -31,7 +31,7 @@ export class EstadoDialogCadastrarComponent {
   });
 
   // Mantido apenas para forçar a caixa alta na UF de forma fluida enquanto digita
-  public onUfInput(event: Event): void {
+  protected onUfInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const upperValue = input.value.toUpperCase();
     if (input.value !== upperValue) {
@@ -40,7 +40,7 @@ export class EstadoDialogCadastrarComponent {
     this.estadoForm.dsUf().value.set(upperValue);
   }
 
-  public onSave(): void {
+  protected onSave(): void {
     if (this.estadoForm().valid()) {
       this.isLoading.set(true);
       const dadosFormulario = this.formModel();
@@ -59,7 +59,7 @@ export class EstadoDialogCadastrarComponent {
     }
   }
 
-  public onCancel(): void {
+  protected onCancel(): void {
     this.resetForm(); // Limpa os dados e estados do formulário
     this.fechar.emit({ salvo: false });
   }

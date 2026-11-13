@@ -55,7 +55,7 @@
 
   <div class="flex justify-between items-center mt-6">
     <div>
-      @if (!isEditing()) {
+      @if (!isEditing() && temPermissaoCadastrarExcluir()) {
         <button type="button" class="btn btn-error btn-outline btn-sm" (click)="abrirModalConfirmarExclusao()" [disabled]="isLoading()">
           Excluir
         </button>
@@ -64,7 +64,9 @@
 
     <div class="flex gap-2">
       @if (!isEditing()) {
-        <button type="button" class="btn btn-primary" (click)="ativarEdicao()">Editar Dados</button>
+        @if(temPermissaoCadastrarExcluir()) {
+          <button type="button" class="btn btn-primary" (click)="ativarEdicao()">Editar Dados</button>
+        }
         <button type="button" class="btn btn-ghost" (click)="fechar()">Fechar</button>
       } @else {
         <button type="button" class="btn btn-ghost" (click)="cancelarEdicao()" [disabled]="isLoading()">Cancelar</button>

@@ -3,14 +3,14 @@
 
   <div class="card bg-base-100 text-base-content shadow-xl relative overflow-hidden">
     <div class="flex flex-col sm:flex-row justify-between items-center p-4 border-b border-base-200 gap-4">
-      <button *appHasPermission="'T_CFT_MASTER'"
-              class="btn btn-primary gap-2"
-              (click)="cadastrarEstado()">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Cadastrar Estado
-      </button>
+      @if(temPermissaoCadastrar()) {
+        <button class="btn btn-primary gap-2" (click)="cadastrarEstado()">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Cadastrar Estado
+        </button>
+      }
 
       <div class="flex items-center gap-2">
         <span class="text-sm font-semibold text-base-content">Itens por página:</span>
