@@ -1,36 +1,54 @@
-<h2 mat-dialog-title>Cadastrar Estado</h2>
-    <mat-dialog-content [formGroup]="estadoForm">
-      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
+<div class="p-6 bg-base-100 rounded-box w-full max-w-md">
+  <h3 class="text-lg font-bold mb-4">Cadastrar Estado</h3>
 
-        <mat-form-field appearance="outline">
-          <mat-label>UF</mat-label>
-          <input matInput formControlName="dsUf" maxlength="2" placeholder="Ex: SP" (input)="toUpperCase('dsUf')">
-          @if (estadoForm.get('dsUf')?.invalid && estadoForm.get('dsUf')?.touched) {
-            <mat-error>A UF deve ter exatamente 2 caracteres.</mat-error>
-          }
-        </mat-form-field>
+  <div class="flex flex-col gap-4">
+    <!-- Campo UF -->
+    <div class="form-control">
+      <label for="dsUf" class="label">
+        <span class="label-text font-semibold">UF</span>
+      </label>
+      <input id="dsUf"
+             type="text"
+             [formField]="estadoForm.dsUf"
+             (input)="onUfInput($event)"
+             placeholder="Ex: SP"
+             class="input input-bordered w-full" />
 
-        <mat-form-field appearance="outline">
-          <mat-label>Nome do Estado</mat-label>
-          <input matInput formControlName="dsNome" placeholder="Ex: São Paulo">
-          @if (estadoForm.get('dsNome')?.invalid && estadoForm.get('dsNome')?.touched) {
-            <mat-error>O nome deve ter no mínimo 3 caracteres.</mat-error>
-          }
-        </mat-form-field>
+      @if (estadoForm.dsUf().touched() && estadoForm.dsUf().errors().length > 0) {
+        @for (error of estadoForm.dsUf().errors(); track error) {
+          <div class="text-error"> {{error.message}} </div>
+        }
+      }
+    </div>
 
-      </div>
-    </mat-dialog-content>
+    <!-- Campo Nome -->
+    <div class="form-control">
+      <label for="dsNome" class="label">
+        <span class="label-text font-semibold">Nome do Estado</span>
+      </label>
+      <input id="dsNome"
+             type="text"
+             [formField]="estadoForm.dsNome"
+             placeholder="Ex: São Paulo"
+             class="input input-bordered w-full" />
 
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-raised-button
-              color="primary"
-              [disabled]="estadoForm.invalid || isLoading()"
-              (click)="onSave()">
-          @if(isLoading()) {
-            <mat-spinner diameter="20" style="display: inline-block;" />
-          } @else {
-            Salvar
-          }
-      </button>
-    </mat-dialog-actions>
+      @if (estadoForm.dsNome().touched() && estadoForm.dsNome().errors().length > 0) {
+        @for (error of estadoForm.dsNome().errors(); track error) {
+          <div class="text-error"> {{error.message}} </div>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2 mt-6">
+    <button class="btn btn-ghost" (click)="onCancel()">Cancelar</button>
+    <button class="btn btn-primary"
+            [disabled]="!estadoForm().valid() || isLoading()"
+            (click)="onSave()">
+      @if(isLoading()) {
+        <span class="loading loading-spinner loading-xs"></span>
+      }
+      Salvar
+    </button>
+  </div>
+</div>

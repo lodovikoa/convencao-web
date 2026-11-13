@@ -1,67 +1,73 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { Component, inject, signal, ChangeDetectionStrategy, output } from '@angular/core';
+import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
-  selector: 'app-estado-form-dialog-cadastrar',
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    ReactiveFormsModule,
-    MatProgressSpinnerModule
-  ],
+  selector: 'app-estado-dialog-cadastrar',
+  imports: [ FormField ],
   templateUrl: './estado-dialog-cadastrar.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './estado-dialog-cadastrar.component.scss',
 })
 export class EstadoDialogCadastrarComponent {
-  private readonly fb = inject(FormBuilder);
-  private readonly estadoService = inject(EstadoService);
-  private readonly dialogRef = inject(MatDialogRef<EstadoDialogCadastrarComponent>);
+  private readonly estadoService: EstadoService = inject(EstadoService);
 
-  isLoading = signal(false);
+  public readonly fechar = output<{ salvo: boolean; nomeEstado?: string }>();
+  public readonly isLoading = signal<boolean>(false);
 
-  estadoForm = this.fb.group({
-    dsUf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
-    dsNome: ['', [Validators.required, Validators.minLength(3)]]
+  protected readonly formModel = signal<Omit<Estado, 'id' | 'links'>>({
+    dsUf: '',
+    dsNome: ''
   });
 
-  toUpperCase(field: string) {
-    const value = this.estadoForm.get(field)?.value;
-    if(value) {
-      this.estadoForm.get(field)?.setValue(value.toUpperCase(), {
-        emitEvent: false
-      });
+  protected readonly estadoForm = form(this.formModel, schema => {
+    required(schema.dsUf, { message: 'A UF é obrigatória' });
+    minLength(schema.dsUf, 2, { message: 'A UF deve ter exatamente 2 caracteres' });
+    maxLength(schema.dsUf, 2, { message: 'A UF deve ter exatamente 2 caracteres' });
+
+    required(schema.dsNome, { message: 'O nome do estado é obrigatório' });
+    minLength(schema.dsNome, 3, { message: 'O nome deve ter no mínimo 3 caracteres' });
+  });
+
+  // Mantido apenas para forçar a caixa alta na UF de forma fluida enquanto digita
+  public onUfInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const upperValue = input.value.toUpperCase();
+    if (input.value !== upperValue) {
+      input.value = upperValue;
     }
+    this.estadoForm.dsUf().value.set(upperValue);
   }
 
-  onSave(): void {
-    if (this.estadoForm.valid) {
+  public onSave(): void {
+    if (this.estadoForm().valid()) {
       this.isLoading.set(true);
+      const dadosFormulario = this.formModel();
+      const nomeEstadoCadastrado = dadosFormulario.dsNome;
 
-      this.estadoService.cadastrarEstado(this.estadoForm.value as Estado).subscribe({
-        next: (res) => {
+      this.estadoService.cadastrarEstado(dadosFormulario as Estado).subscribe({
+        next: () => {
           this.isLoading.set(false);
-          this.dialogRef.close(true);
+          this.resetForm(); // Limpa os dados e estados do formulário
+          this.fechar.emit({ salvo: true, nomeEstado: nomeEstadoCadastrado });
         },
-        error: (err) => {
+        error: () => {
           this.isLoading.set(false);
         }
       });
     }
   }
 
-  onCancel(): void {
-    this.dialogRef.close(false);
+  public onCancel(): void {
+    this.resetForm(); // Limpa os dados e estados do formulário
+    this.fechar.emit({ salvo: false });
+  }
+
+  private resetForm(): void {
+    // Reseta os valores do model
+    this.formModel.set({ dsUf: '', dsNome: '' });
+    // Reseta o estado de toque/sujeira e validações do formulário reativo por sinais
+    this.estadoForm().reset();
   }
 }

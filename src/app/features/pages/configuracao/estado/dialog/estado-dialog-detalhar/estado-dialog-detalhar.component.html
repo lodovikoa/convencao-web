@@ -1,0 +1,105 @@
+<div class="p-6 bg-base-100 rounded-box w-full max-w-md text-base-content relative">
+  <button type="button"
+          class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-base-content/70 hover:text-base-content"
+          (click)="fechar()">
+    ✕
+  </button>
+
+  <h3 class="text-lg font-bold mb-4 text-base-content pr-8">
+    @if(isEditing()) {
+      Alterar Estado
+    } @else {
+      Detalhar Estado
+    }
+  </h3>
+
+  <div class="flex flex-col gap-4">
+    <!-- Campo UF -->
+    <div class="form-control">
+      <label for="dsUfDet" class="label">
+        <span class="label-text font-semibold text-base-content">UF</span>
+      </label>
+      <input id="dsUfDet"
+             type="text"
+             [formField]="estadoForm.dsUf"
+             (input)="onUfInput($event)"
+             class="input input-bordered w-full bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content" />
+      @if (isEditing() && estadoForm.dsUf().touched() && estadoForm.dsUf().errors().length > 0) {
+        <label class="label">
+          @for (error of estadoForm.dsUf().errors(); track error) {
+           <div class="text-error"> {{error.message}} </div>
+          }
+        </label>
+      }
+    </div>
+
+    <!-- Campo Nome -->
+    <div class="form-control">
+      <label for="dsNomeDet" class="label">
+        <span class="label-text font-semibold text-base-content">Nome</span>
+      </label>
+      <input id="dsNomeDet"
+             type="text"
+             [formField]="estadoForm.dsNome"
+             (input)="onNomeInput($event)"
+             class="input input-bordered w-full bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content" />
+      @if (isEditing() && estadoForm.dsNome().touched() && estadoForm.dsNome().errors().length > 0) {
+        <label class="label">
+          @for (error of estadoForm.dsNome().errors(); track error) {
+            <div class="text-error"> {{error.message}} </div>
+          }
+        </label>
+      }
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center mt-6">
+    <div>
+      @if (!isEditing()) {
+        <button type="button" class="btn btn-error btn-outline btn-sm" (click)="abrirModalConfirmarExclusao()" [disabled]="isLoading()">
+          Excluir
+        </button>
+      }
+    </div>
+
+    <div class="flex gap-2">
+      @if (!isEditing()) {
+        <button type="button" class="btn btn-primary" (click)="ativarEdicao()">Editar Dados</button>
+        <button type="button" class="btn btn-ghost" (click)="fechar()">Fechar</button>
+      } @else {
+        <button type="button" class="btn btn-ghost" (click)="cancelarEdicao()" [disabled]="isLoading()">Cancelar</button>
+        <button type="button"
+                class="btn btn-primary"
+                [disabled]="!estadoForm().valid() || isLoading()"
+                (click)="salvarAlteracoes()">
+          @if(isLoading()) {
+            <span class="loading loading-spinner loading-xs"></span>
+          }
+          Salvar
+        </button>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Modal DaisyUI de Confirmação de Exclusão -->
+<dialog #confirmDialogRef class="modal modal-middle">
+  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200">
+    <h3 class="font-bold text-lg text-error">Confirmar Exclusão</h3>
+    <p class="py-4 text-sm text-base-content/80">
+      Tem certeza de que deseja excluir o estado <strong class="text-base-content">{{ formModel().dsNome }}</strong>?
+    </p>
+    <div class="modal-action justify-end gap-2">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="fecharModalConfirmarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-error btn-sm px-4" (click)="confirmarExclusao()" [disabled]="isLoading()">
+        @if(isLoading()) {
+          <span class="loading loading-spinner loading-xs"></span>
+        }
+        Excluir
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" (click)="fecharModalConfirmarExclusao()">fechar</button>
+  </form>
+</dialog>

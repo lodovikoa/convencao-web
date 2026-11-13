@@ -1,50 +1,143 @@
-<div class="header-container">
-  <h2 class="card-title text-2xl">Cadastro de Estados</h2>
-  <button *appHasPermission="'T_CFT_MASTER'" mat-raised-button color="primary" (click)="cadastrarEstado()">
-    <mat-icon>add</mat-icon> Cadastrar Estado
-  </button>
-</div>
+<div class="flex flex-col gap-3 p-6">
+  <h2 class="text-2xl font-bold text-base-content m-0">Cadastro de Estados</h2>
 
-<div class="container mat-elevation-z4">
+  <div class="card bg-base-100 text-base-content shadow-xl relative overflow-hidden">
+    <div class="flex flex-col sm:flex-row justify-between items-center p-4 border-b border-base-200 gap-4">
+      <button *appHasPermission="'T_CFT_MASTER'"
+              class="btn btn-primary gap-2"
+              (click)="cadastrarEstado()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Cadastrar Estado
+      </button>
 
-  @if(isLoading()) {
-    <div class="loading-overlay">
-      <mat-spinner diameter="50" />
+      <div class="flex items-center gap-2">
+        <span class="text-sm font-semibold text-base-content">Itens por página:</span>
+        <select class="select select-bordered select-sm w-24 bg-base-100 text-base-content"
+                [value]="estadosResponse()?.pageable?.pageSize || 10"
+                (change)="mudarItensPorPagina($event)">
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
     </div>
-  }
 
-  <table mat-table [dataSource]="datasource" matSort (matSortChange)="ordenar($event)">
+    @if (isLoading()) {
+      <div class="absolute inset-0 bg-base-100/50 backdrop-blur-xs flex items-center justify-center z-10">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    }
 
-    <ng-container matColumnDef="dsUf">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> UF </th>
-      <td mat-cell *matCellDef="let element"> {{element.dsUf}} </td>
-    </ng-container>
+    <div class="overflow-x-auto">
+      <table class="table table-zebra text-base-content">
+        <thead>
+          <tr class="text-base-content">
+            <th class="cursor-pointer hover:bg-base-200" (click)="ordenar('dsUf')">UF</th>
+            <th class="cursor-pointer hover:bg-base-200" (click)="ordenar('dsNome')">Nome</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (element of estadosList(); track element.id) {
+            <tr>
+              <td>
+                <a class="link link-primary font-semibold cursor-pointer" (click)="detalhar(element)">
+                  {{ element.dsUf }}
+                </a>
+              </td>
+              <td class="text-base-content">{{ element.dsNome }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="2" class="text-center py-4 text-base-content/60">Nenhum estado encontrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-    <ng-container matColumnDef="dsNome">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
-      <td mat-cell *matCellDef="let element"> {{element.dsNome}} </td>
-    </ng-container>
+    <div class="flex flex-col sm:flex-row justify-between items-center p-4 border-t border-base-200 gap-4">
+      <span class="text-sm text-base-content">
+        Mostrando página
+        <strong class="text-base-content">{{ (estadosResponse()?.pageable?.pageNumber || 0) + 1 }}</strong>
+        de
+        <strong class="text-base-content">{{ estadosResponse()?.pageable?.pageTotal || 1 }}</strong>
+        (Total de
+        <strong class="text-base-content">{{ estadosResponse()?.pageable?.elementsTotal || 0 }}</strong> estados)
+      </span>
 
-    <ng-container matColumnDef="acoes">
-      <th mat-header-cell *matHeaderCellDef> Ações </th>
-      <td mat-cell *matCellDef="let element">
-        <button  *appHasPermission="'T_CFT_MASTER'" mat-icon-button color="primary" (click)="editar(element)">
-          <mat-icon>edit</mat-icon>
+      <div class="join">
+        <button class="join-item btn btn-sm"
+                [disabled]="(estadosResponse()?.pageable?.pageNumber || 0) === 0"
+                (click)="mudarPagina(0)">
+          ««
         </button>
-        <button  *appHasPermission="'T_CFT_MASTER'" mat-icon-button color="warn" (click)="excluir(element)">
-          <mat-icon>delete</mat-icon>
+        <button class="join-item btn btn-sm"
+                [disabled]="(estadosResponse()?.pageable?.pageNumber || 0) === 0"
+                (click)="mudarPagina((estadosResponse()?.pageable?.pageNumber || 0) - 1)">
+          « Anterior
         </button>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-  </table>
-  <mat-paginator
-    [length]="estadosResponse()?.pageable?.elementsTotal || 0"
-    [pageSize]="estadosResponse()?.pageable?.pageSize || 10"
-    [pageSizeOptions]="[5, 10, 20]"
-    (page)="mudouPagina($event)"
-    showFirstLastButtons  />
+        <button class="join-item btn btn-sm btn-disabled bg-base-200 text-base-content font-semibold">
+          {{ (estadosResponse()?.pageable?.pageNumber || 0) + 1 }} / {{ estadosResponse()?.pageable?.pageTotal || 1 }}
+        </button>
+        <button class="join-item btn btn-sm"
+                [disabled]="((estadosResponse()?.pageable?.pageNumber || 0) + 1) >= (estadosResponse()?.pageable?.pageTotal || 1)"
+                (click)="mudarPagina((estadosResponse()?.pageable?.pageNumber || 0) + 1)">
+          Próxima »
+        </button>
+        <button class="join-item btn btn-sm"
+                [disabled]="((estadosResponse()?.pageable?.pageNumber || 0) + 1) >= (estadosResponse()?.pageable?.pageTotal || 1)"
+                (click)="mudarPagina((estadosResponse()?.pageable?.pageTotal || 1) - 1)">
+          »»
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Modal DaisyUI para Cadastro -->
+<dialog #cadastrarDialog class="modal modal-middle">
+  <div class="modal-box bg-base-100 p-0 shadow-2xl border border-base-200">
+    <app-estado-dialog-cadastrar (fechar)="fecharCadastrarDialog($event.salvo, $event.nomeEstado)" />
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" (click)="fecharCadastrarDialog(false)">fechar</button>
+  </form>
+</dialog>
+
+<!-- Modal DaisyUI para Detalhar/Editar -->
+<dialog #detalharDialog class="modal modal-middle">
+  <div class="modal-box bg-base-100 p-0 shadow-2xl border border-base-200">
+    @if (estadoSelecionado(); as estado) {
+      <app-estado-dialog-detalhar [estado]="estado" (fecharModal)="fecharDetalharDialog($event)" />
+    }
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" (click)="fecharDetalharDialog(undefined)">fechar</button>
+  </form>
+</dialog>
+
+<!-- Modal DaisyUI Unificado de Sucesso -->
+<dialog #successDialog class="modal modal-middle">
+  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
+    <div class="flex justify-center mb-3">
+      <div class="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center text-success">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    </div>
+    <h3 class="font-bold text-lg text-success">Operação Realizada!</h3>
+    <p class="py-2 text-sm text-base-content/80">
+      {{ mensagemSucessoModal() }}
+    </p>
+    <div class="modal-action justify-center mt-4">
+      <button type="button" class="btn btn-primary btn-sm px-6" (click)="fecharModalSucesso()">OK</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button type="button" (click)="fecharModalSucesso()">fechar</button>
+  </form>
+</dialog>
