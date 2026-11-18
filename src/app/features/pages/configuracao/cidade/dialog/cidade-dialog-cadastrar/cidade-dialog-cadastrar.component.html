@@ -4,122 +4,157 @@
     <!-- Cabeçalho do Modal -->
     <div class="flex justify-between items-center pb-4 mb-4 border-b border-base-200">
       <h3 class="font-bold text-lg text-base-content">Cadastrar Nova Cidade</h3>
-      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="fechar()">✕</button>
+      <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="onCancel()">✕</button>
     </div>
 
-    <!-- Formulário Reativo -->
-    <form [formGroup]="form" (ngSubmit)="salvar($event)" class="space-y-4">
+    <!-- Formulário com Signal Forms -->
+    <div class="space-y-4">
 
       <!-- Linha 1: Nome da Cidade (IBGE) e Código IBGE -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <!-- Nome da Cidade (IBGE) - Ocupa 2 colunas -->
+        <!-- Nome da Cidade (IBGE) -->
         <div class="form-control sm:col-span-2">
-          <label for="cad-dsNomeIbge" class="label"><span class="label-text font-semibold">Nome da Cidade (IBGE) *</span></label>
+          <label for="cad-dsNomeIbge" class="label">
+            <span class="label-text font-semibold">Nome da Cidade (IBGE) *</span>
+          </label>
           <input
             id="cad-dsNomeIbge"
             type="text"
             placeholder="Ex: Cariacica"
-            maxlength="50"
             class="input input-bordered w-full bg-base-100 text-base-content"
-            formControlName="dsNomeIbge"
-            (input)="aplicarMascaraTexto('dsNomeIbge', 50, $event)"
+            [formField]="cidadeForm.dsNomeIbge"
             autocomplete="off"/>
+
           <label class="label">
             <span class="label-text-alt text-base-content/60">
-              {{ form.get('dsNomeIbge')?.value?.length || 0 }}/50 caracteres
+              {{ cidadeForm.dsNomeIbge().value().length }}/50 caracteres
             </span>
           </label>
+
+          @if (cidadeForm.dsNomeIbge().touched() && cidadeForm.dsNomeIbge().errors().length > 0) {
+            @for (error of cidadeForm.dsNomeIbge().errors(); track error) {
+              <div class="text-error text-xs mt-1">{{ error.message }}</div>
+            }
+          }
+
         </div>
 
-        <!-- Código IBGE - Ocupa 1 coluna -->
+        <!-- Código IBGE -->
         <div class="form-control sm:col-span-1">
-          <label for="cad-cdIbge" class="label"><span class="label-text font-semibold">Cód. IBGE *</span></label>
+          <label for="cad-cdIbge" class="label">
+            <span class="label-text font-semibold">Cód. IBGE *</span>
+          </label>
           <input
             id="cad-cdIbge"
             type="text"
             placeholder="Ex: 3201308"
-            maxlength="7"
             class="input input-bordered w-full bg-base-100 text-base-content font-mono"
-            formControlName="cdIbge"
-            (input)="aplicarMascaraNumeros('cdIbge', 7, $event)"
+            [formField]="cidadeForm.cdIbge"
             autocomplete="off"
+            (input)="aplicarMascaraNumeros('cdIbge', 7, $event)"
           />
           <label class="label">
             <span class="label-text-alt text-base-content/60">Máx. 7 dígitos</span>
           </label>
+          @if (cidadeForm.cdIbge().touched() && cidadeForm.cdIbge().errors().length > 0) {
+            @for (error of cidadeForm.cdIbge().errors(); track error) {
+              <div class="text-error text-xs mt-1">{{ error.message }}</div>
+            }
+          }
         </div>
       </div>
 
       <!-- Linha 2: Nome TOM e Código TOM -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <!-- Nome TOM - Ocupa 2 colunas -->
+        <!-- Nome TOM -->
         <div class="form-control sm:col-span-2">
-          <label for="cad-dsNomeTom" class="label"><span class="label-text font-semibold">Nome TOM (Opcional)</span></label>
+          <label for="cad-dsNomeTom" class="label">
+            <span class="label-text font-semibold">Nome TOM (Opcional)</span>
+          </label>
           <input
             id="cad-dsNomeTom"
             type="text"
             placeholder="Nome TOM"
-            maxlength="50"
             class="input input-bordered w-full bg-base-100 text-base-content"
-            formControlName="dsNomeTom"
-            (input)="aplicarMascaraTexto('dsNomeTom', 50, $event)"
+            [formField]="cidadeForm.dsNomeTom"
             autocomplete="off"
           />
           <label class="label">
             <span class="label-text-alt text-base-content/60">
-              {{ form.get('dsNomeTom')?.value?.length || 0 }}/50 caracteres
+              {{ cidadeForm.dsNomeTom().value().length }}/50 caracteres
             </span>
           </label>
+          @if (cidadeForm.dsNomeTom().touched() && cidadeForm.dsNomeTom().errors().length > 0) {
+            @for (error of cidadeForm.dsNomeTom().errors(); track error) {
+              <div class="text-error text-xs mt-1">{{ error.message }}</div>
+            }
+          }
         </div>
 
-        <!-- Código TOM - Ocupa 1 coluna -->
+        <!-- Código TOM -->
         <div class="form-control sm:col-span-1">
-          <label for="cad-cdTom" class="label"><span class="label-text font-semibold">Cód. TOM</span></label>
+          <label for="cad-cdTom" class="label">
+            <span class="label-text font-semibold">Cód. TOM</span>
+          </label>
           <input
             id="cad-cdTom"
             type="text"
             placeholder="Cód. TOM"
-            maxlength="5"
             class="input input-bordered w-full bg-base-100 text-base-content font-mono"
-            formControlName="cdTom"
-            (input)="aplicarMascaraNumeros('cdTom', 5, $event)"
+            [formField]="cidadeForm.cdTom"
             autocomplete="off"
+            (input)="aplicarMascaraNumeros('cdTom', 5, $event)"
           />
           <label class="label">
             <span class="label-text-alt text-base-content/60">Máx. 5 dígitos</span>
           </label>
-        </div>
+          </div>
+          @if (cidadeForm.cdTom().touched() && cidadeForm.cdTom().errors().length > 0) {
+            @for (error of cidadeForm.cdTom().errors(); track error) {
+              <div class="text-error text-xs mt-1">{{ error.message }}</div>
+            }
+          }
       </div>
 
-      <!-- Linha 3: Estado (UF) em largura total -->
+      <!-- Linha 3: Estado (UF) -->
       <div class="form-control">
-        <label for="cad-estadoUf" class="label"><span class="label-text font-semibold">Estado (UF) *</span></label>
+        <label for="cad-estadoUf" class="label">
+          <span class="label-text font-semibold">Estado (UF) *</span>
+        </label>
         <select
           id="cad-estadoUf"
           class="select select-bordered w-full bg-base-100 text-base-content font-medium"
-          formControlName="estadoUf">
+          [formField]="cidadeForm.estadoUf">
           <option value="" disabled selected>Selecione o estado...</option>
           @for (est of estados(); track est.id) {
             <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
           }
         </select>
+
+        @if (cidadeForm.estadoUf().touched() && cidadeForm.estadoUf().errors().length > 0) {
+          @for (error of cidadeForm.estadoUf().errors(); track error) {
+            <div class="text-error text-xs mt-1">{{ error.message }}</div>
+          }
+        }
       </div>
 
       <!-- Rodapé / Ações -->
       <div class="modal-action pt-4 border-t border-base-200">
-        <button type="button" class="btn btn-ghost" (click)="fechar()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || salvando()">
-          @if (salvando()) {
+        <button type="button" class="btn btn-ghost" (click)="onCancel()">Cancelar</button>
+        <button type="button"
+                class="btn btn-primary"
+                [disabled]="!cidadeForm().valid() || isLoading()"
+                (click)="onSave()">
+          @if (isLoading()) {
             <span class="loading loading-spinner loading-xs"></span>
-            Salvando...
-          } @else {
-            Cadastrar
           }
+          Cadastrar
         </button>
       </div>
-    </form>
+
+    </div>
   </div>
   <form method="dialog" class="modal-backdrop">
-    <button type="button" (click)="fechar()">fechar</button>
+    <button type="button" (click)="onCancel()">fechar</button>
   </form>
 </dialog>

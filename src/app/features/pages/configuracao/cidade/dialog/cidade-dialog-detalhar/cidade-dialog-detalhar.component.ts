@@ -1,7 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, output, signal, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { form, maxLength, required } from '@angular/forms/signals';
+import { Component, inject, signal, ChangeDetectionStrategy, ViewChild, ElementRef, output, effect } from '@angular/core';
+import { form, FormField, maxLength, minLength, required, disabled } from '@angular/forms/signals';
 import { Cidade } from '@shared/interfaces/configuracao/cidade';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { CidadeService } from '@shared/services/configuracao/cidade.service';
@@ -12,74 +10,91 @@ interface CidadeFormModel {
   cdIbge: string;
   dsNomeTom: string;
   cdTom: string;
-  estadoId: number | null;
+  estadoUf: string;
 }
 
 @Component({
   selector: 'app-cidade-dialog-detalhar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormField],
   templateUrl: './cidade-dialog-detalhar.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './cidade-dialog-detalhar.component.scss'
 })
 export class CidadeDialogDetalharComponent {
   private readonly cidadeService = inject(CidadeService);
   private readonly estadoService = inject(EstadoService);
 
-  private readonly dialogRef = viewChild<ElementRef<HTMLDialogElement>>('dialogElement');
-  private readonly confirmDialogRef = viewChild<ElementRef<HTMLDialogElement>>('confirmDialogElement');
+  @ViewChild('dialogElement') private readonly dialogRef!: ElementRef<HTMLDialogElement>;
+  @ViewChild('confirmDialogElement') private readonly confirmDialogRef!: ElementRef<HTMLDialogElement>;
 
   protected readonly atualizado = output<string>();
   protected readonly excluido = output<string>();
 
   protected readonly loading = signal<boolean>(false);
-  protected readonly editando = signal<boolean>(false);
+  protected readonly isEditing = signal<boolean>(false);
   protected readonly cidadeId = signal<number | null>(null);
   protected readonly cidadeCompleta = signal<Cidade | null>(null);
   protected readonly estadosList = signal<Estado[]>([]);
 
-// 1. Modelo de dados reativo com Signal
+  // 1. Modelo de dados reativo com Signal
   protected readonly formModel = signal<CidadeFormModel>({
     dsNomeIbge: '',
     cdIbge: '',
     dsNomeTom: '',
     cdTom: '',
-    estadoId: null
+    estadoUf: ''
   });
 
-  // 2. Instância oficial do Signal Form com Schema e regras de validação
+  // 2. Instância oficial do Signal Form com Schema, validações e controle dinâmico de desativação
   protected readonly cidadeForm = form(this.formModel, (schema) => {
-    required(schema.dsNomeIbge, { message: 'Nome da cidade (IBGE) é obrigatório' });
-    maxLength(schema.dsNomeIbge, 50, { message: 'Máximo de 50 caracteres' });
+    required(schema.dsNomeIbge, { message: 'O nome da cidade (IBGE) é obrigatório' });
+    maxLength(schema.dsNomeIbge, 50, { message: 'O nome deve ter no máximo 50 caracteres' });
+    disabled(schema.dsNomeIbge, { when: () => !this.isEditing() });
 
-    required(schema.cdIbge, { message: 'Código IBGE é obrigatório' });
-    maxLength(schema.cdIbge, 7, { message: 'Máximo de 7 dígitos' });
+    required(schema.cdIbge, { message: 'O código IBGE é obrigatório' });
+    maxLength(schema.cdIbge, 7, { message: 'O código IBGE deve ter no máximo 7 dígitos' });
+    disabled(schema.cdIbge, { when: () => !this.isEditing() });
 
-    maxLength(schema.dsNomeTom, 50, { message: 'Máximo de 50 caracteres' });
-    maxLength(schema.cdTom, 5, { message: 'Máximo de 5 dígitos' });
+    maxLength(schema.dsNomeTom, 50, { message: 'O nome TOM deve ter no máximo 50 caracteres' });
+    disabled(schema.dsNomeTom, { when: () => !this.isEditing() });
 
-    required(schema.estadoId, { message: 'Estado (UF) é obrigatório' });
+    maxLength(schema.cdTom, 5, { message: 'O código TOM deve ter no máximo 5 dígitos' });
+    disabled(schema.cdTom, { when: () => !this.isEditing() });
+
+    required(schema.estadoUf, { message: 'O estado (UF) é obrigatório' });
+    disabled(schema.estadoUf, { when: () => !this.isEditing() });
   });
+
+  constructor() {
+    effect(() => {
+      const cidade = this.cidadeCompleta();
+      if (cidade) {
+        this.formModel.set({
+          dsNomeIbge: cidade.dsNomeIbge ?? '',
+          cdIbge: cidade.cdIbge ?? '',
+          dsNomeTom: cidade.dsNomeTom ?? '',
+          cdTom: cidade.cdTom ?? '',
+          estadoUf: cidade.estado?.dsUf ?? ''
+        });
+      }
+    });
+  }
 
   public abrir(id: number): void {
     this.cidadeId.set(id);
-    this.editando.set(false);
-    this.dialogRef()?.nativeElement.showModal();
-
-    // Carrega os estados primeiro e, só após tê-los, busca os dados da cidade
+    this.isEditing.set(false);
+    this.dialogRef?.nativeElement.showModal();
     this.carregarEstadosEData(id);
   }
 
   private carregarEstadosEData(id: number): void {
     this.loading.set(true);
 
-    // Busca os estados
     this.estadoService.listarTodosEstados().subscribe({
       next: (estados) => {
         const ordenados = estados.sort((a, b) => a.dsNome.localeCompare(b.dsNome));
         this.estadosList.set(ordenados);
-
-        // Com os estados garantidos na memória, busca os dados da cidade
         this.carregarDados(id);
       },
       error: (err) => {
@@ -89,36 +104,10 @@ export class CidadeDialogDetalharComponent {
     });
   }
 
-  protected fechar(): void {
-    this.dialogRef()?.nativeElement.close();
-    this.formModel.set({
-      dsNomeIbge: '',
-      cdIbge: '',
-      dsNomeTom: '',
-      cdTom: '',
-      estadoId: null
-    });
-    this.editando.set(false);
-    this.cidadeId.set(null);
-    this.cidadeCompleta.set(null);
-  }
-
-protected alternarEdicao(): void {
-    if (this.editando()) {
-      this.preencherFormularioComDadosOriginais();
-      this.editando.set(false);
-    } else {
-      this.editando.set(true);
-      // Assegura que os dados originais estão sincronizados ao entrar em edição
-      this.preencherFormularioComDadosOriginais();
-    }
-  }
-
-private carregarDados(id: number): void {
+  private carregarDados(id: number): void {
     this.cidadeService.buscarCidadePorId(id).subscribe({
       next: (cidade) => {
         this.cidadeCompleta.set(cidade);
-        this.preencherFormularioComDadosOriginais();
         this.loading.set(false);
       },
       error: (err) => {
@@ -128,47 +117,46 @@ private carregarDados(id: number): void {
     });
   }
 
-private preencherFormularioComDadosOriginais(): void {
+  protected fechar(): void {
+    this.dialogRef?.nativeElement.close();
+    this.resetForm();
+  }
+
+  protected ativarEdicao(): void {
+    this.isEditing.set(true);
+  }
+
+  protected cancelarEdicao(): void {
     const cidade = this.cidadeCompleta();
-    if (!cidade) return;
-
-    const idEstadoOriginal = (cidade as any).estadoId ?? cidade.estado?.id ?? null;
-
-    // Atualiza os valores do model mantendo rigorosamente o ID do estado original
-    this.formModel.set({
-      dsNomeIbge: cidade.dsNomeIbge ?? '',
-      cdIbge: cidade.cdIbge ?? '',
-      dsNomeTom: cidade.dsNomeTom ?? '',
-      cdTom: cidade.cdTom ?? '',
-      estadoId: idEstadoOriginal
-    });
-
-    // Garante explicitamente que o nó do signal form receba o ID correto
-    if (this.cidadeForm?.estadoId) {
-      this.cidadeForm.estadoId().value.set(idEstadoOriginal);
+    if (cidade) {
+      this.formModel.set({
+        dsNomeIbge: cidade.dsNomeIbge ?? '',
+        cdIbge: cidade.cdIbge ?? '',
+        dsNomeTom: cidade.dsNomeTom ?? '',
+        cdTom: cidade.cdTom ?? '',
+        estadoUf: cidade.estado?.dsUf ?? ''
+      });
     }
+    this.isEditing.set(false);
   }
 
   protected aplicarMascaraNumeros(campo: 'cdIbge' | 'cdTom', maxLengthNum: number, event: Event): void {
     const input = event.target as HTMLInputElement;
     const valorLimpo = input.value.replace(/\D/g, '').slice(0, maxLengthNum);
     input.value = valorLimpo;
-    if (campo === 'cdIbge') {
-      this.cidadeForm.cdIbge().value.set(valorLimpo);
-    } else {
-      this.cidadeForm.cdTom().value.set(valorLimpo);
-    }
+
+    this.formModel.update(model => ({
+      ...model,
+      [campo]: valorLimpo
+    }));
   }
 
-  protected salvar(): void {
+  protected salvarAlteracoes(): void {
     if (!this.cidadeForm().valid() || !this.cidadeCompleta()) return;
 
     this.loading.set(true);
     const model = this.formModel();
     const original = this.cidadeCompleta()!;
-
-    const estadoSelecionado = this.estadosList().find(e => e.id === Number(model.estadoId));
-    const ufDestino = estadoSelecionado ? estadoSelecionado.dsUf : original.estado?.dsUf;
     const nomeCidade = model.dsNomeIbge.trim();
 
     const cidadeParaAtualizar: any = {
@@ -177,7 +165,7 @@ private preencherFormularioComDadosOriginais(): void {
       cdTom: model.cdTom ? model.cdTom.trim() : undefined,
       dsNomeTom: model.dsNomeTom ? model.dsNomeTom.trim() : undefined,
       dsNomeIbge: nomeCidade,
-      estadoUf: ufDestino
+      estadoUf: model.estadoUf.trim()
     };
 
     this.cidadeService.editarCidade(cidadeParaAtualizar).subscribe({
@@ -193,22 +181,14 @@ private preencherFormularioComDadosOriginais(): void {
     });
   }
 
-  protected atualizarEstadoId(valor: string): void {
-    const idNumerico = valor ? Number(valor) : null;
-    this.cidadeForm.estadoId().value.set(idNumerico);
-  }
-
-  // Abre o modal daisyUI de confirmação de exclusão
   protected abrirModalConfirmarExclusao(): void {
-    this.confirmDialogRef()?.nativeElement.showModal();
+    this.confirmDialogRef?.nativeElement.showModal();
   }
 
-  // Fecha o modal daisyUI de confirmação de exclusão
   protected fecharModalConfirmarExclusao(): void {
-    this.confirmDialogRef()?.nativeElement.close();
+    this.confirmDialogRef?.nativeElement.close();
   }
 
-  // Executa a exclusão da cidade após a confirmação do usuário
   protected confirmarExclusao(): void {
     const id = this.cidadeId();
     const nome = this.cidadeCompleta()?.dsNomeIbge ?? '';
@@ -216,6 +196,7 @@ private preencherFormularioComDadosOriginais(): void {
 
     this.fecharModalConfirmarExclusao();
     this.loading.set(true);
+
     this.cidadeService.excluirCidade(id).subscribe({
       next: () => {
         this.loading.set(false);
@@ -227,5 +208,19 @@ private preencherFormularioComDadosOriginais(): void {
         this.loading.set(false);
       }
     });
+  }
+
+  private resetForm(): void {
+    this.formModel.set({
+      dsNomeIbge: '',
+      cdIbge: '',
+      dsNomeTom: '',
+      cdTom: '',
+      estadoUf: ''
+    });
+    this.isEditing.set(false);
+    this.cidadeId.set(null);
+    this.cidadeCompleta.set(null);
+    this.cidadeForm().reset();
   }
 }

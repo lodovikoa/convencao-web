@@ -1,14 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Cidade } from '@shared/interfaces/configuracao/cidade';
 import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-paginada';
 import { CidadeService } from '@shared/services/configuracao/cidade.service';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CidadeDialogCadastrarComponent } from '../dialog/cidade-dialog-cadastrar/cidade-dialog-cadastrar.component';
 import { CidadeDialogDetalharComponent } from '../dialog/cidade-dialog-detalhar/cidade-dialog-detalhar.component';
 
-// Interface do Modelo de Filtros baseada seu padrão
+// Interface do Modelo de Filtros
 interface FiltroCidadeModel {
   nome: string;
   ibge: string;
@@ -16,7 +15,10 @@ interface FiltroCidadeModel {
 }
 
 @Component({
-  imports: [CommonModule, CidadeDialogCadastrarComponent, CidadeDialogDetalharComponent],
+  imports: [
+    CidadeDialogCadastrarComponent,
+    CidadeDialogDetalharComponent
+  ],
   selector: 'app-cidade',
   styleUrl: './cidade.component.scss',
   templateUrl: './cidade.component.html',
@@ -28,7 +30,7 @@ export class CidadeComponent {
   @ViewChild('dialogDetalhar') dialogDetalhar!: CidadeDialogDetalharComponent;
   @ViewChild('successDialog') successDialog!: ElementRef<HTMLDialogElement>;
 
-  // Modelo reativo utilizando o padrão solicitado
+  // Modelo reativo utilizando Signal puro
   protected readonly filtroModel = signal<FiltroCidadeModel>({
     nome: '',
     ibge: '',
@@ -40,10 +42,9 @@ export class CidadeComponent {
   protected readonly size = signal<number>(10);
   protected readonly loading = signal<boolean>(false);
   protected readonly triggerReload = signal<number>(0);
-
   protected readonly mensagemSucessoModal = signal<string>('');
 
-  // Signals com debounce de aplicados sobre as propriedades do model e filtros
+  // Signals com debounce aplicados sobre as propriedades do model
   protected readonly filtroNome = toSignal(
     toObservable(computed(() => this.filtroModel().nome)).pipe(debounceTime(1000), distinctUntilChanged()),
     { initialValue: '' }
@@ -54,12 +55,11 @@ export class CidadeComponent {
     { initialValue: '' }
   );
 
-  // Ajustado: só dispara a pesquisa se a UF tiver exatamente 2 caracteres, senão envia vazio
   protected readonly filtroUf = toSignal(
     toObservable(computed(() => {
       const uf = this.filtroModel().uf.trim();
       return uf.length === 2 ? uf : '';
-    })).pipe(debounceTime(500),distinctUntilChanged()),
+    })).pipe(debounceTime(500), distinctUntilChanged()),
     { initialValue: '' }
   );
 
@@ -100,14 +100,14 @@ export class CidadeComponent {
     });
   }
 
-  // Atualizador centralizado do model de filtros reativo
+  // Atualizador reativo centralizado do model de filtros
   protected atualizarFiltro(campo: keyof FiltroCidadeModel, event: Event): void {
     const input = event.target as HTMLInputElement;
     let valor = input.value;
 
     this.page.set(0);
 
-    if(campo === 'uf') {
+    if (campo === 'uf') {
       valor = valor.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2);
       input.value = valor;
     }
@@ -130,39 +130,32 @@ export class CidadeComponent {
     }
   }
 
-    // Disparado quando o modal de cadastro é concluído com sucesso
   protected onCidadeCadastrada(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi cadastrada com sucesso.`);
     this.recarregarLista();
-
-    if(this.successDialog) {
+    if (this.successDialog) {
       this.successDialog.nativeElement.showModal();
     }
   }
 
-  // Disparado quando o modal de detalhes conclui a edição com sucesso
   protected onCidadeAtualizada(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi atualizada com sucesso.`);
     this.recarregarLista();
-
-    if(this.successDialog) {
+    if (this.successDialog) {
       this.successDialog.nativeElement.showModal();
     }
   }
 
-  // Disparado quando o modal de detalhes confirma a exclusão
   protected onCidadeExcluida(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi excluída com sucesso.`);
     this.recarregarLista();
-
-    // Abre o modal nativo DaisyUI de sucesso
-    if(this.successDialog) {
+    if (this.successDialog) {
       this.successDialog.nativeElement.showModal();
     }
   }
 
   protected fecharModalSucesso(): void {
-    if(this.successDialog) {
+    if (this.successDialog) {
       this.successDialog.nativeElement.close();
     }
     this.mensagemSucessoModal.set('');
@@ -183,5 +176,4 @@ export class CidadeComponent {
     this.size.set(novoTamanho);
     this.page.set(0);
   }
-
 }

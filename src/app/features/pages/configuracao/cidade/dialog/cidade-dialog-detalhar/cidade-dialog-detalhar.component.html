@@ -4,7 +4,13 @@
 
     <div class="flex justify-between items-center pb-4 mb-4 border-b border-base-200">
       <div>
-        <h3 class="font-bold text-xl text-base-content">Detalhes da Cidade</h3>
+        <h3 class="font-bold text-xl text-base-content">
+          @if (isEditing()) {
+            Alterar Cidade
+          } @else {
+            Detalhes da Cidade
+          }
+        </h3>
         <p class="text-xs text-base-content/70">Visualize ou edite as informações cadastrais.</p>
       </div>
       <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="fechar()">✕</button>
@@ -15,91 +21,135 @@
         <span class="loading loading-spinner loading-lg text-primary"></span>
       </div>
     } @else {
-      <form (ngSubmit)="salvar()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <!-- 1. Nome da Cidade (IBGE) -->
+         <!-- 1. Nome da Cidade (IBGE) -->
           <div class="form-control">
-            <label for="input-detalhar-nome-ibge" class="label"><span class="label-text font-medium">Nome da cidade (IBGE) *</span></label>
+            <label for="input-detalhar-nome-ibge" class="label">
+              <span class="label-text font-medium">Nome da cidade (IBGE) *</span>
+            </label>
             <input
               id="input-detalhar-nome-ibge"
               type="text"
-              maxlength="50"
-              class="input input-bordered w-full bg-base-100 text-base-content"
-              [value]="cidadeForm.dsNomeIbge().value()"
-              (input)="cidadeForm.dsNomeIbge().value.set($any($event.target).value)"
-              [readonly]="!editando()"
-              required
+              class="input input-bordered w-full bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content"
+              [formField]="cidadeForm.dsNomeIbge"
             />
+            @if (isEditing()) {
+              <!-- Rodapé do input: Contador e Erro organizados -->
+              <div class="flex flex-col gap-1 mt-1 px-1">
+                <span class="text-xs text-base-content/60">
+                  {{ cidadeForm.dsNomeIbge().value().length }}/50 caracteres
+                </span>
+
+                @if(cidadeForm.dsNomeIbge().touched() && cidadeForm.dsNomeIbge().errors().length > 0) {
+                  @for (error of cidadeForm.dsNomeIbge().errors(); track error) {
+                    <div class="text-error text-xs">{{ error.message }}</div>
+                  }
+                }
+              </div>
+            }
           </div>
 
           <!-- 2. Código IBGE -->
           <div class="form-control">
-            <label for="input-detalhar-cd-ibge" class="label"><span class="label-text font-medium">Código IBGE *</span></label>
+            <label for="input-detalhar-cd-ibge" class="label">
+              <span class="label-text font-medium">Código IBGE *</span>
+            </label>
             <input
               id="input-detalhar-cd-ibge"
               type="text"
-              maxlength="7"
-              class="input input-bordered w-full font-mono bg-base-100 text-base-content"
-              [value]="cidadeForm.cdIbge().value()"
+              class="input input-bordered w-full font-mono bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content"
+              [formField]="cidadeForm.cdIbge"
               (input)="aplicarMascaraNumeros('cdIbge', 7, $event)"
-              [readonly]="!editando()"
-              required
             />
+            @if (isEditing()) {
+              <!-- Rodapé do input: Contador e Erro organizados -->
+              <div class="flex flex-col gap-1 mt-1 px-1">
+                <span class="text-xs text-base-content/60">Máx. 7 dígitos</span>
+
+                @if(cidadeForm.cdIbge().touched() && cidadeForm.cdIbge().errors().length > 0) {
+                  @for (error of cidadeForm.cdIbge().errors(); track error) {
+                    <div class="text-error text-xs">{{ error.message }}</div>
+                  }
+                }
+              </div>
+            }
           </div>
 
           <!-- 3. Nome da cidade (TOM) -->
           <div class="form-control">
-            <label for="input-detalhar-ds-nome-tom" class="label"><span class="label-text font-medium">Nome da cidade (TOM)</span></label>
+            <label for="input-detalhar-ds-nome-tom" class="label">
+              <span class="label-text font-medium">Nome da cidade (TOM)</span>
+            </label>
             <input
               id="input-detalhar-ds-nome-tom"
               type="text"
-              maxlength="50"
-              class="input input-bordered w-full bg-base-100 text-base-content"
-              [value]="cidadeForm.dsNomeTom().value()"
-              (input)="cidadeForm.dsNomeTom().value.set($any($event.target).value)"
-              [readonly]="!editando()"
+              class="input input-bordered w-full bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content"
+              [formField]="cidadeForm.dsNomeTom"
             />
+            @if (isEditing()) {
+              <!-- Rodapé do input: Contador e Erro organizados -->
+              <div class="flex flex-col gap-1 mt-1 px-1">
+                <span class="text-xs text-base-content/60">
+                  {{ cidadeForm.dsNomeTom().value().length }}/50 caracteres
+                </span>
+
+                @if(cidadeForm.dsNomeTom().touched() && cidadeForm.dsNomeTom().errors().length > 0) {
+                  @for (error of cidadeForm.dsNomeTom().errors(); track error) {
+                    <div class="text-error text-xs">{{ error.message }}</div>
+                  }
+                }
+              </div>
+            }
           </div>
 
           <!-- 4. Código TOM -->
           <div class="form-control">
-            <label for="input-detalhar-cd-tom" class="label"><span class="label-text font-medium">Código TOM</span></label>
+            <label for="input-detalhar-cd-tom" class="label">
+              <span class="label-text font-medium">Código TOM</span>
+            </label>
             <input
               id="input-detalhar-cd-tom"
               type="text"
-              maxlength="5"
-              class="input input-bordered w-full font-mono bg-base-100 text-base-content"
-              [value]="cidadeForm.cdTom().value()"
+              class="input input-bordered w-full font-mono bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content"
+              [formField]="cidadeForm.cdTom"
               (input)="aplicarMascaraNumeros('cdTom', 5, $event)"
-              [readonly]="!editando()"
             />
+            @if (isEditing()) {
+              <!-- Rodapé do input: Contador e Erro organizados -->
+              <div class="flex flex-col gap-1 mt-1 px-1">
+                <span class="text-xs text-base-content/60">Máx. 5 dígitos</span>
+
+                @if(cidadeForm.cdTom().touched() && cidadeForm.cdTom().errors().length > 0) {
+                  @for (error of cidadeForm.cdTom().errors(); track error) {
+                    <div class="text-error text-xs">{{ error.message }}</div>
+                  }
+                }
+              </div>
+            }
           </div>
 
           <!-- 5. Estado (UF) -->
           <div class="form-control md:col-span-2">
-            <label for="select-detalhar-estado" class="label"><span class="label-text font-medium">Estado (UF) *</span></label>
-
-            @if (!editando()) {
-              <input
-                id="input-detalhar-estado-uf-visualizacao"
-                type="text"
-                [value]="cidadeCompleta()?.estado ? (cidadeCompleta()?.estado?.dsUf + ' - ' + cidadeCompleta()?.estado?.dsNome) : ''"
-                class="input input-bordered w-full bg-base-100 text-base-content"
-                readonly
-              />
-            } @else {
-              <select
-                id="select-detalhar-estado"
-                class="select select-bordered w-full bg-base-100 text-base-content"
-                [value]="cidadeForm.estadoId().value() ?? 9"
-                (change)="atualizarEstadoId($any($event.target).value)"
-                required>
-                <option value="" disabled>Selecione um estado...</option>
-                @for (est of estadosList(); track est.id) {
-                  <option [value]="est.id" [selected]="est.id === cidadeForm.estadoId().value()">{{ est.dsUf }} - {{ est.dsNome }}</option>
+            <label for="select-detalhar-estado" class="label">
+              <span class="label-text font-medium">Estado (UF) *</span>
+            </label>
+            <select
+              id="select-detalhar-estado"
+              class="select select-bordered w-full bg-base-100 text-base-content disabled:bg-base-200 disabled:text-base-content font-medium"
+              [formField]="cidadeForm.estadoUf">
+              <option value="" disabled>Selecione um estado...</option>
+              @for (est of estadosList(); track est.id) {
+                <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
+              }
+            </select>
+            @if (isEditing() && cidadeForm.estadoUf().touched() && cidadeForm.estadoUf().errors().length > 0) {
+              <label class="label">
+                @for (error of cidadeForm.estadoUf().errors(); track error) {
+                  <div class="text-error text-xs">{{ error.message }}</div>
                 }
-              </select>
+              </label>
             }
           </div>
 
@@ -107,22 +157,25 @@
 
         <div class="modal-action mt-6 pt-4 border-t border-base-200 flex justify-between items-center">
           <div>
-            @if (!editando()) {
-              <button type="button" class="btn btn-outline btn-error btn-sm" (click)="abrirModalConfirmarExclusao()">
+            @if (!isEditing()) {
+              <button type="button" class="btn btn-outline btn-error btn-sm" (click)="abrirModalConfirmarExclusao()" [disabled]="loading()">
                 Excluir Cidade
               </button>
             }
           </div>
 
           <div class="flex gap-2">
-            @if (!editando()) {
-              <button type="button" class="btn btn-outline btn-primary" (click)="alternarEdicao()">
+            @if (!isEditing()) {
+              <button type="button" class="btn btn-outline btn-primary" (click)="ativarEdicao()">
                 Editar Dados
               </button>
               <button type="button" class="btn" (click)="fechar()">Fechar</button>
             } @else {
-              <button type="button" class="btn btn-ghost" (click)="alternarEdicao()">Cancelar</button>
-              <button type="submit" class="btn btn-primary" [disabled]="!cidadeForm().valid() || loading()">
+              <button type="button" class="btn btn-ghost" (click)="cancelarEdicao()" [disabled]="loading()">Cancelar</button>
+              <button type="button"
+                      class="btn btn-primary"
+                      [disabled]="!cidadeForm().valid() || loading()"
+                      (click)="salvarAlteracoes()">
                 @if (loading()) {
                   <span class="loading loading-spinner loading-sm"></span>
                 }
@@ -131,7 +184,7 @@
             }
           </div>
         </div>
-      </form>
+      </div>
     }
 
   </div>
@@ -142,14 +195,19 @@
 
 <!-- Modal DaisyUI de Confirmação de Exclusão -->
 <dialog #confirmDialogElement class="modal modal-middle">
-  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
-    <h3 class="font-bold text-lg text-error">Confirmação de Exclusão</h3>
-    <p class="py-4">
-      Deseja realmente excluir a cidade <span class="font-bold">"{{ cidadeCompleta()?.dsNomeIbge }}"</span>?
+  <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200">
+    <h3 class="font-bold text-lg text-error">Confirmar Exclusão</h3>
+    <p class="py-4 text-sm text-base-content/80">
+      Tem certeza de que deseja excluir a cidade <strong class="text-base-content">"{{ cidadeCompleta()?.dsNomeIbge }}"</strong>?
     </p>
-    <div class="modal-action justify-center gap-4">
-      <button type="button" class="btn btn-ghost" (click)="fecharModalConfirmarExclusao()">NÃO</button>
-      <button type="button" class="btn btn-error" (click)="confirmarExclusao()">SIM</button>
+    <div class="modal-action justify-end gap-2">
+      <button type="button" class="btn btn-ghost btn-sm" (click)="fecharModalConfirmarExclusao()">Cancelar</button>
+      <button type="button" class="btn btn-error btn-sm px-4" (click)="confirmarExclusao()" [disabled]="loading()">
+        @if (loading()) {
+          <span class="loading loading-spinner loading-xs"></span>
+        }
+        Excluir
+      </button>
     </div>
   </div>
   <form method="dialog" class="modal-backdrop">

@@ -1,41 +1,60 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, OnInit, output, signal, ViewChild } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ElementRef, inject, OnInit, output, signal, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { form, FormField, maxLength, minLength, required } from '@angular/forms/signals';
 import { Estado } from '@shared/interfaces/configuracao/estado';
 import { CidadeService } from '@shared/services/configuracao/cidade.service';
 import { EstadoService } from '@shared/services/configuracao/estado.service';
 
+// Interface exclusiva para o modelo do formulário de cadastro
+export interface CidadeCadastroModel {
+  dsNomeIbge: string;
+  cdIbge: string;
+  dsNomeTom: string;
+  cdTom: string;
+  estadoUf: string;
+}
+
 @Component({
   selector: 'app-cidade-dialog-cadastrar',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [FormField],
   templateUrl: './cidade-dialog-cadastrar.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './cidade-dialog-cadastrar.component.scss'
 })
 export class CidadeDialogCadastrarComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
   private readonly cidadeService = inject(CidadeService);
   private readonly estadoService = inject(EstadoService);
 
   @ViewChild('modalCadastro') private readonly modalCadastroRef!: ElementRef<HTMLDialogElement>;
-  // @ViewChild('errorDialog') private readonly errorDialogRef!: ElementRef<HTMLDialogElement>;
 
   // Output emitindo o nome da cidade cadastrada com sucesso
   protected readonly salvo = output<string>();
 
   // Lista de estados para o combobox
   protected readonly estados = signal<Estado[]>([]);
+  protected readonly isLoading = signal<boolean>(false);
 
-  protected readonly salvando = signal<boolean>(false);
-  protected readonly errorMessageModal = signal<string | null>(null);
+  // Modelo do formulário utilizando Omit da interface Cidade
+  protected readonly formModel = signal<CidadeCadastroModel>({
+    dsNomeIbge: '',
+    cdIbge: '',
+    dsNomeTom: '',
+    cdTom: '',
+    estadoUf: ''
+  });
 
-  // Definição do Formulário Reativo limpo e centralizado
-  protected readonly form = this.fb.group({
-    dsNomeIbge: ['', [Validators.required, Validators.maxLength(50)]],
-    cdIbge: ['', [Validators.required, Validators.maxLength(7)]],
-    dsNomeTom: ['', [Validators.maxLength(50)]],
-    cdTom: ['', [Validators.maxLength(5)]],
-    estadoUf: ['', [Validators.required]]
+  // Definição do formulário com Signal Forms e validações via schema
+  protected readonly cidadeForm = form(this.formModel, schema => {
+    required(schema.dsNomeIbge, { message: 'O nome da cidade (IBGE) é obrigatório' });
+    maxLength(schema.dsNomeIbge, 50, { message: 'O nome deve ter no máximo 50 caracteres' });
+
+    required(schema.cdIbge, { message: 'O código IBGE é obrigatório' });
+    maxLength(schema.cdIbge, 7, { message: 'O código IBGE deve ter no máximo 7 dígitos' });
+
+    maxLength(schema.dsNomeTom, 50, { message: 'O nome TOM deve ter no máximo 50 caracteres' });
+    maxLength(schema.cdTom, 5, { message: 'O código TOM deve ter no máximo 5 dígitos' });
+
+    required(schema.estadoUf, { message: 'O estado (UF) é obrigatório' });
   });
 
   public ngOnInit(): void {
@@ -55,15 +74,7 @@ export class CidadeDialogCadastrarComponent implements OnInit {
   }
 
   public abrir(): void {
-    this.form.reset({
-      dsNomeIbge: '',
-      cdIbge: '',
-      dsNomeTom: '',
-      cdTom: '',
-      estadoUf: ''
-    });
-    this.errorMessageModal.set(null);
-
+    this.resetForm();
     if (this.modalCadastroRef?.nativeElement) {
       this.modalCadastroRef.nativeElement.showModal();
     }
@@ -75,52 +86,60 @@ export class CidadeDialogCadastrarComponent implements OnInit {
     }
   }
 
-  // Máscaras aplicadas de forma limpa diretamente atualizando os controles do Reactive Forms
-  protected aplicarMascaraNumeros(controlName: 'cdIbge' | 'cdTom', maxLength: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const valorLimpo = input.value.replace(/\D/g, '').slice(0, maxLength);
-    input.value = valorLimpo;
-    this.form.get(controlName)?.setValue(valorLimpo, { emitEvent: false });
-  }
+  protected onSave(): void {
+    if (this.cidadeForm().valid()) {
+      this.isLoading.set(true);
+      const dadosFormulario = this.formModel();
+      const nomeCidade = dadosFormulario.dsNomeIbge.trim();
 
-  protected aplicarMascaraTexto(controlName: 'dsNomeIbge' | 'dsNomeTom', maxLength: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const valorLimitado = input.value.slice(0, maxLength);
-    input.value = valorLimitado;
-    this.form.get(controlName)?.setValue(valorLimitado, { emitEvent: false });
-  }
+      const payload = {
+        ...dadosFormulario,
+        cdIbge: dadosFormulario.cdIbge.trim(),
+        cdTom: dadosFormulario.cdTom ? dadosFormulario.cdTom.trim() : undefined,
+        dsNomeIbge: nomeCidade,
+        dsNomeTom: dadosFormulario.dsNomeTom ? dadosFormulario.dsNomeTom.trim() : undefined,
+        estadoUf: dadosFormulario.estadoUf.trim()
+      };
 
-  protected salvar(event: Event): void {
-    event.preventDefault();
-
-    if(this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+      this.cidadeService.cadastrarCidade(payload as any).subscribe({
+        next: () => {
+          this.isLoading.set(false);
+          this.resetForm();
+          this.salvo.emit(nomeCidade);
+          this.fechar();
+        },
+        error: (err) => {
+          console.error('Erro ao cadastrar nova cidade:', err);
+          this.isLoading.set(false);
+        }
+      });
     }
+  }
 
-    const formValues = this.form.getRawValue();
+  protected onCancel(): void {
+    this.resetForm();
+    this.fechar();
+  }
 
-    const nomeCidade = formValues.dsNomeIbge!.trim();
-
-    const payload: any = {
-      cdIbge: formValues.cdIbge!.trim(),
-      cdTom: formValues.cdTom ? formValues.cdTom.trim() : undefined,
-      dsNomeIbge: nomeCidade,
-      dsNomeTom: formValues.dsNomeTom ? formValues.dsNomeTom.trim() : undefined,
-      estadoUf: formValues.estadoUf!.trim()
-    };
-
-    this.salvando.set(true);
-    this.cidadeService.cadastrarCidade(payload).subscribe({
-      next: () => {
-        this.salvando.set(false);
-        this.salvo.emit(nomeCidade);
-        this.fechar();
-      },
-      error: (err) => {
-        console.error('Erro ao cadastrar nova cidade:', err);
-        this.salvando.set(false);
-      }
+  private resetForm(): void {
+    this.formModel.set({
+      dsNomeIbge: '',
+      cdIbge: '',
+      dsNomeTom: '',
+      cdTom: '',
+      estadoUf: ''
     });
+    this.cidadeForm().reset();
+  }
+
+  protected aplicarMascaraNumeros(campo: 'cdIbge' | 'cdTom', maxLengthNum: number, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const valorLimpo = input.value.replace(/\D/g, '').slice(0, maxLengthNum);
+    input.value = valorLimpo;
+
+    this.formModel.update(model => ({
+      ...model,
+      [campo]: valorLimpo
+    }));
   }
 }
