@@ -170,8 +170,12 @@
   (excluido)="onCidadeExcluida($event)">
 </app-cidade-dialog-detalhar>
 
+<!-- Componente Reutilizável de Sucesso -->
+<app-success-modal #successModal [mensagem]="mensagemSucessoModal()"(fechado)="fecharModalSucesso()" />
+
+
 <!-- Modal DaisyUI Unificado de Sucesso -->
-<dialog #successDialog class="modal modal-middle">
+<!-- <dialog #successDialog class="modal modal-middle">
   <div class="modal-box bg-base-100 text-base-content shadow-2xl border border-base-200 text-center">
     <div class="flex justify-center mb-3">
       <div class="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center text-success">
@@ -191,4 +195,4 @@
   <form method="dialog" class="modal-backdrop">
     <button type="button" (click)="fecharModalSucesso()">fechar</button>
   </form>
-</dialog>
+</dialog> -->

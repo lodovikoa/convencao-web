@@ -6,6 +6,7 @@ import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-pagina
 import { EstadoDialogCadastrarComponent } from '../dialog/estado-dialog-cadastrar/estado-dialog-cadastrar.component';
 import { EstadoDialogDetalharComponent } from '../dialog/estado-dialog-detalhar/estado-dialog-detalhar.component';
 import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
+import { SuccessModalComponent } from '@shared/utilitarios/success-modal/success-modal.component';
 
 interface PaginationParams {
   page: number;
@@ -17,8 +18,9 @@ interface PaginationParams {
   selector: 'app-estado',
   imports: [
     EstadoDialogCadastrarComponent,
-    EstadoDialogDetalharComponent
-  ],
+    EstadoDialogDetalharComponent,
+    SuccessModalComponent
+],
   templateUrl: './estado.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './estado.component.scss',
@@ -27,9 +29,9 @@ export class EstadoComponent {
   private readonly estadoService = inject(EstadoService);
   private readonly loginFacade = inject(LoginFacadeService); // Injetando o serviço real do seu projeto
 
-  @ViewChild('successDialog') protected readonly successDialog!: ElementRef<HTMLDialogElement>;
   @ViewChild('cadastrarDialog') protected readonly cadastrarDialog!: ElementRef<HTMLDialogElement>;
   @ViewChild('detalharDialog') protected readonly detalharDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('successModal') protected readonly successModal!: SuccessModalComponent;
 
   protected readonly mensagemSucessoModal = signal<string>('');
   protected readonly estadoSelecionado = signal<Estado | null>(null);
@@ -108,7 +110,7 @@ export class EstadoComponent {
         this.mensagemSucessoModal.set(`O estado "${resultado.nomeEstado}" foi excluído com sucesso.`);
       }
       this.recarregarDados();
-      this.successDialog?.nativeElement.showModal();
+      this.successModal?.abrir();
     }
   }
 
@@ -127,11 +129,12 @@ export class EstadoComponent {
   protected onEstadoCadastrado(nomeEstado: string): void {
     this.mensagemSucessoModal.set(`O estado "${nomeEstado}" foi cadastrado com sucesso.`);
     this.recarregarDados();
-    this.successDialog?.nativeElement.showModal();
+    this.successModal?.abrir();
   }
 
   protected fecharModalSucesso(): void {
-    this.successDialog?.nativeElement.close();
+    //this.successDialog?.nativeElement.close();
+    this.successModal?.fechar();
     this.mensagemSucessoModal.set('');
   }
 }

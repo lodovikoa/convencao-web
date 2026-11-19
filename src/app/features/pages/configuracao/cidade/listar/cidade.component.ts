@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, computed, effect, inject, signal, ViewChild, ElementRef, viewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Cidade } from '@shared/interfaces/configuracao/cidade';
@@ -6,6 +6,7 @@ import { RespostaPaginada } from '@shared/interfaces/utilitarios/resposta-pagina
 import { CidadeService } from '@shared/services/configuracao/cidade.service';
 import { CidadeDialogCadastrarComponent } from '../dialog/cidade-dialog-cadastrar/cidade-dialog-cadastrar.component';
 import { CidadeDialogDetalharComponent } from '../dialog/cidade-dialog-detalhar/cidade-dialog-detalhar.component';
+import { SuccessModalComponent } from '@shared/utilitarios/success-modal/success-modal.component';
 
 // Interface do Modelo de Filtros
 interface FiltroCidadeModel {
@@ -17,8 +18,9 @@ interface FiltroCidadeModel {
 @Component({
   imports: [
     CidadeDialogCadastrarComponent,
-    CidadeDialogDetalharComponent
-  ],
+    CidadeDialogDetalharComponent,
+    SuccessModalComponent
+],
   selector: 'app-cidade',
   styleUrl: './cidade.component.scss',
   templateUrl: './cidade.component.html',
@@ -28,7 +30,11 @@ export class CidadeComponent {
 
   @ViewChild('dialogCadastrar') dialogCadastrar!: CidadeDialogCadastrarComponent;
   @ViewChild('dialogDetalhar') dialogDetalhar!: CidadeDialogDetalharComponent;
-  @ViewChild('successDialog') successDialog!: ElementRef<HTMLDialogElement>;
+ // @ViewChild('successDialog') successDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('successModal') protected readonly sucessModal!: SuccessModalComponent;
+
+  protected readonly mensagemSucessoModal = signal<string>('');
+
 
   // Modelo reativo utilizando Signal puro
   protected readonly filtroModel = signal<FiltroCidadeModel>({
@@ -42,7 +48,7 @@ export class CidadeComponent {
   protected readonly size = signal<number>(10);
   protected readonly loading = signal<boolean>(false);
   protected readonly triggerReload = signal<number>(0);
-  protected readonly mensagemSucessoModal = signal<string>('');
+
 
   // Signals com debounce aplicados sobre as propriedades do model
   protected readonly filtroNome = toSignal(
@@ -133,31 +139,35 @@ export class CidadeComponent {
   protected onCidadeCadastrada(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi cadastrada com sucesso.`);
     this.recarregarLista();
-    if (this.successDialog) {
-      this.successDialog.nativeElement.showModal();
-    }
+    this.sucessModal?.abrir();
+    // if (this.successDialog) {
+    //   this.successDialog.nativeElement.showModal();
+    // }
   }
 
   protected onCidadeAtualizada(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi atualizada com sucesso.`);
     this.recarregarLista();
-    if (this.successDialog) {
-      this.successDialog.nativeElement.showModal();
-    }
+    this.sucessModal?.abrir();
+    // if (this.successDialog) {
+    //   this.successDialog.nativeElement.showModal();
+    // }
   }
 
   protected onCidadeExcluida(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi excluída com sucesso.`);
     this.recarregarLista();
-    if (this.successDialog) {
-      this.successDialog.nativeElement.showModal();
-    }
+    this.sucessModal?.abrir();
+    // if (this.successDialog) {
+    //   this.successDialog.nativeElement.showModal();
+    // }
   }
 
   protected fecharModalSucesso(): void {
-    if (this.successDialog) {
-      this.successDialog.nativeElement.close();
-    }
+    // if (this.successDialog) {
+    //   this.successDialog.nativeElement.close();
+    // }
+    this.sucessModal?.fechar();
     this.mensagemSucessoModal.set('');
   }
 
