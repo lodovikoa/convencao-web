@@ -28,9 +28,8 @@ interface FiltroCidadeModel {
 export class CidadeComponent {
   private readonly cidadeService = inject(CidadeService);
 
-  @ViewChild('dialogCadastrar') dialogCadastrar!: CidadeDialogCadastrarComponent;
-  @ViewChild('dialogDetalhar') dialogDetalhar!: CidadeDialogDetalharComponent;
- // @ViewChild('successDialog') successDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('dialogCadastrar') protected readonly dialogCadastrar!: CidadeDialogCadastrarComponent;
+  @ViewChild('dialogDetalhar') protected readonly dialogDetalhar!: CidadeDialogDetalharComponent;
   @ViewChild('successModal') protected readonly sucessModal!: SuccessModalComponent;
 
   protected readonly mensagemSucessoModal = signal<string>('');
@@ -140,33 +139,21 @@ export class CidadeComponent {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi cadastrada com sucesso.`);
     this.recarregarLista();
     this.sucessModal?.abrir();
-    // if (this.successDialog) {
-    //   this.successDialog.nativeElement.showModal();
-    // }
   }
 
   protected onCidadeAtualizada(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi atualizada com sucesso.`);
     this.recarregarLista();
     this.sucessModal?.abrir();
-    // if (this.successDialog) {
-    //   this.successDialog.nativeElement.showModal();
-    // }
   }
 
   protected onCidadeExcluida(nomeCidade: string): void {
     this.mensagemSucessoModal.set(`A cidade "${nomeCidade}" foi excluída com sucesso.`);
     this.recarregarLista();
     this.sucessModal?.abrir();
-    // if (this.successDialog) {
-    //   this.successDialog.nativeElement.showModal();
-    // }
   }
 
   protected fecharModalSucesso(): void {
-    // if (this.successDialog) {
-    //   this.successDialog.nativeElement.close();
-    // }
     this.sucessModal?.fechar();
     this.mensagemSucessoModal.set('');
   }
