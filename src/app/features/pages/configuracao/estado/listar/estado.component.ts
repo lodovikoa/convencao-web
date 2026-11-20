@@ -133,7 +133,6 @@ export class EstadoComponent {
   }
 
   protected fecharModalSucesso(): void {
-    //this.successDialog?.nativeElement.close();
     this.successModal?.fechar();
     this.mensagemSucessoModal.set('');
   }

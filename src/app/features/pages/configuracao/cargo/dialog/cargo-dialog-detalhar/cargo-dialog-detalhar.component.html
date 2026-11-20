@@ -136,6 +136,29 @@
     </div>
 
     <div class="modal-action justify-between mt-6">
+      <button
+        type="button"
+        class="btn btn-outline btn-error btn-sm"
+        (click)="solicitarExclusao()"
+      >
+        Excluir
+      </button>
+
+      <div class="flex gap-2">
+        <button
+          type="button"
+          class="btn btn-outline btn-primary btn-sm"
+          (click)="habilitarEdicao()"
+        >
+          Alterar
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="onFechar()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <!-- <div class="modal-action justify-between mt-6">
       <div class="flex gap-2">
         <button
           type="button"
@@ -156,6 +179,6 @@
       <button type="button" class="btn btn-ghost btn-sm" (click)="onFechar()">
         Fechar
       </button>
-    </div>
+    </div> -->
   }
 </div>

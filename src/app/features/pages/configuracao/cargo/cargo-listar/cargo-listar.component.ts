@@ -56,14 +56,8 @@ export class CargoListarComponent {
     const dir = this.sortDirection() === 'asc' ? 1 : -1;
 
     return [...lista].sort((a, b) => {
-      const valorA =
-        field === 'convencao'
-          ? (a.convencao?.dsReduzido ?? '')
-          : (a[field] ?? '');
-      const valorB =
-        field === 'convencao'
-          ? (b.convencao?.dsReduzido ?? '')
-          : (b[field] ?? '');
+      const valorA = field === 'convencao'? (a.convencao?.dsReduzido ?? ''): (a[field] ?? '');
+      const valorB = field === 'convencao'? (b.convencao?.dsReduzido ?? ''): (b[field] ?? '');
 
       return valorA.localeCompare(valorB, 'pt-BR', { sensitivity: 'base' }) * dir;
     });
@@ -93,13 +87,9 @@ export class CargoListarComponent {
 
     if (resultado) {
       if (resultado.acao === 'atualizado') {
-        this.mensagemSucessoModal.set(
-          `O cargo "${resultado.nomeCargo}" foi atualizado com sucesso.`
-        );
+        this.mensagemSucessoModal.set(`O cargo "${resultado.nomeCargo}" foi atualizado com sucesso.`);
       } else if (resultado.acao === 'excluido') {
-        this.mensagemSucessoModal.set(
-          `O cargo "${resultado.nomeCargo}" foi excluído com sucesso.`
-        );
+        this.mensagemSucessoModal.set( `O cargo "${resultado.nomeCargo}" foi excluído com sucesso.`);
       }
       this.recarregarDados();
       this.successModal?.abrir();
@@ -114,9 +104,7 @@ export class CargoListarComponent {
     this.cadastrarDialog?.nativeElement.close();
 
     if (salvo) {
-      this.mensagemSucessoModal.set(
-        `O cargo "${nomeCargo || 'Cargo'}" foi cadastrado com sucesso.`
-      );
+      this.mensagemSucessoModal.set(`O cargo "${nomeCargo || 'Cargo'}" foi cadastrado com sucesso.`);
       this.recarregarDados();
       this.successModal?.abrir();
     }
