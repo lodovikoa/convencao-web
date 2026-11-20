@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { Cargo } from '@shared/interfaces/configuracao/cargo';
+import { Cargo, CargoRequest } from '@shared/interfaces/configuracao/cargo';
 import { Observable } from 'rxjs';
 
 @Service()
@@ -17,11 +17,11 @@ export class CargoService {
     return this.http.get<Cargo>(`${this.API_URL}/${id}`);
   }
 
-  cadastrar(cargo: Partial<Cargo>): Observable<Cargo> {
+  cadastrar(cargo: CargoRequest): Observable<Cargo> {
     return this.http.post<Cargo>(this.API_URL, cargo);
   }
 
-  editar(cargo: Cargo): Observable<Cargo> {
+  editar(cargo: CargoRequest): Observable<Cargo> {
     return this.http.put<Cargo>(`${this.API_URL}/${cargo.id}`, cargo);
   }
 

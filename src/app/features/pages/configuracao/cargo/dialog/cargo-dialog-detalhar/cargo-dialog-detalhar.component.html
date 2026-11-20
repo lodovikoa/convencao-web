@@ -1,0 +1,161 @@
+<div class="p-6 bg-base-100 rounded-box w-full max-w-md">
+  @if (modoEdicao()) {
+    <h3 class="text-lg font-bold mb-4">Alterar Cargo</h3>
+
+    <div class="flex flex-col gap-4">
+      <div class="form-control w-full">
+        <label for="editDsCargo" class="label">
+          <span class="label-text font-semibold">Cargo</span>
+        </label>
+        <input
+          id="editDsCargo"
+          type="text"
+          class="input input-bordered w-full"
+          [formField]="cargoForm.dsCargo"
+        />
+        @if (cargoForm.dsCargo().touched() && cargoForm.dsCargo().invalid()) {
+          <span class="text-error text-xs mt-1">
+            {{ cargoForm.dsCargo().errors()[0]?.message }}
+          </span>
+        }
+      </div>
+
+      <div class="form-control w-full">
+        <label for="editDsTitulo" class="label">
+          <span class="label-text font-semibold">Título</span>
+        </label>
+        <input
+          id="editDsTitulo"
+          type="text"
+          class="input input-bordered w-full"
+          [formField]="cargoForm.dsTitulo"
+        />
+        @if (cargoForm.dsTitulo().touched() && cargoForm.dsTitulo().invalid()) {
+          <span class="text-error text-xs mt-1">
+            {{ cargoForm.dsTitulo().errors()[0]?.message }}
+          </span>
+        }
+      </div>
+
+      <div class="form-control w-full">
+        <label for="editConvencaoId" class="label">
+          <span class="label-text font-semibold">Convenção</span>
+        </label>
+        <select
+          id="editConvencaoId"
+          class="select select-bordered w-full"
+          [formField]="cargoForm.convencaoId"
+        >
+          <option value="">Selecione uma convenção</option>
+          @for (convencao of convencaos(); track convencao.id) {
+            <option [value]="convencao.id">{{ convencao.dsReduzido }}</option>
+          }
+        </select>
+        @if (cargoForm.convencaoId().touched() && cargoForm.convencaoId().invalid()) {
+          <span class="text-error text-xs mt-1">
+            {{ cargoForm.convencaoId().errors()[0]?.message }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="modal-action mt-6">
+      <button
+        type="button"
+        class="btn btn-ghost"
+        [disabled]="isLoading()"
+        (click)="cancelarEdicao()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        [disabled]="cargoForm().invalid() || isLoading()"
+        (click)="onSave()"
+      >
+        @if (isLoading()) {
+          <span class="loading loading-spinner loading-xs"></span>
+          Salvando...
+        } @else {
+          Salvar
+        }
+      </button>
+    </div>
+  } @else if (confirmandoExclusao()) {
+    <h3 class="text-lg font-bold text-error mb-2">Confirmar Exclusão</h3>
+    <p class="text-sm text-base-content/80">
+      Deseja realmente excluir o cargo
+      <strong class="text-base-content">{{ cargo().dsCargo }}</strong>?
+      Esta ação não poderá ser desfeita.
+    </p>
+
+    <div class="modal-action mt-6">
+      <button
+        type="button"
+        class="btn btn-ghost"
+        [disabled]="isLoading()"
+        (click)="cancelarExclusao()"
+      >
+        Voltar
+      </button>
+      <button
+        type="button"
+        class="btn btn-error"
+        [disabled]="isLoading()"
+        (click)="confirmarExclusao()"
+      >
+        @if (isLoading()) {
+          <span class="loading loading-spinner loading-xs"></span>
+          Excluindo...
+        } @else {
+          Confirmar Exclusão
+        }
+      </button>
+    </div>
+  } @else {
+    <h3 class="text-lg font-bold mb-4">Detalhes do Cargo</h3>
+
+    <div class="flex flex-col gap-3 rounded-box bg-base-200/50 p-4 border border-base-200">
+      <div>
+        <span class="text-xs font-semibold uppercase text-base-content/60">Cargo</span>
+        <p class="font-medium text-base-content">{{ cargo().dsCargo }}</p>
+      </div>
+
+      <div>
+        <span class="text-xs font-semibold uppercase text-base-content/60">Título</span>
+        <p class="font-medium text-base-content">{{ cargo().dsTitulo }}</p>
+      </div>
+
+      <div>
+        <span class="text-xs font-semibold uppercase text-base-content/60">Convenção</span>
+        <p class="font-medium text-base-content">
+          {{ cargo().convencao?.dsReduzido || '-' }}
+        </p>
+      </div>
+    </div>
+
+    <div class="modal-action justify-between mt-6">
+      <div class="flex gap-2">
+        <button
+          type="button"
+          class="btn btn-outline btn-primary btn-sm"
+          (click)="habilitarEdicao()"
+        >
+          Alterar
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline btn-error btn-sm"
+          (click)="solicitarExclusao()"
+        >
+          Excluir
+        </button>
+      </div>
+
+      <button type="button" class="btn btn-ghost btn-sm" (click)="onFechar()">
+        Fechar
+      </button>
+    </div>
+  }
+</div>

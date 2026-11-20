@@ -1,134 +1,129 @@
-import { CommonModule } from '@angular/common';
-import { Component, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { Cargo } from '@shared/interfaces/configuracao/cargo';
 import { CargoService } from '@shared/services/configuracao/cargo.service';
-import { BehaviorSubject, finalize, switchMap, tap } from 'rxjs';
+import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
+import { SuccessModalComponent } from '@shared/utilitarios/success-modal/success-modal.component';
 import { CargoDialogCadastrarComponent } from '../dialog/cargo-dialog-cadastrar/cargo-dialog-cadastrar.component';
-import { CargoDialogAlterarComponent } from '../dialog/cargo-dialog-alterar/cargo-dialog-alterar.component';
-import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
+import { CargoDialogDetalharComponent } from '../dialog/cargo-dialog-detalhar/cargo-dialog-detalhar.component';
+
+
+type SortField = 'dsCargo' | 'dsTitulo' | 'convencao';
+type SortDirection = 'asc' | 'desc';
+
+export interface CargoDetalharResultado {
+  acao: 'atualizado' | 'excluido';
+  nomeCargo: string;
+}
 
 @Component({
   selector: 'app-cargo-listar',
   imports: [
-    CommonModule,
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule
+    CargoDialogCadastrarComponent,
+    CargoDialogDetalharComponent,
+    SuccessModalComponent,
   ],
   templateUrl: './cargo-listar.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './cargo-listar.component.scss',
 })
 export class CargoListarComponent {
-
-  private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly cargoService = inject(CargoService);
+  private readonly loginFacade = inject(LoginFacadeService);
 
-  isLoading = signal(false);
-  datasource = new MatTableDataSource<Cargo>([]);
-  displayedColumns: string[] = ['dsCargo', 'dsTitulo', 'convencao.dsReduzido', 'acoes'];
+  @ViewChild('cadastrarDialog') protected readonly cadastrarDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('detalharDialog') protected readonly detalharDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('successModal') protected readonly successModal!: SuccessModalComponent;
 
-  private readonly refreshList$ = new BehaviorSubject<void>(undefined);
+  protected readonly mensagemSucessoModal = signal<string>('');
+  protected readonly cargoSelecionado = signal<Cargo | null>(null);
+  protected readonly sortField = signal<SortField>('dsCargo');
+  protected readonly sortDirection = signal<SortDirection>('asc');
 
-  cargosResponse = toSignal(
-    this.refreshList$.pipe(
-      tap(() => this.isLoading.set(true)),
-      switchMap(() => this.cargoService.listar().pipe(
-        finalize(() => this.isLoading.set(false))
-      ))
-    )
+  protected readonly temPermissaoCadastrar = computed(() =>
+    this.loginFacade.hasPermission('T_CFT_MASTER')
   );
 
-  constructor() {
-    effect(() => {
-      const data = this.cargosResponse();
-      if (data) {
-        this.datasource.data = data;
-      }
+  protected readonly cargosResource = rxResource({
+    stream: () => this.cargoService.listar(),
+  });
+
+  protected readonly isLoading = computed(() => this.cargosResource.isLoading());
+
+  protected readonly cargosList = computed<Cargo[]>(() => {
+    const lista = this.cargosResource.value() ?? [];
+    const field = this.sortField();
+    const dir = this.sortDirection() === 'asc' ? 1 : -1;
+
+    return [...lista].sort((a, b) => {
+      const valorA =
+        field === 'convencao'
+          ? (a.convencao?.dsReduzido ?? '')
+          : (a[field] ?? '');
+      const valorB =
+        field === 'convencao'
+          ? (b.convencao?.dsReduzido ?? '')
+          : (b[field] ?? '');
+
+      return valorA.localeCompare(valorB, 'pt-BR', { sensitivity: 'base' }) * dir;
     });
+  });
+
+  protected recarregarDados(): void {
+    this.cargosResource.reload();
   }
 
-  recarregarDados() {
-    this.refreshList$.next();
+  protected ordenar(coluna: SortField): void {
+    if (this.sortField() === coluna) {
+      this.sortDirection.update((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      this.sortField.set(coluna);
+      this.sortDirection.set('asc');
+    }
   }
 
-  cadastrar() {
-    // Implementar lógica de cadastro
-    const dialogRef = this.dialog.open(CargoDialogCadastrarComponent, {
-      width: '400px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe(saved => {
-      if (saved) {
-        this.snackBar.open('Cargo cadastrado com sucesso!', 'Fechar', {
-          duration: 10000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['snackbar-success']
-        });
-        this.recarregarDados();
-      }
-    });
+  protected detalhar(cargo: Cargo): void {
+    this.cargoSelecionado.set({ ...cargo });
+    this.detalharDialog?.nativeElement.showModal();
   }
 
-  editar(cargo: Cargo) {
-    // Implementar lógica de edição
-    const dialogRef = this.dialog.open(CargoDialogAlterarComponent, {
-      width: '400px',
-      disableClose: true,
-      data: { ...cargo } // Passa o cargo para o diálogo de edição
-    });
+  protected fecharDetalharDialog(resultado?: CargoDetalharResultado): void {
+    this.detalharDialog?.nativeElement.close();
+    this.cargoSelecionado.set(null);
 
-    dialogRef.afterClosed().subscribe(saved => {
-      if (saved) {
-        this.snackBar.open('Cargo atualizado com sucesso!', 'Fechar', {
-          duration: 10000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['snackbar-success']
-        });
-        this.recarregarDados();
+    if (resultado) {
+      if (resultado.acao === 'atualizado') {
+        this.mensagemSucessoModal.set(
+          `O cargo "${resultado.nomeCargo}" foi atualizado com sucesso.`
+        );
+      } else if (resultado.acao === 'excluido') {
+        this.mensagemSucessoModal.set(
+          `O cargo "${resultado.nomeCargo}" foi excluído com sucesso.`
+        );
       }
-    });
+      this.recarregarDados();
+      this.successModal?.abrir();
+    }
   }
 
-  excluir(cargo: Cargo) {
-    // Implementar lógica de exclusão
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { nome: cargo.dsCargo,
-        titulo: 'Confirmar Exclusão'
-      }
-    });
+  protected cadastrarCargo(): void {
+    this.cadastrarDialog?.nativeElement.showModal();
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.cargoService.excluir(cargo.id).subscribe({
-          next: () => {
-            this.snackBar.open('Cargo excluído com sucesso!', 'Fechar', {
-              duration: 10000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              panelClass: ['snackbar-success']
-            });
-            this.recarregarDados();
-          }
-        });
-      }
-    });
+  protected fecharCadastrarDialog(salvo: boolean, nomeCargo?: string): void {
+    this.cadastrarDialog?.nativeElement.close();
 
+    if (salvo) {
+      this.mensagemSucessoModal.set(
+        `O cargo "${nomeCargo || 'Cargo'}" foi cadastrado com sucesso.`
+      );
+      this.recarregarDados();
+      this.successModal?.abrir();
+    }
+  }
+
+  protected fecharModalSucesso(): void {
+    this.successModal?.fechar();
+    this.mensagemSucessoModal.set('');
   }
 }

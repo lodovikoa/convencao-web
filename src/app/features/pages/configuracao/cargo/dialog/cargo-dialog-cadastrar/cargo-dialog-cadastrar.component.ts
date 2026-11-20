@@ -1,67 +1,91 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
-import { Cargo } from '@shared/interfaces/configuracao/cargo';
+import { form, FormField, maxLength, required } from '@angular/forms/signals';
+import { CargoRequest } from '@shared/interfaces/configuracao/cargo';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
 import { CargoService } from '@shared/services/configuracao/cargo.service';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 
+interface CargoCadastroModel {
+  dsCargo: string;
+  dsTitulo: string;
+  convencaoId:string;
+}
+
 @Component({
   selector: 'app-cargo-dialog-cadastrar',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatProgressSpinnerModule
-  ],
+  imports: [FormField],
   templateUrl: './cargo-dialog-cadastrar.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './cargo-dialog-cadastrar.component.scss',
 })
 export class CargoDialogCadastrarComponent {
-
-  private readonly fb = inject(FormBuilder);
-  private readonly dialogRef = inject(MatDialogRef<CargoDialogCadastrarComponent>);
   private readonly cargoService = inject(CargoService);
   private readonly convencaoService = inject(ConvencaoService);
 
-  isLoading = signal(false);
+  public readonly fechar = output<{ salvo: boolean; nomeCargo?: string }>();
 
-  convencaos = toSignal(this.convencaoService.listarConvencao(), { initialValue: [] as Convencao[] });
+  protected readonly isLoading = signal<boolean>(false);
+  protected readonly convencaos = toSignal(
+    this.convencaoService.listarConvencao(),
+    { initialValue: [] as Convencao[] }
+  );
 
-  form: FormGroup = this.fb.group({
-    dsCargo: ['', [Validators.required, Validators.maxLength(50)]],
-    dsTitulo: ['', [Validators.required, Validators.maxLength(5)]],
-    convencaoId: ['', [Validators.required]]
+  protected readonly formModel = signal<CargoCadastroModel>({
+    dsCargo: '',
+    dsTitulo: '',
+    convencaoId: '',
   });
 
-  onSave() {
-    if (!this.form.valid) {
-      return;
-    }
+  protected readonly cargoForm = form(this.formModel, (schema) => {
+    required(schema.dsCargo, { message: 'O cargo é obrigatório.' });
+    maxLength(schema.dsCargo, 50, {
+      message: 'O cargo deve ter no máximo 50 caracteres.',
+    });
+
+    required(schema.dsTitulo, { message: 'O título é obrigatório.' });
+    maxLength(schema.dsTitulo, 5, {
+      message: 'O título deve ter no máximo 5 caracteres.',
+    });
+
+    required(schema.convencaoId, { message: 'A convenção é obrigatória.' });
+  });
+
+  protected onSave(): void {
+    if (!this.cargoForm().valid() || this.isLoading()) return;
 
     this.isLoading.set(true);
-    this.cargoService.cadastrar(this.form.value as Cargo).subscribe({
+    const dados = this.formModel();
+    const payload: CargoRequest = {
+      dsCargo: dados.dsCargo.trim(),
+      dsTitulo: dados.dsTitulo.trim(),
+      convencaoId: dados.convencaoId? Number(dados.convencaoId): null,
+    };
+
+    this.cargoService.cadastrar(payload).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.dialogRef.close(true);
+        const nomeSalvo = payload.dsCargo;
+        this.resetForm();
+        this.fechar.emit({ salvo: true, nomeCargo: nomeSalvo });
       },
       error: () => {
         this.isLoading.set(false);
-      }
+      },
     });
-
   }
 
+  protected onCancel(): void {
+    this.resetForm();
+    this.fechar.emit({ salvo: false });
+  }
+
+  private resetForm(): void {
+    this.formModel.set({
+      dsCargo: '',
+      dsTitulo: '',
+      convencaoId: '',
+    });
+    this.cargoForm().reset();
+  }
 }
