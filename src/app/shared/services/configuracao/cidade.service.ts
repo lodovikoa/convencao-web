@@ -26,6 +26,14 @@ export class CidadeService {
     return this.http.get<Cidade>(`${this.API_URL}/${id}`);
   }
 
+  /**
+   * Listar cidades filgtradas pela UF do estado
+   * @param uf buscar todas as cidades com a uf informada
+   */
+  listarPorUf(uf: string): Observable<Cidade[]> {
+    return this.http.get<Cidade[]>(`${this.API_URL}/uf/${uf}`);
+  }
+
   /*
   * Lista todas as cidades disponíveis Paginado
   * @Param page Número da página (iniciado com 0)

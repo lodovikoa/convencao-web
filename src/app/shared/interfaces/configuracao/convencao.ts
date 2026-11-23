@@ -18,3 +18,8 @@ export interface Convencao {
   dsTelefone3: string;
   dsWatsapp: string;
 }
+
+export type ConvencaoRequest = Omit<Convencao, 'id' | 'cidade' | 'estado'> & {
+  id?: number;
+  cidadeId: number | null;
+}

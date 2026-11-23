@@ -39,14 +39,10 @@ export class CargoDialogCadastrarComponent {
 
   protected readonly cargoForm = form(this.formModel, (schema) => {
     required(schema.dsCargo, { message: 'O cargo é obrigatório.' });
-    maxLength(schema.dsCargo, 50, {
-      message: 'O cargo deve ter no máximo 50 caracteres.',
-    });
+    maxLength(schema.dsCargo, 50, { message: 'O cargo deve ter no máximo 50 caracteres.' });
 
     required(schema.dsTitulo, { message: 'O título é obrigatório.' });
-    maxLength(schema.dsTitulo, 5, {
-      message: 'O título deve ter no máximo 5 caracteres.',
-    });
+    maxLength(schema.dsTitulo, 5, { message: 'O título deve ter no máximo 5 caracteres.', });
 
     required(schema.convencaoId, { message: 'A convenção é obrigatória.' });
   });

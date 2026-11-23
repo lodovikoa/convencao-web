@@ -1,106 +1,196 @@
-<h2 mat-dialog-title>Cadastrar Convenção</h2>
+<div class="mx-auto p-5 bg-base-100 rounded-box w-full max-w-sm">
 
-<mat-dialog-content>
-  <form [formGroup]="form" style="padding-top: 10px;">
+  <!-- Cabeçalho -->
+  <div class="flex justify-between items-center pb-3 mb-4 border-b border-base-200">
+    <h3 class="text-lg font-bold">Cadastrar Convenção</h3>
+    <button type="button" class="btn btn-sm btn-circle btn-ghost" (click)="onCancel()">✕</button>
+  </div>
 
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>Nome Reduzido</mat-label>
-        <input matInput formControlName="dsReduzido">
-      </mat-form-field>
+  <div class="flex flex-col gap-3 w-full">
 
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>CNPJ</mat-label>
-        <input matInput formControlName="dsCnpj" mask="00.000.000/0000-00" placeholder="__.___.___/____-__", [dropSpecialCharacters]="true">
-      </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nome da Convenção</mat-label>
-      <input matInput formControlName="dsConvencao">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>E-mail</mat-label>
-      <input matInput formControlName="dsEmail">
-    </mat-form-field>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>Telefone1</mat-label>
-        <input matInput formControlName="dsTelefone1" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>Telefone2</mat-label>
-        <input matInput formControlName="dsTelefone2" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
-      </mat-form-field>
-    </div>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>Telefone3</mat-label>
-        <input matInput formControlName="dsTelefone3" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>WhatApp</mat-label>
-        <input matInput formControlName="dsWatsapp" mask="(00) 00000-0000" placeholder="(__) _____-____", [dropSpecialCharacters]="true">
-      </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Endereço</mat-label>
-      <input matInput formControlName="dsEndereco">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Bairro</mat-label>
-      <input matInput formControlName="dsBairro">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Cidade</mat-label>
-      <input matInput formControlName="dsCidade">
-    </mat-form-field>
-
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>Estado</mat-label>
-        <mat-select formControlName="estadoId">
-          <mat-option [value]="null">Selecione um estado</mat-option>
-          @for (estado of estados(); track estado.id) {
-            <mat-option [value]="estado.id">
-              {{ estado.dsUf }} - {{ estado.dsNome }}
-            </mat-option>
+    <!-- Nome reduzido + CNPJ na mesma linha -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+      <!-- Nome reduzido -->
+      <div class="form-control w-full">
+        <label for="cadDsReduzido" class="label py-1">
+          <span class="label-text font-semibold">Nome reduzido</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsReduzido"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsReduzido"
+          placeholder="Ex. CONFRATERES"
+        />
+        @if (convencaoForm.dsReduzido().touched() && convencaoForm.dsReduzido().invalid()) {
+          @for (error of convencaoForm.dsReduzido().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
           }
-        </mat-select>
-      </mat-form-field>
+        }
+      </div>
 
-      <mat-form-field appearance="outline" class="flex-1">
-        <mat-label>CEP</mat-label>
-        <input matInput formControlName="dsCep" mask="00000-000" placeholder="_____-___", [dropSpecialCharacters]="true">
-      </mat-form-field>
+      <!-- CNPJ -->
+      <div class="form-control w-full">
+        <label for="cadDsCnpj" class="label py-1">
+          <span class="label-text font-semibold">CNPJ</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsCnpj"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsCnpj"
+          placeholder="00.000.000/0000-00"
+        />
+        @if (convencaoForm.dsCnpj().touched() && convencaoForm.dsCnpj().invalid()) {
+          @for (error of convencaoForm.dsCnpj().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
     </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>País</mat-label>
-      <input matInput formControlName="dsPais">
-    </mat-form-field>
+    <!-- Nome da Convenção -->
+    <div class="form-control w-full">
+      <label for="cadDsConvencao" class="label py-1">
+        <span class="label-text font-semibold">Convenção</span>
+      </label>
+      <input
+        type="text"
+        id="cadDsConvencao"
+        class="input input-bordered input-sm sm:input-md w-full"
+        [formField]="convencaoForm.dsConvencao"
+        placeholder="Ex. CONFRATERES - Convenção Fraternal ...."
+      />
+      @if (convencaoForm.dsConvencao().touched() && convencaoForm.dsConvencao().invalid()) {
+        @for (error of convencaoForm.dsConvencao().errors(); track error) {
+          <span class="text-error text-xs mt-1">{{ error.message }}</span>
+        }
+      }
+    </div>
 
-  </form>
-</mat-dialog-content>
+    <!-- Endereço -->
+    <div class="form-control w-full">
+      <label for="cadDsEndereco" class="label py-1">
+        <span class="label-text font-semibold">Endereço</span>
+      </label>
+      <input
+        type="text"
+        id="cadDsEndereco"
+        class="input input-bordered input-sm sm:input-md w-full"
+        [formField]="convencaoForm.dsEndereco"
+        placeholder="Rua/Av/Etc.."
+      />
+      @if (convencaoForm.dsEndereco().touched() && convencaoForm.dsEndereco().invalid()) {
+        @for (error of convencaoForm.dsEndereco().errors(); track error) {
+          <span class="text-error text-xs mt-1">{{ error.message }}</span>
+        }
+      }
+    </div>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button
-      color="primary"
-      [disabled]="form.invalid || isLoading()"
-      (click)="onSave()">
-    @if(isLoading()) {
-      <mat-spinner diameter="20" style="display: inline-block;" />
-    } @else {
-      Salvar
-    }
-  </button>
-</mat-dialog-actions>
+     <!-- Bairro -->
+    <div class="form-control w-full">
+      <label for="cadDsBairro" class="label py-1">
+        <span class="label-text font-semibold">Bairro</span>
+      </label>
+      <input
+        type="text"
+        id="cadDsBairro"
+        class="input input-bordered input-sm sm:input-md w-full"
+        [formField]="convencaoForm.dsBairro"
+        placeholder="Ex. Campo Grande"
+      />
+      @if (convencaoForm.dsBairro().touched() && convencaoForm.dsBairro().invalid()) {
+        @for (error of convencaoForm.dsBairro().errors(); track error) {
+          <span class="text-error text-xs mt-1">{{ error.message }}</span>
+        }
+      }
+    </div>
+
+    <!-- CEP -->
+    <div class="form-control w-full">
+      <label for="cadDsCep" class="label py-1">
+        <span class="label-text font-semibold">CEP</span>
+      </label>
+      <input
+        type="text"
+        id="cadDsCep"
+        class="input input-bordered input-sm sm:input-md w-full"
+        [formField]="convencaoForm.dsCep"
+        placeholder="00000-000"
+      />
+      @if (convencaoForm.dsCep().touched() && convencaoForm.dsCep().invalid()) {
+        @for (error of convencaoForm.dsCep().errors(); track error) {
+          <span class="text-error text-xs mt-1">{{ error.message }}</span>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Estado (UF) + Cidades na mesma linha -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+    <!-- Estado (UF) -->
+    <div class="form-control w-full">
+      <label for="cad-estadoUf" class="label">
+        <span class="label-text font-semibold">Estado (UF)</span>
+      </label>
+      <select
+        id="cad-estadoUf"
+        class="select select-bordered w-full bg-base-100 text-base-content font-medium"
+        [formField]="convencaoForm.estadoUf"
+      >
+        <option value="" disabled selected>Seleciona o estado...</option>
+        @for (est of estados(); track est.id) {
+          <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
+        }
+      </select>
+
+      @if (convencaoForm.estadoUf().touched() && convencaoForm.estadoUf().errors().length > 0) {
+        @for (error of convencaoForm.estadoUf().errors(); track error) {
+          <div class="text-error text-xs mt-1">{{ error.message }}</div>
+        }
+      }
+    </div>
+
+    <!-- Cidade por UF -->
+    <div class="form-control w-full">
+      <label for="cad-cidadeUF" class="label">
+        <span class="label-text font-semibold">Cidades</span>
+      </label>
+      <select
+        id="cad-cidadeUF"
+        class="select select-bordered w-full bg-base-100 text-base-content font-medium"
+        [formField]="convencaoForm.cidadeId"
+      >
+        <option value="" disabled selected>
+          @if (!formModel().estadoUf) {
+            Selecione um estado primeiro...
+          } @else if (isLoadingCidades()) {
+            Carregando cidades...
+          } @else {
+            Selecione a cidade...
+          }
+        </option>
+        @for (cid of cidades(); track cid.id) {
+          <option [value]="cid.id">{{ cid.dsNomeIbge }} - {{ cid.estado?.dsUf }}</option>
+        }
+      </select>
+
+      @if (convencaoForm.cidadeId().touched() && convencaoForm.cidadeId().errors().length > 0) {
+        @for (error of convencaoForm.cidadeId().errors(); track error) {
+          <div class="text-error text-xs mt-1">{{ error.message }}</div>
+        }
+      }
+    </div>
+  </div>
+
+
+  <div class="modal-action mt-5">
+    <button type="button" class="btn btn-ghost" [disabled]="isLoading()" (click)="onCancel()"> Cancelar </button>
+    <button type="button" class="btn btn-primary" [disabled]="convencaoForm().invalid() || isLoading()" (click)="onSave()">
+      @if(isLoading()) {
+        <span class="loading loading-spinner loading-xs"></span>
+        Gravando...
+      } @else { Gravar }
+    </button>
+  </div>
+</div>

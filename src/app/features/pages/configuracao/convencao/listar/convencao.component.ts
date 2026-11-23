@@ -1,143 +1,90 @@
-import { Component, effect, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, inject, signal, ChangeDetectionStrategy, ViewChild, ElementRef, computed } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
-import { Convencao } from '@shared/interfaces/configuracao/convencao';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip'
-import { CommonModule } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { BehaviorSubject, switchMap } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators'
-import { ConfirmDialogComponent } from '@features/pages/dialogo/confirm-dialog/confirm-dialog.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ConvencaoDialogDetalharComponent } from '../dialog/convencao-dialog-detalhar/convencao-dialog-detalhar.component';
-import { ConvencaoDialogAlterarComponent } from '../dialog/convencao-dialog-alterar/convencao-dialog-alterar.component';
 import { ConvencaoDialogCadastrarComponent } from '../dialog/convencao-dialog-cadastrar/convencao-dialog-cadastrar.component';
-import { HasPermissionDirectiveDirective } from '@shared/directives/has-permission-directive.directive';
+import { SuccessModalComponent } from '@shared/utilitarios/success-modal/success-modal.component';
+import { LoginFacadeService } from '@shared/services/auth/login-facade.service';
+import { ConvencaoResumo } from '@shared/interfaces/configuracao/convencao-resumo';
+
+export interface ConvencaoDetalharResultado {
+  acao: 'atualizado' | 'excluido';
+  nomeConvencao: string;
+}
 
 @Component({
   selector: 'app-convencao',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    MatProgressSpinnerModule,
-    HasPermissionDirectiveDirective
+  imports: [ ConvencaoDialogCadastrarComponent,
+             SuccessModalComponent
   ],
   templateUrl: './convencao.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './convencao.component.scss',
 })
 export class ConvencaoComponent {
-  private readonly dialog = inject(MatDialog);
   private readonly convencaoService = inject(ConvencaoService);
-  private readonly snacBar = inject(MatSnackBar)
+  private readonly loginFacade = inject(LoginFacadeService);
 
-  isLoading = signal(false);
-  datasource = new MatTableDataSource<Convencao>([]);
-  displayedColumns: string[] = ['dsReduzido', 'dsConvencao', 'estado.dsUf', 'acoes']; // Ajuste conforme sua interface
+  @ViewChild('cadastrarDialog') protected readonly cadastrarDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('detalharDialog') protected readonly detalharDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild('successModal') protected readonly successModal!: SuccessModalComponent;
 
-  // Gatilho simples (void) para recarregar a lista
-  private refreshList$ = new BehaviorSubject<void>(undefined);
+  protected readonly mensagemSucessoModal = signal<string>('');
+  protected readonly convencaoSelecionada = signal<ConvencaoResumo | null>(null);
 
-  // Transforma o Observable em Signal. O switchMap chama o listar que retorna Convencao[]
-  convencoesResponse = toSignal(
-    this.refreshList$.pipe(
-      tap(() => this.isLoading.set(true)),
-      switchMap(() => this.convencaoService.listarConvencao().pipe(
-        finalize(() => this.isLoading.set(false))
-      ))
-    )
+  protected readonly temPermissaoCadastrar = computed(() =>
+    this.loginFacade.hasPermission('T_CFT_MASTER')
   );
 
-  constructor() {
-    // Efeito para atualizar o datasource sempre que o sinal de convenções mudar
-    effect(() => {
-      const data = this.convencoesResponse();
-      if (data) {
-        this.datasource.data = data;
+  protected readonly convencaoResource = rxResource({
+    stream:() => this.convencaoService.listarConvencao(),
+  });
+
+  protected readonly convencaoList = computed(() => this.convencaoResource.value() ?? []);
+
+  protected readonly isLoading = computed(() => this.convencaoResource.isLoading());
+
+  protected recarregarDados(): void {
+    this.convencaoResource.reload();
+  }
+
+  protected detalhar(ConvencaoResumo: ConvencaoResumo): void {
+    this.convencaoSelecionada.set({ ...ConvencaoResumo });
+    this.detalharDialog?.nativeElement.showModal();
+  }
+
+  protected fecharDetalharDialog(resultado?: ConvencaoDetalharResultado): void {
+    this.detalharDialog?.nativeElement.close();
+    this.convencaoSelecionada.set(null);
+
+    if(resultado) {
+      if(resultado.acao === 'atualizado') {
+        this.mensagemSucessoModal.set(`A convenção "${resultado.nomeConvencao}" foi atualizada com sucesso.`);
+      } else if(resultado.acao === 'excluido') {
+        this.mensagemSucessoModal.set(`A convenção "${resultado.nomeConvencao}" foi excluída com sucesso.`);
       }
-    });
+      this.recarregarDados();
+      this.successModal?.abrir();
+    }
   }
 
-  recarregarDados() {
-    this.refreshList$.next();
+  protected cadastrar(): void {
+    this.cadastrarDialog?.nativeElement.showModal();
   }
 
-  visualizar(convencao: Convencao) {
-    this.dialog.open(ConvencaoDialogDetalharComponent, {
-      width: '600px',
-      data: convencao // Passa a convenção selecionada para o diálogo de detalhes
-    });
+  protected fecharCadastrarDialog(salvo: boolean, nomeConvencao?: string): void {
+    this.cadastrarDialog?.nativeElement.close();
+
+    if(salvo) {
+      this.mensagemSucessoModal.set(`A convenção "${nomeConvencao || 'Convencao'}" foi cadastrada com sucesso.`);
+      this.recarregarDados();
+      this.successModal?.abrir();
+    }
   }
 
-  cadastrar() {
-    const dialogRef = this.dialog.open(ConvencaoDialogCadastrarComponent, {
-      width: '800px',
-      disableClose: true // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
-    });
-
-    dialogRef.afterClosed().subscribe(saved => {
-      if (saved) {
-        this.snacBar.open('Convenção cadastrada com sucesso!', 'Fechar', {
-          duration: 10000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['success-snackbar']
-        });
-
-        this.recarregarDados();
-      }
-    });
-  }
-
-  editar(convencao: Convencao) {
-    const dialogRef = this.dialog.open(ConvencaoDialogAlterarComponent, {
-      width: '800px',
-      disableClose: true, // Impede fechar clicando fora ou com ESC, forçando o usuário a escolher Salvar ou Cancelar
-      data: { ...convencao } // Envia cópia para não alterar o datasource antes do tempo
-    });
-
-    dialogRef.afterClosed().subscribe(saved => {
-      if (saved) {
-        this.snacBar.open('Convenção atualizada com sucesso!', 'Fechar', {
-          duration: 10000,
-          horizontalPosition: 'center',
-          verticalPosition: 'top',
-          panelClass: ['success-snackbar']
-        });
-        this.recarregarDados();
-      }
-    });
-  }
-
-  excluir(convencao: Convencao) {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '350px',
-      data: { nome: convencao.dsReduzido } // Ajuste para o campo correto da sua interface
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.convencaoService.excluirConvencao(convencao.id).subscribe({
-          next: () => {
-            this.snacBar.open('Convenção excluída com sucesso!', 'Fechar', {
-              duration: 10000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top',
-              panelClass: ['success-snackbar']
-            });
-            this.recarregarDados();
-          }
-        });
-      }
-    });
+  protected fecharModalSucesso(): void {
+    this.successModal?.fechar();
+    this.mensagemSucessoModal.set('');
   }
 }

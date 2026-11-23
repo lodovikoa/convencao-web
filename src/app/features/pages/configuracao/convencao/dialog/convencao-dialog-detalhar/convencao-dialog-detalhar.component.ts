@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy, output, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { Convencao } from '@shared/interfaces/configuracao/convencao';
+import { ConvencaoResumo } from '@shared/interfaces/configuracao/convencao-resumo';
 import { ConvencaoService } from '@shared/services/configuracao/convencao.service';
 import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
@@ -15,10 +16,13 @@ import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 ],
 providers: [provideNgxMask()], // Necessário para usar as máscaras do ngx-mask
   templateUrl: './convencao-dialog-detalhar.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './convencao-dialog-detalhar.component.scss',
 })
 export class ConvencaoDialogDetalharComponent {
+
+  public readonly fecharModal = output<{ acao: 'atualizado' | 'excluido'; nomeConvencao: string } | undefined>();
+  public readonly convencao = input.required<ConvencaoResumo>();
 
   // Injeta o serviço para acessar os dados da convenção, se necessário
   private readonly convencaoService = inject(ConvencaoService);
