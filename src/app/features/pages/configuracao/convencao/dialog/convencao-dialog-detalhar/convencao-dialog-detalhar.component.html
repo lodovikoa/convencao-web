@@ -1,45 +1,442 @@
-<h2 mat-dialog-title>Detalhes da Convenção: <strong>{{ data.dsReduzido }}</strong></h2>
-
-<mat-dialog-content class="mat-typography">
-  <div class="detalhe-container">
-
-    <div class="logo-wrapper">
-      <img [src]="logoUrl" alt="Logo da Convenção" class="logo-imagem">
+<div class="p-5 sm:p-6 bg-base-100 text-base-content rounded-box border border-base-300 shadow-xl">
+  <!-- Cabeçalho -->
+  <div class="flex justify-between items-center pb-4 mb-4 border-b border-base-300">
+    <div>
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-xl text-base-content">
+          @if (isEditing()) {
+            Editar Convenção
+          } @else {
+            Detalhes da Convenção
+          }
+        </h3>
+        @if (isEditing()) {
+          <span class="badge badge-primary badge-sm font-medium">Modo Edição</span>
+        }
+      </div>
+      <p class="text-xs text-base-content/80 mt-0.5">Visualize ou edite as informações cadastrais.</p>
     </div>
-
-    <p><strong>Nome Completo:</strong> {{ data.dsConvencao }}</p>
-    <p><strong>CNPJ:</strong> {{ data.dsCnpj | mask: '00.000.000/0000-00' }}</p>
-    <p><strong>E-mail:</strong> {{ data.dsEmail }}</p>
-
-    <div class="info-row">
-      <p><strong>Telefone 1:</strong> {{ data.dsTelefone1 || '-' | mask: '(00) 00000-0000' }}</p>
-      <p><strong>Telefone 2:</strong> {{ data.dsTelefone2 || '-' | mask: '(00) 00000-0000' }}</p>
-    </div>
-
-    <div class="info-row">
-      <p><strong>Telefone 3:</strong> {{ data.dsTelefone3 || '-' | mask: '(00) 00000-0000' }}</p>
-      <p><strong>WhatsApp:</strong> {{ data.dsWatsapp || '-' | mask: '(00) 00000-0000' }}</p>
-    </div>
-
-    <hr>
-
-    <p><strong>Endereço:</strong> {{ data.dsEndereco }}</p>
-
-    <div class="info-row">
-      <p><strong>Bairro:</strong> {{ data.dsBairro || '-' }}</p>
-      <p><strong>Cidade:</strong> {{ data.cidade?.dsNomeIbge || '-' }}</p>
-    </div>
-
-    <div class="info-row">
-      <p><strong>Estado:</strong> {{ data.estado?.dsUf || '-' }}</p>
-      <p><strong>CEP:</strong> {{ data.dsCep || '-'  | mask: '00000-000' }}</p>
-    </div>
-
-    <p><strong>País:</strong> {{ data.dsPais }}</p>
+    <button
+      type="button"
+      class="btn btn-sm btn-circle btn-ghost text-base-content/80 hover:text-base-content"
+      [disabled]="isLoading()"
+      (click)="fechar()"
+    >
+      ✕
+    </button>
   </div>
-</mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close color="primary">Fechar</button>
-</mat-dialog-actions>
+  <!-- Estado de carregamento inicial -->
+  @if (isLoading() && !convencaoCompleta()) {
+    <div class="flex flex-col items-center justify-center py-12 gap-3">
+      <span class="loading loading-spinner loading-md text-primary"></span>
+      <span class="text-sm text-base-content/85">Carregando dados da convenção...</span>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-3 w-full">
+      <!-- Nome reduzido + CNPJ na mesma linha -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <div class="form-control w-full">
+          <label for="detDsReduzido" class="label py-1">
+            <span class="label-text font-semibold text-base-content">
+              Nome reduzido
+              @if (isEditing()) {
+                <span class="text-error ml-0.5" aria-hidden="true">*</span>
+              }
+            </span>
+          </label>
+          <input
+            type="text"
+            id="detDsReduzido"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsReduzido"
+            placeholder="Ex. CONFRATERES"
+          />
+          @if (isEditing() && convencaoForm.dsReduzido().touched() && convencaoForm.dsReduzido().invalid()) {
+            @for (error of convencaoForm.dsReduzido().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
 
+        <div class="form-control w-full">
+          <label for="detDsCnpj" class="label py-1">
+            <span class="label-text font-semibold text-base-content">CNPJ</span>
+          </label>
+          <input
+            type="text"
+            id="detDsCnpj"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsCnpj"
+            placeholder="00.000.000/0000-00"
+          />
+          @if (isEditing() && convencaoForm.dsCnpj().touched() && convencaoForm.dsCnpj().invalid()) {
+            @for (error of convencaoForm.dsCnpj().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Nome da Convenção -->
+      <div class="form-control w-full">
+        <label for="detDsConvencao" class="label py-1">
+          <span class="label-text font-semibold text-base-content">
+            Convenção
+            @if (isEditing()) {
+              <span class="text-error ml-0.5" aria-hidden="true">*</span>
+            }
+          </span>
+        </label>
+        <input
+          type="text"
+          id="detDsConvencao"
+          class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+          [formField]="convencaoForm.dsConvencao"
+          placeholder="Ex. CONFRATERES - Convenção Fraternal ...."
+        />
+        @if (isEditing() && convencaoForm.dsConvencao().touched() && convencaoForm.dsConvencao().invalid()) {
+          @for (error of convencaoForm.dsConvencao().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+
+      <!-- Endereço -->
+      <div class="form-control w-full">
+        <label for="detDsEndereco" class="label py-1">
+          <span class="label-text font-semibold text-base-content">Endereço</span>
+        </label>
+        <input
+          type="text"
+          id="detDsEndereco"
+          class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+          [formField]="convencaoForm.dsEndereco"
+          placeholder="Rua/Av/Etc.."
+        />
+        @if (isEditing() && convencaoForm.dsEndereco().touched() && convencaoForm.dsEndereco().invalid()) {
+          @for (error of convencaoForm.dsEndereco().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+
+      <!-- Bairro + CEP na mesma linha -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+        <div class="form-control w-full sm:col-span-2">
+          <label for="detDsBairro" class="label py-1">
+            <span class="label-text font-semibold text-base-content">Bairro</span>
+          </label>
+          <input
+            type="text"
+            id="detDsBairro"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsBairro"
+            placeholder="Ex. Campo Grande"
+          />
+          @if (isEditing() && convencaoForm.dsBairro().touched() && convencaoForm.dsBairro().invalid()) {
+            @for (error of convencaoForm.dsBairro().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-control w-full">
+          <label for="detDsCep" class="label py-1">
+            <span class="label-text font-semibold text-base-content">CEP</span>
+          </label>
+          <input
+            type="text"
+            id="detDsCep"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsCep"
+            placeholder="00000-000"
+          />
+          @if (isEditing() && convencaoForm.dsCep().touched() && convencaoForm.dsCep().invalid()) {
+            @for (error of convencaoForm.dsCep().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Estado (UF) + Cidades na mesma linha -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <div class="form-control w-full">
+          <label for="detEstadoUf" class="label py-1">
+            <span class="label-text font-semibold text-base-content">
+              Estado (UF)
+              @if (isEditing()) {
+                <span class="text-error ml-0.5" aria-hidden="true">*</span>
+              }
+            </span>
+          </label>
+          <select
+            id="detEstadoUf"
+            class="select select-bordered select-sm sm:select-md w-full font-medium text-base-content bg-base-200 border-base-300 focus:border-primary"
+            [formField]="convencaoForm.estadoUf"
+          >
+            <option value="" disabled class="bg-base-200 text-base-content">Selecione o estado...</option>
+            @for (est of estadosList(); track est.id) {
+              <option [value]="est.dsUf" class="bg-base-200 text-base-content">
+                {{ est.dsUf }} - {{ est.dsNome }}
+              </option>
+            }
+          </select>
+          @if (isEditing() && convencaoForm.estadoUf().touched() && convencaoForm.estadoUf().errors().length > 0) {
+            @for (error of convencaoForm.estadoUf().errors(); track error) {
+              <div class="text-error text-xs mt-1">{{ error.message }}</div>
+            }
+          }
+        </div>
+
+        <div class="form-control w-full">
+          <label for="detCidadeId" class="label py-1">
+            <span class="label-text font-semibold text-base-content">
+              Cidades
+              @if (isEditing()) {
+                <span class="text-error ml-0.5" aria-hidden="true">*</span>
+              }
+            </span>
+          </label>
+          <select
+            id="detCidadeId"
+            class="select select-bordered select-sm sm:select-md w-full font-medium text-base-content bg-base-200 border-base-300 focus:border-primary"
+            [formField]="convencaoForm.cidadeId"
+          >
+            <option value="" disabled class="bg-base-200 text-base-content">
+              @if (!formModel().estadoUf) {
+                Selecione um estado...
+              } @else if (isLoadingCidades()) {
+                Carregando cidades...
+              } @else {
+                Selecione a cidade...
+              }
+            </option>
+            @for (cid of cidades(); track cid.id) {
+              <option [value]="cid.id" class="bg-base-200 text-base-content">
+                {{ cid.dsNomeIbge }} - {{ cid.dsUf ?? cid.estado?.dsUf }}
+              </option>
+            }
+          </select>
+          @if (isEditing() && convencaoForm.cidadeId().touched() && convencaoForm.cidadeId().errors().length > 0) {
+            @for (error of convencaoForm.cidadeId().errors(); track error) {
+              <div class="text-error text-xs mt-1">{{ error.message }}</div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- País + Email na mesma linha -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <div class="form-control w-full">
+          <label for="detDsPais" class="label py-1">
+            <span class="label-text font-semibold text-base-content">País</span>
+          </label>
+          <input
+            type="text"
+            id="detDsPais"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsPais"
+            placeholder="Ex. Brasil"
+          />
+          @if (isEditing() && convencaoForm.dsPais().touched() && convencaoForm.dsPais().invalid()) {
+            @for (error of convencaoForm.dsPais().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-control w-full">
+          <label for="detDsEmail" class="label py-1">
+            <span class="label-text font-semibold text-base-content">Email</span>
+          </label>
+          <input
+            type="email"
+            id="detDsEmail"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsEmail"
+            placeholder="Ex. email@gmail.com.br"
+          />
+          @if (isEditing() && convencaoForm.dsEmail().touched() && convencaoForm.dsEmail().invalid()) {
+            @for (error of convencaoForm.dsEmail().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Telefone 1 + Telefone 2 na mesma linha -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <div class="form-control w-full">
+          <label for="detDsTelefone1" class="label py-1">
+            <span class="label-text font-semibold text-base-content">Telefone 1</span>
+          </label>
+          <input
+            type="text"
+            id="detDsTelefone1"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsTelefone1"
+            placeholder="Tel. Principal"
+          />
+          @if (isEditing() && convencaoForm.dsTelefone1().touched() && convencaoForm.dsTelefone1().invalid()) {
+            @for (error of convencaoForm.dsTelefone1().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-control w-full">
+          <label for="detDsTelefone2" class="label py-1">
+            <span class="label-text font-semibold text-base-content">Telefone 2</span>
+          </label>
+          <input
+            type="text"
+            id="detDsTelefone2"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsTelefone2"
+            placeholder="Tel. Secundário"
+          />
+          @if (isEditing() && convencaoForm.dsTelefone2().touched() && convencaoForm.dsTelefone2().invalid()) {
+            @for (error of convencaoForm.dsTelefone2().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Telefone 3 + WhatsApp na mesma linha -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+        <div class="form-control w-full">
+          <label for="detDsTelefone3" class="label py-1">
+            <span class="label-text font-semibold text-base-content">Telefone 3</span>
+          </label>
+          <input
+            type="text"
+            id="detDsTelefone3"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsTelefone3"
+            placeholder="Outro telefone"
+          />
+          @if (isEditing() && convencaoForm.dsTelefone3().touched() && convencaoForm.dsTelefone3().invalid()) {
+            @for (error of convencaoForm.dsTelefone3().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+
+        <div class="form-control w-full">
+          <label for="detDsWhatsapp" class="label py-1">
+            <span class="label-text font-semibold text-base-content">WhatsApp</span>
+          </label>
+          <input
+            type="text"
+            id="detDsWhatsapp"
+            class="input input-bordered input-sm sm:input-md w-full font-medium text-base-content bg-base-200 border-base-300 placeholder:text-base-content/50 focus:border-primary"
+            [formField]="convencaoForm.dsWatsapp"
+            placeholder="WhatsApp"
+          />
+          @if (isEditing() && convencaoForm.dsWatsapp().touched() && convencaoForm.dsWatsapp().invalid()) {
+            @for (error of convencaoForm.dsWatsapp().errors(); track error) {
+              <span class="text-error text-xs mt-1">{{ error.message }}</span>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Rodapé de ações -->
+  <div class="modal-action mt-5 pt-4 border-t border-base-300 flex justify-between items-center gap-2">
+    @if (isEditing()) {
+      <div class="flex items-center gap-2 ml-auto">
+        <button
+          type="button"
+          class="btn btn-ghost text-base-content/90"
+          [disabled]="isLoading()"
+          (click)="cancelarEdicao()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!podeSalvar()"
+          (click)="salvarAlteracoes()"
+        >
+          @if (isLoading()) {
+            <span class="loading loading-spinner loading-xs"></span>
+            Salvando...
+          } @else {
+            Salvar
+          }
+        </button>
+      </div>
+    } @else {
+      <button
+        type="button"
+        class="btn btn-error btn-outline"
+        [disabled]="isLoading()"
+        (click)="abrirModalConfirmarExclusao()"
+      >
+        Excluir
+      </button>
+
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          class="btn btn-ghost text-base-content/90"
+          [disabled]="isLoading()"
+          (click)="fechar()"
+        >
+          Fechar
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="isLoading()"
+          (click)="ativarEdicao()"
+        >
+          Editar
+        </button>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<dialog #confirmDialogElement class="modal">
+  <div class="modal-box max-w-md bg-base-100 text-base-content rounded-box border border-base-300 shadow-xl">
+    <h3 class="text-lg font-bold text-error">Confirmar Exclusão</h3>
+    <p class="py-3 text-sm text-base-content/85">
+      Deseja realmente excluir a convenção
+      <strong class="font-semibold text-base-content">
+        {{ convencaoCompleta()?.dsReduzido || convencaoCompleta()?.dsConvencao || ('#' + convencaoId()) }}
+      </strong>?
+      Esta ação não poderá ser desfeita.
+    </p>
+    <div class="modal-action mt-4">
+      <button
+        type="button"
+        class="btn btn-ghost text-base-content/90"
+        [disabled]="isLoading()"
+        (click)="fecharModalConfirmarExclusao()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="btn btn-error"
+        [disabled]="isLoading()"
+        (click)="confirmarExclusao()"
+      >
+        @if (isLoading()) {
+          <span class="loading loading-spinner loading-xs"></span>
+          Excluindo...
+        } @else {
+          Confirmar Exclusão
+        }
+      </button>
+    </div>
+  </div>
+</dialog>

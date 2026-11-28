@@ -27,7 +27,7 @@ export class CidadeService {
   }
 
   /**
-   * Listar cidades filgtradas pela UF do estado
+   * Listar cidades filtradas pela UF do estado
    * @param uf buscar todas as cidades com a uf informada
    */
   listarPorUf(uf: string): Observable<Cidade[]> {

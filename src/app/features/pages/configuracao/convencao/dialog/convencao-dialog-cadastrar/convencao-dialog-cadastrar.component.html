@@ -1,4 +1,4 @@
-<div class="mx-auto p-5 bg-base-100 rounded-box w-full max-w-sm">
+<div class="mx-auto p-5 sm:p-6 bg-base-100 rounded-box w-full max-w-2xl">
 
   <!-- Cabeçalho -->
   <div class="flex justify-between items-center pb-3 mb-4 border-b border-base-200">
@@ -10,10 +10,9 @@
 
     <!-- Nome reduzido + CNPJ na mesma linha -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-      <!-- Nome reduzido -->
       <div class="form-control w-full">
         <label for="cadDsReduzido" class="label py-1">
-          <span class="label-text font-semibold">Nome reduzido</span>
+          <span class="label-text font-semibold">Nome reduzido <span class="text-error ml-0.5" aria-hidden="true">*</span></span>
         </label>
         <input
           type="text"
@@ -29,7 +28,6 @@
         }
       </div>
 
-      <!-- CNPJ -->
       <div class="form-control w-full">
         <label for="cadDsCnpj" class="label py-1">
           <span class="label-text font-semibold">CNPJ</span>
@@ -52,7 +50,7 @@
     <!-- Nome da Convenção -->
     <div class="form-control w-full">
       <label for="cadDsConvencao" class="label py-1">
-        <span class="label-text font-semibold">Convenção</span>
+        <span class="label-text font-semibold">Convenção<span class="text-error ml-0.5" aria-hidden="true">*</span></span>
       </label>
       <input
         type="text"
@@ -87,110 +85,235 @@
       }
     </div>
 
-     <!-- Bairro -->
-    <div class="form-control w-full">
-      <label for="cadDsBairro" class="label py-1">
-        <span class="label-text font-semibold">Bairro</span>
-      </label>
-      <input
-        type="text"
-        id="cadDsBairro"
-        class="input input-bordered input-sm sm:input-md w-full"
-        [formField]="convencaoForm.dsBairro"
-        placeholder="Ex. Campo Grande"
-      />
-      @if (convencaoForm.dsBairro().touched() && convencaoForm.dsBairro().invalid()) {
-        @for (error of convencaoForm.dsBairro().errors(); track error) {
-          <span class="text-error text-xs mt-1">{{ error.message }}</span>
-        }
-      }
-    </div>
-
-    <!-- CEP -->
-    <div class="form-control w-full">
-      <label for="cadDsCep" class="label py-1">
-        <span class="label-text font-semibold">CEP</span>
-      </label>
-      <input
-        type="text"
-        id="cadDsCep"
-        class="input input-bordered input-sm sm:input-md w-full"
-        [formField]="convencaoForm.dsCep"
-        placeholder="00000-000"
-      />
-      @if (convencaoForm.dsCep().touched() && convencaoForm.dsCep().invalid()) {
-        @for (error of convencaoForm.dsCep().errors(); track error) {
-          <span class="text-error text-xs mt-1">{{ error.message }}</span>
-        }
-      }
-    </div>
-  </div>
-
-  <!-- Estado (UF) + Cidades na mesma linha -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-    <!-- Estado (UF) -->
-    <div class="form-control w-full">
-      <label for="cad-estadoUf" class="label">
-        <span class="label-text font-semibold">Estado (UF)</span>
-      </label>
-      <select
-        id="cad-estadoUf"
-        class="select select-bordered w-full bg-base-100 text-base-content font-medium"
-        [formField]="convencaoForm.estadoUf"
-      >
-        <option value="" disabled selected>Seleciona o estado...</option>
-        @for (est of estados(); track est.id) {
-          <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
-        }
-      </select>
-
-      @if (convencaoForm.estadoUf().touched() && convencaoForm.estadoUf().errors().length > 0) {
-        @for (error of convencaoForm.estadoUf().errors(); track error) {
-          <div class="text-error text-xs mt-1">{{ error.message }}</div>
-        }
-      }
-    </div>
-
-    <!-- Cidade por UF -->
-    <div class="form-control w-full">
-      <label for="cad-cidadeUF" class="label">
-        <span class="label-text font-semibold">Cidades</span>
-      </label>
-      <select
-        id="cad-cidadeUF"
-        class="select select-bordered w-full bg-base-100 text-base-content font-medium"
-        [formField]="convencaoForm.cidadeId"
-      >
-        <option value="" disabled selected>
-          @if (!formModel().estadoUf) {
-            Selecione um estado primeiro...
-          } @else if (isLoadingCidades()) {
-            Carregando cidades...
-          } @else {
-            Selecione a cidade...
+    <!-- Bairro + CEP na mesma linha -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+      <div class="form-control w-full sm:col-span-2">
+        <label for="cadDsBairro" class="label py-1">
+          <span class="label-text font-semibold">Bairro</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsBairro"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsBairro"
+          placeholder="Ex. Campo Grande"
+        />
+        @if (convencaoForm.dsBairro().touched() && convencaoForm.dsBairro().invalid()) {
+          @for (error of convencaoForm.dsBairro().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
           }
-        </option>
-        @for (cid of cidades(); track cid.id) {
-          <option [value]="cid.id">{{ cid.dsNomeIbge }} - {{ cid.estado?.dsUf }}</option>
         }
-      </select>
+      </div>
 
-      @if (convencaoForm.cidadeId().touched() && convencaoForm.cidadeId().errors().length > 0) {
-        @for (error of convencaoForm.cidadeId().errors(); track error) {
-          <div class="text-error text-xs mt-1">{{ error.message }}</div>
+      <div class="form-control w-full">
+        <label for="cadDsCep" class="label py-1">
+          <span class="label-text font-semibold">CEP</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsCep"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsCep"
+          placeholder="00000-000"
+        />
+        @if (convencaoForm.dsCep().touched() && convencaoForm.dsCep().invalid()) {
+          @for (error of convencaoForm.dsCep().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
         }
-      }
+      </div>
     </div>
-  </div>
 
+    <!-- Estado (UF) + Cidades na mesma linha -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+      <div class="form-control w-full">
+        <label for="cad-estadoUf" class="label py-1">
+          <span class="label-text font-semibold">Estado (UF)<span class="text-error ml-0.5" aria-hidden="true">*</span></span>
+        </label>
+        <select
+          id="cad-estadoUf"
+          class="select select-bordered select-sm sm:select-md w-full bg-base-100 text-base-content font-medium"
+          [formField]="convencaoForm.estadoUf"
+        >
+          <option value="" disabled selected>Selecione o estado...</option>
+          @for (est of estados(); track est.id) {
+            <option [value]="est.dsUf">{{ est.dsUf }} - {{ est.dsNome }}</option>
+          }
+        </select>
+
+        @if (convencaoForm.estadoUf().touched() && convencaoForm.estadoUf().errors().length > 0) {
+          @for (error of convencaoForm.estadoUf().errors(); track error) {
+            <div class="text-error text-xs mt-1">{{ error.message }}</div>
+          }
+        }
+      </div>
+
+      <div class="form-control w-full">
+        <label for="cad-cidadeUF" class="label py-1">
+          <span class="label-text font-semibold">Cidades<span class="text-error ml-0.5" aria-hidden="true">*</span></span>
+        </label>
+        <select
+          id="cad-cidadeUF"
+          class="select select-bordered select-sm sm:select-md w-full bg-base-100 text-base-content font-medium"
+          [formField]="convencaoForm.cidadeId"
+        >
+          <option value="" disabled selected>
+            @if (!formModel().estadoUf) {
+              Selecione um estado...
+            } @else if (isLoadingCidades()) {
+              Carregando cidades...
+            } @else {
+              Selecione a cidade...
+            }
+          </option>
+          @for (cid of cidades(); track cid.id) {
+            <option [value]="cid.id">{{ cid.dsNomeIbge }} - {{ cid.estado?.dsUf }}</option>
+          }
+        </select>
+
+        @if (convencaoForm.cidadeId().touched() && convencaoForm.cidadeId().errors().length > 0) {
+          @for (error of convencaoForm.cidadeId().errors(); track error) {
+            <div class="text-error text-xs mt-1">{{ error.message }}</div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- País + Email na mesma linha -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+      <div class="form-control w-full">
+        <label for="cadDsPais" class="label py-1">
+          <span class="label-text font-semibold">País</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsPais"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsPais"
+          placeholder="Ex. Brasil"
+        />
+        @if (convencaoForm.dsPais().touched() && convencaoForm.dsPais().invalid()) {
+          @for (error of convencaoForm.dsPais().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+
+      <div class="form-control w-full">
+        <label for="cadDsEmail" class="label py-1">
+          <span class="label-text font-semibold">Email</span>
+        </label>
+        <input
+          type="email"
+          id="cadDsEmail"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsEmail"
+          placeholder="Ex. email@gmail.com.br"
+        />
+        @if (convencaoForm.dsEmail().touched() && convencaoForm.dsEmail().invalid()) {
+          @for (error of convencaoForm.dsEmail().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Telefone 1 + Telefone 2 na mesma linha -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+      <div class="form-control w-full">
+        <label for="cadDsTelefone1" class="label py-1">
+          <span class="label-text font-semibold">Telefone 1</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsTelefone1"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsTelefone1"
+          placeholder="Tel. Principal"
+        />
+        @if (convencaoForm.dsTelefone1().touched() && convencaoForm.dsTelefone1().invalid()) {
+          @for (error of convencaoForm.dsTelefone1().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+
+      <div class="form-control w-full">
+        <label for="cadDsTelefone2" class="label py-1">
+          <span class="label-text font-semibold">Telefone 2</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsTelefone2"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsTelefone2"
+          placeholder="Tel. Secundário"
+        />
+        @if (convencaoForm.dsTelefone2().touched() && convencaoForm.dsTelefone2().invalid()) {
+          @for (error of convencaoForm.dsTelefone2().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Telefone 3 + WhatsApp na mesma linha -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+      <div class="form-control w-full">
+        <label for="cadDsTelefone3" class="label py-1">
+          <span class="label-text font-semibold">Telefone 3</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsTelefone3"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsTelefone3"
+          placeholder="Outro telefone"
+        />
+        @if (convencaoForm.dsTelefone3().touched() && convencaoForm.dsTelefone3().invalid()) {
+          @for (error of convencaoForm.dsTelefone3().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+
+      <div class="form-control w-full">
+        <label for="cadDsWhatsapp" class="label py-1">
+          <span class="label-text font-semibold">WhatsApp</span>
+        </label>
+        <input
+          type="text"
+          id="cadDsWhatsapp"
+          class="input input-bordered input-sm sm:input-md w-full"
+          [formField]="convencaoForm.dsWatsapp"
+          placeholder="WhatsApp"
+        />
+        @if (convencaoForm.dsWatsapp().touched() && convencaoForm.dsWatsapp().invalid()) {
+          @for (error of convencaoForm.dsWatsapp().errors(); track error) {
+            <span class="text-error text-xs mt-1">{{ error.message }}</span>
+          }
+        }
+      </div>
+    </div>
+
+  </div>
 
   <div class="modal-action mt-5">
-    <button type="button" class="btn btn-ghost" [disabled]="isLoading()" (click)="onCancel()"> Cancelar </button>
-    <button type="button" class="btn btn-primary" [disabled]="convencaoForm().invalid() || isLoading()" (click)="onSave()">
-      @if(isLoading()) {
+    <button type="button" class="btn btn-ghost" [disabled]="isLoading()" (click)="onCancel()">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="convencaoForm().invalid() || isLoading()"
+      (click)="onSave()"
+    >
+      @if (isLoading()) {
         <span class="loading loading-spinner loading-xs"></span>
         Gravando...
-      } @else { Gravar }
+      } @else {
+        Gravar
+      }
     </button>
   </div>
 </div>

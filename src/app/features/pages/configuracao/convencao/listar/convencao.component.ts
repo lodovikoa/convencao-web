@@ -15,9 +15,7 @@ export interface ConvencaoDetalharResultado {
 @Component({
   selector: 'app-convencao',
   standalone: true,
-  imports: [ ConvencaoDialogCadastrarComponent,
-             SuccessModalComponent
-  ],
+  imports: [ConvencaoDialogCadastrarComponent, ConvencaoDialogDetalharComponent, SuccessModalComponent],
   templateUrl: './convencao.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './convencao.component.scss',

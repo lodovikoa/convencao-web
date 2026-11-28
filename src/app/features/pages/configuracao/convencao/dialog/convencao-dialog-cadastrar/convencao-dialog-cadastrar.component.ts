@@ -51,28 +51,28 @@ export class ConvencaoDialogCadastrarComponent {
   private readonly estadoUfSelecionado$ = toObservable( computed(() => this.formModel().estadoUf) );
 
   // Só busca cidades quando houver UF selecionada; caso contrário, rtorna []
-  protected readonly cidades = toSignal(
-    this.estadoUfSelecionado$.pipe(
-      tap(() => {
-        // Limpa a cidade selecionada sempre que o estado mudar
-        if(this.formModel().cidadeId !== '') {
-          this.formModel.update((atual) => ({ ...atual, cidadeId: '' }));
-        }
-      }),
-      switchMap((uf) => {
-        if(!uf) {
-          this.isLoadingCidades.set(false);
-          return of([] as Cidade[]);
-        }
-        this.isLoadingCidades.set(true);
-        return this.cidadeService.listarPorUf(uf).pipe(
-          catchError(() => of([] as Cidade[])),
-          tap(() => this.isLoadingCidades.set(false))
-        );
-      })
-    ),
-    { initialValue: [] as Cidade[] }
-   );
+protected readonly cidades = toSignal(
+  this.estadoUfSelecionado$.pipe(
+    tap(() => {
+      if (this.formModel().cidadeId !== '') {
+        this.formModel.update((atual) => ({ ...atual, cidadeId: '' }));
+      }
+      this.convencaoForm.cidadeId().reset();
+    }),
+    switchMap((uf) => {
+      if (!uf) {
+        this.isLoadingCidades.set(false);
+        return of([] as Cidade[]);
+      }
+      this.isLoadingCidades.set(true);
+      return this.cidadeService.listarPorUf(uf).pipe(
+        catchError(() => of([] as Cidade[])),
+        tap(() => this.isLoadingCidades.set(false))
+      );
+    })
+  ),
+  { initialValue: [] as Cidade[] }
+);
 
   protected readonly formModel = signal<ConvencaoCadastroModel>({
     dsReduzido: '',
@@ -81,7 +81,7 @@ export class ConvencaoDialogCadastrarComponent {
     dsBairro: '',
     estadoUf: '',
     cidadeId: '',
-    dsPais: '',
+    dsPais: 'Brasil',
     dsCep: '',
     dsCnpj: '',
     dsEmail: '',
@@ -101,7 +101,9 @@ export class ConvencaoDialogCadastrarComponent {
     maxLength(schema.dsEndereco, 100, { message: 'Endereço deve ter no máximo 100 caracteres.' });
     maxLength(schema.dsBairro, 100, { message: 'Bairro deve ter no máximo 100 caracteres.' });
 
-    required(schema.cidadeId, { message: 'A cidadde é obrigatória.' });
+    required(schema.estadoUf, { message: 'O estado é obrigatório.'})
+
+    required(schema.cidadeId, { message: 'A cidade é obrigatória.' });
     disabled(schema.cidadeId, { when: () => !this.formModel().estadoUf || this.isLoadingCidades() });
     validate(schema.cidadeId, ({ value })=>{
       const id = Number(value());
@@ -172,7 +174,7 @@ export class ConvencaoDialogCadastrarComponent {
       dsBairro: '',
       estadoUf: '',
       cidadeId: '',
-      dsPais: '',
+      dsPais: 'Brasil',
       dsCep: '',
       dsCnpj: '',
       dsEmail: '',

@@ -3,8 +3,8 @@
 
   <div class="card bg-base-100 text-base-content shadow-xl relative overflow-hidden">
     <div class="flex flex-col sm:flex-row justify-between items-center p-4 border-b border-base-200 gap-4">
-      @if(temPermissaoCadastrar()) {
-        <button class="btn btn-primary gap-2" (click)="cadastrar()">
+      @if (temPermissaoCadastrar()) {
+        <button type="button" class="btn btn-primary gap-2" (click)="cadastrar()">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -16,63 +16,70 @@
         Total de <strong class="text-base-content">{{ convencaoList().length }}</strong> registros
       </span>
     </div>
-      @if (isLoading()) {
-        <div class="absolute inset-0 bg-base-100/50 backdrop-blur-xs flex items-center justify-center z-10">
-          <span class="loading loading-spinner loading-lg text-primary"></span>
-        </div>
-      }
 
-      <div class="overflow-x-auto">
-        <table class="table table-zebra text-base-content">
-          <thead>
-             <tr class="text-base-content">
-              <th class="cursor-pointer hover:bg-base-200">Nome reduzido</th>
-              <th class="cursor-pointer hover:bg-base-200" >Convenção</th>
+    @if (isLoading()) {
+      <div class="absolute inset-0 bg-base-100/50 backdrop-blur-xs flex items-center justify-center z-10">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+      </div>
+    }
+
+    <div class="overflow-x-auto">
+      <table class="table table-zebra text-base-content">
+        <thead>
+          <tr class="text-base-content">
+            <th class="cursor-pointer hover:bg-base-200">Nome reduzido</th>
+            <th class="cursor-pointer hover:bg-base-200">Convenção</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of convencaoList(); track item.id) {
+            <tr>
+              <td>
+                <a class="link link-primary font-semibold cursor-pointer" (click)="detalhar(item)">
+                  {{ item.dsReduzido }}
+                </a>
+              </td>
+              <td class="text-base-content">{{ item.dsConvencao }}</td>
             </tr>
-          </thead>
-          <tbody>
-            @for (item of convencaoList(); track item.id) {
-              <tr>
-                <td>
-                  <a class="link link-primary font-semibold cursor-pointer" (click)="detalhar(item)">
-                    {{ item.dsReduzido }}
-                  </a>
-                </td>
-                <td class="text-base-content">{{ item.dsConvencao }}</td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="2" class="text-center py-4 text-base-content/60">Nenhuma convenção encontrada.</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-
+          } @empty {
+            <tr>
+              <td colspan="2" class="text-center py-4 text-base-content/60">Nenhuma convenção encontrada.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 
-<!-- Modal DaisyUI para Cadastro -->
+<!-- Modal DaisyUI para Cadastro (largura expandida em relação ao max-w-sm anterior) -->
 <dialog #cadastrarDialog class="modal modal-middle">
-  <div class="modal-box bg-base-100 p-0 shadow-2xl border border-base-200">
-    <app-convencao-dialog-cadastrar (fechar)="fecharCadastrarDialog($event.salvo, $event.nomeConvencao)" />
+  <div class="modal-box w-11/12 max-w-2xl bg-base-100 p-0 shadow-2xl border border-base-200">
+    <app-convencao-dialog-cadastrar
+      (fechar)="fecharCadastrarDialog($event.salvo, $event.nomeConvencao)"
+    />
   </div>
   <form method="dialog" class="modal-backdrop">
     <button type="button" (click)="fecharCadastrarDialog(false)">fechar</button>
   </form>
 </dialog>
 
-<!-- Modal DaisyUI para Detalhar/Editar -->
-<!-- <dialog #detalharDialog class="modal modal-middle">
-  <div class="modal-box bg-base-100 p-0 shadow-2xl border border-base-200">
-    @if (convencaoSelecionada(); as convencao) {
-      <app-convencao-dialog-detalhar [convencao]="convencao" (fecharModal)="fecharDetalharDialog($event)" />
+<!-- Modal DaisyUI para Detalhar / Editar -->
+<dialog #detalharDialog class="modal modal-middle" (cancel)="fecharDetalharDialog()">
+  <div class="modal-box w-11/12 max-w-2xl bg-base-100 p-0 shadow-2xl border border-base-200">
+    @if (convencaoSelecionada(); as selecionada) {
+      <app-convencao-dialog-detalhar
+        [convencaoId]="selecionada.id"
+        (fecharDialog)="fecharDetalharDialog()"
+        (atualizado)="fecharDetalharDialog({ acao: 'atualizado', nomeConvencao: $event })"
+        (excluido)="fecharDetalharDialog({ acao: 'excluido', nomeConvencao: $event })"
+      />
     }
   </div>
   <form method="dialog" class="modal-backdrop">
-    <button type="button" (click)="fecharDetalharDialog(undefined)">fechar</button>
+    <button type="button" (click)="fecharDetalharDialog()">fechar</button>
   </form>
-</dialog> -->
+</dialog>
 
 <!-- Componente Reutilizável de Sucesso -->
-<app-success-modal #successModal [mensagem]="mensagemSucessoModal()"(fechado)="fecharModalSucesso()" />
+<app-success-modal #successModal [mensagem]="mensagemSucessoModal()" (fechado)="fecharModalSucesso()" />
